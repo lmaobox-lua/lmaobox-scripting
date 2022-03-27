@@ -1,3 +1,8 @@
+local round_number = function( num )
+    num = (num - math.floor( num ) > 0.5) and math.ceil( num ) or math.floor( num )
+    return num
+end
+
 local initFont = (function( path, name, height, weight )
     return (draw.AddFontResource( path ) ~= nil and draw.CreateFont( name, height, weight ))
 end)
