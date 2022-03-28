@@ -74,7 +74,37 @@ local usermessage_observer = function( proton )
 end
 
 local OnStartup = (function()
+    -- https://wiki.teamfortress.com/wiki/Voting
     -- tf2 settings to make voting easier
+    -- cl_vote_ui_active_after_voting 1
+    -- cl_vote_ui_show_notification 1
+    -- sv_allow_votes 1
+    -- sv_vote_allow_spectators 1
+    -- sv_vote_creation_timer 5
+    -- sv_vote_failure_timer 7
+    -- sv_vote_holder_may_vote_no
+    -- sv_vote_issue_autobalance_allowed 1
+    -- sv_vote_issue_autobalance_cooldown 9
+    -- sv_vote_issue_changelevel_allowed 1
+    -- sv_vote_issue_classlimits_allowed 1
+    -- sv_vote_issue_classlimits_cooldown 13
+    -- sv_vote_issue_classlimits_max 4
+    -- sv_vote_issue_extendlevel_allowed 1
+    -- sv_vote_issue_extendlevel_quorum 0.1 (default : 0.6)
+    -- sv_vote_issue_kick_allowed 1
+    -- sv_vote_issue_kick_namelock_duration 15
+    -- sv_vote_issue_mvm_challenge_allowed 1
+    -- sv_vote_issue_nextlevel_allowed 1
+    -- sv_vote_issue_nextlevel_allowextend 1
+    -- sv_vote_issue_nextlevel_prevent_change 1
+    -- sv_vote_issue_restart_game_allowed 1
+    -- sv_vote_issue_restart_game_cooldown 15
+    -- sv_vote_issue_scramble_teams_allowed 1
+    -- sv_vote_issue_scramble_teams_cooldown 15
+    -- sv_vote_kick_ban_duration 1
+    -- sv_vote_late_join_cooldown 10
+    -- sv_vote_quorum_ratio 0.1 (default : 0.6)
+    -- sv_vote_ui_hide_disabled_issues 0 (default 1)
 end)()
 
 callbacks.Register( 'DispatchUserMessage', 'usermessage_observer', usermessage_observer )
