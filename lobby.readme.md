@@ -1,4 +1,5 @@
-List of features :
+## lobby.lua by discord: Moonverse#9320
+### version 1.0.0.0
 ```lua
 ".party: query party info", 
 ".join [steamid64]: join lobby of this player",
