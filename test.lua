@@ -1,3 +1,5 @@
+-- i hereby claim the throne of the best vote revealer
+
 --[[
 local party_chat_commands_workshop = {
     status = function()
