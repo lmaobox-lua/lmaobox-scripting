@@ -160,11 +160,11 @@ basic_cmd['.party'] = function()
 end
 
 basic_cmd['.autoqueue'] = function()
-    config.toggle( 'auto_queue', true )
+    config.toggle( 'auto_queue' )
 end
 
 basic_cmd['.fastjoin'] = function()
-    config.toggle( 'fast_join', true )
+    config.toggle( 'fast_join' )
 end
 
 basic_cmd['.abandon'] = function() -- #testing-commands
