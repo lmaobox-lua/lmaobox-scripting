@@ -14,4 +14,5 @@
 to be added in next update :
 ```lua
 "to be dicussed"
+"replace string_builder with string.format"
 ```
