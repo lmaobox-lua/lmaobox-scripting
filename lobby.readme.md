@@ -1,9 +1,8 @@
 # lobby.lua by discord: Moonverse#9320
 
 ## How to use
-To use this script you need a brain
-
-open party chat vgui and type '.help'
+1. Load Script
+2. Open party chat vgui and type '.help'
 > `tf_party_chat ".help"`
 
 ---

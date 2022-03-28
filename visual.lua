@@ -36,9 +36,32 @@ end
 
 local TFTeamName = {}
 
-local to_team_name = (function( team_number )
-    return (team_number == 3 and "Blu") or (team_number == 2 and "Red") or (team_number == 1 and "Spectator") or
-               (team_number == 0 and "Unassigned")
+local team_name = {
+    [0] = "Unassigned",
+    [1] = "Spectator",
+    [2] = "Red",
+    [3] = "Blu"
+}
+
+local to_team_name = (function( entityindex )
+    local team_number = entityindex:GetTeamNumber()
+    return team_name[team_number]
+end)
+
+local class_name = {
+    [1] = 'Scout',
+    [3] = 'Soldier',
+    [7] = 'Pyro',
+    [4] = 'Demoman',
+    [6] = 'Heavy',
+    [9] = 'Engineer',
+    [5] = 'Medic',
+    [2] = 'Sniper',
+    [8] = 'Spy'
+ }
+local to_class_name = (function( entityindex )
+    local class_number = entityindex:GetPropInt('m_iClass')
+    return class_name[class_number]
 end)
 
 local myfont = draw.CreateFont( "Verdana", 16, 800 )
