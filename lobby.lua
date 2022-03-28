@@ -4,6 +4,8 @@
     https://github.com/LewdDeveloper/lmaobox-scripting 
 ]] -- 
 -- LuaFormatter on
+local __human_version__ = "1.0.0.0"
+
 callbacks.Unregister( 'FireGameEvent', 'observe_party_chat' )
 callbacks.Unregister( 'FireGameEvent', 'event_observer' )
 
@@ -109,9 +111,16 @@ local blacklisted_steamid, superuser_steamid = {}, {}
 local queue_type = { "casual", "competitive", "bootcamp", "mannup" }
 
 config = {
-    auto_queue = false,
-    fast_join = true
+    auto_queue = false, -- next update, auto_queue has 4 mode : 1. disabled, 2. will not queue if  IsInStandbyQueue, 3. force new queue when in lobby, 4. QueueUpStandby if IsInStandbyQueue, else new queue
+    fast_join = false
  }
+
+config.toggle = function( key, bAnnouce )
+    config[key] = not config[key]
+    if (bAnnouce) then
+        tf_party_chat( "config:", key, "is", (config[key] and 'enabled' or 'disabled') )
+    end
+end
 
 local allowExecute = false -- todo : chat timeout + permission
 
@@ -135,7 +144,7 @@ basic_cmd['.ping'] = function()
     return true
 end
 
-basic_cmd['.whois'] = function()
+basic_cmd['.party'] = function()
     local user, name
     local members = party.GetMembers()
     tf_party_chat( ' | ', "name", "steam", "online", "lobby" )
@@ -151,17 +160,25 @@ basic_cmd['.whois'] = function()
 end
 
 basic_cmd['.autoqueue'] = function()
-
+    config.toggle( 'auto_queue', true )
 end
 
 basic_cmd['.fastjoin'] = function()
-    config['fast_join'] = true
+    config.toggle( 'fast_join', true )
 end
 
 basic_cmd['.abandon'] = function() -- #testing-commands
     if (allowExecute) then
         gamecoordinator.AbandonMatch()
     end
+end
+
+basic_cmd['.stopqueue'] = function()
+
+end
+
+basic_cmd['.clearqueue'] = function()
+
 end
 
 -- #endregion basic. cmd
@@ -184,18 +201,21 @@ end
 adv_cmd['.queue'] = function( message, steamid )
     -- todo : waiting for blackfire
 end
+
 adv_cmd['.join'] = function( message, steamid ) -- #testing-commands
     if (steam.GetPlayerName( message ) == "[unknown]") then -- todo : check if steamid has valid structure instead
         return print( "Error, invalid steamid" )
     end
     client.Command( "tf_party_request_join_user " .. message, true )
 end
+
 adv_cmd['.invite'] = function( message, steamid ) -- #testing-commands
     if (steam.GetPlayerName( message ) == "[unknown]") then
         return print( "Error, invalid steamid" )
     end
     client.Command( "tf_party_invite_user " .. message, true )
 end
+
 adv_cmd['.parse'] = function( message, steamid ) -- #testing-commands
     printc( 255, 0, 0, 255, table.concat( { "parsed:", #message, "characters:", message, "steamid:", steamid }, ' ' ) )
 end
@@ -206,7 +226,7 @@ local help_resources = {  -- "lobbyinfo: query matchmaking info [see docs]",
 -- "gameinfo : query game info (if ingame)",
 -- "userinfo: get script runner computer info", 
 -- args
-".whois: query party member info", ".join [steamid64]: join lobby of this player",
+".party: query party info", ".join [steamid64]: join lobby of this player",
 ".invite [steamid64]: invite this player to lobby", ".queue: read docs", ".clearqueue: cancel all matchmaking request",
 ".stopqueue: cancel the last request to queue up for a match group.", ".autoqueue : read docs",
 ".abandon: i will abandon current match" -- "q casual: request to queue up for 12v12 gamemode",
@@ -289,15 +309,13 @@ local OnStartup = (function()
     end )
 
     settimeout( 5000, function()
-        if not config['auto_queue']
-        or gamecoordinator.HasLiveMatch() 
-        or gamecoordinator.IsConnectedToMatchServer() 
-        or gamecoordinator.GetNumMatchInvites() > 0 then
+        if not config['auto_queue'] or gamecoordinator.HasLiveMatch() or gamecoordinator.IsConnectedToMatchServer() or
+            gamecoordinator.GetNumMatchInvites() > 0 then
             return
         end
 
         if #party.GetQueuedMatchGroups() == 0 and not party.IsInStandbyQueue() then
-            party.QueueUp(7)
+            party.QueueUp( 7 )
         end
     end, true )
 end)()
