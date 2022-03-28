@@ -3,25 +3,57 @@
     vote revealer.lua | Test Build | Moonverse#9320 is looking for comments and suggestions
     https://github.com/LewdDeveloper/lmaobox-scripting 
 ]] -- 
-
 callbacks.Unregister( 'DispatchUserMessage', 'usermessage_observer' )
 callbacks.Unregister( 'FireGameEvent', "event_observer" )
 
 -- #region : vscode-ext inline color
-local rgba = function( ... )
-    return { ... }
+local Color = {
+    __index = {},
+    [1] = rgba_color_t,
+    [2] = hex_color_t,
+    [3] = hsv_color_t
+ }
+Color.rgba = function( r, g, b, a )
+    return setmetatable( { r, g, b, a }, Color )
 end
-local _rgba = function( ... ) -- rgba to hex
-    -- The integer form of RGBA is 0xRRGGBBAA
-    -- Hex for red is 0xRR000000, Multiply red value by 0x1000000(16777216) to get 0xRR000000
-    -- Hex for green is 0x00GG0000, Multiply green value by 0x10000(65536) to get 0x00GG0000
-    -- Hex for blue is 0x0000BB00, Multiply blue value by 0x100(256) to get 0x0000BB00
-    -- Hex for alpha is 0x00000AA, no need to multiply since
-    local r, g, b, a = table.unpack( { ... } )
+Color.hex = function( hex )
+    return setmetatable( { hex }, Color )
+end
+
+function Color:to_hex( color_type, to_string_format )
+    local s = type( color_type ) == "number" and Color[tostring( color_type )]()
+end
+
+-- @param color_type
+-- @param to_string_format (optional)
+-- @return hexadecimal color codes
+function Color:rgba_to_hex()
+    --[[ rgba_to_hex 
+            -- The integer form of RGBA is 0xRRGGBBAA
+            -- Hex for red is 0xRR000000, Multiply red value by 0x1000000(16777216) to get 0xRR000000
+            -- Hex for green is 0x00GG0000, Multiply green value by 0x10000(65536) to get 0x00GG0000
+            -- Hex for blue is 0x0000BB00, Multiply blue value by 0x100(256) to get 0x0000BB00
+            -- Hex for alpha is 0x00000AA, thus no need to multiply
+    ]] -- 
+
+    local r, g, b, a = self.r, self.g, self.b, self.a
     a = (0x100 <= a) and 255 or a
-    local rgba = (r * 0x1000000) + (g * 0x10000) + (b * 0x100) + a
-    return rgba
-    -- string.format( "0x%06x", rgba )
+    local hex = (r * 0x1000000) + (g * 0x10000) + (b * 0x100) + a
+    if not (to_string_format) then
+        self.hex = hex
+    else
+        --[[ 
+            '0x%06x':format( hex ) -> '0xRRGGBBAA'
+            '#%06x':format( hex ) -> '#RRGGBBAA'
+            '%06x':format( hex ) -> 'RRGGBBAA'
+        ]] --
+        self.hex = (to_string_format):format( hex )
+    end
+    return self.hex
+end
+
+function Color:hex_to_rgba( color_type, to_string_format )
+
 end
 -- #endregion : vscode-ext inline color
 
@@ -48,11 +80,6 @@ local print_console_color = function( color, sep, ... )
     local r, g, b, a = table.unpack( color )
     local final = text_builder( sep, ... )
     return printc( r, g, b, a, final )
-end
-
-local chatPrintf = function( sep, ... )
-    local final = text_builder( sep, ... )
-    client.ChatPrintf( final )
 end
 
 -- #endregion utils
@@ -116,7 +143,7 @@ msg_func[CallVoteFailed] = function( msg )
     local nReason = msg:ReadByte()
     local nTime = msg:ReadByte() + (msg:ReadByte() << 8) -- how much time left before it can be voted again
     -- print(nReason)
-    chatPrintf( ' ', "\x01", "Cannot call a vote in", nTime, "seconds." )
+    print_console( ' ', "\x01", "Cannot call a vote in", nTime, "seconds." )
     -- print_console_color( rgba( 25, 0, 255, 255 ), ' | ', 'nReason ' .. nReason, 'nTime ' .. nTime )
     -- todo : invest further
     return msg:Reset()
@@ -141,7 +168,7 @@ msg_func[VoteStart] = function( msg )
         detail_str = ": " .. detail_str
     end
 
-    chatPrintf( ' ', "\x03", "[", team_name[m_nVoteTeamIndex], "]", initiator:GetName(), "\x01 casted", "\x05",
+    print_console( ' ', "\x03", "[", team_name[m_nVoteTeamIndex], "]", initiator:GetName(), "\x01 casted", "\x05",
         display_str, detail_str )
     return msg:Reset()
 end
@@ -155,7 +182,7 @@ msg_func[VotePass] = function( msg )
         detail_str = ": " .. detail_str
     end
 
-    chatPrintf( ' ', "\x01", "[", team_name[m_nVoteTeamIndex], "]", "\x05", passed_str, detail_str )
+    print_console( ' ', "\x01", "[", team_name[m_nVoteTeamIndex], "]", "\x05", passed_str, detail_str )
 
     -- print_console_color( rgba( 25, 0, 255, 255 ), ' | ', 'm_nVoteTeamIndex ' .. m_nVoteTeamIndex,'passed_str ' .. passed_str, 'detail_str ' .. detail_str )
     return msg:Reset()
@@ -165,9 +192,9 @@ msg_func[VoteFailed] = function( msg )
     local m_nVoteTeamIndex = msg:ReadByte()
     local nReason = msg:ReadByte()
     nReason = nReason + 1 -- EDGE CASE : In Lua, table starts at 1
-    print_console_color( rgba( 25, 0, 255, 255 ), ' | ', 'm_nVoteTeamIndex ' .. m_nVoteTeamIndex, 'nReason ' .. nReason )
+    print_console_color( Color( 25, 0, 255, 255 ), ' | ', 'm_nVoteTeamIndex ' .. m_nVoteTeamIndex, 'nReason ' .. nReason )
 
-    chatPrintf( ' ', "\x01", "[", team_name[m_nVoteTeamIndex], "]", "\x05", vote_create_failed_t[nReason] )
+    print_console( ' ', "\x01", "[", team_name[m_nVoteTeamIndex], "]", "\x05", vote_create_failed_t[nReason] )
     return msg:Reset()
 end
 
@@ -194,7 +221,7 @@ local event_observer = function( event )
         local entity = entities.GetByIndex( entityindex )
         -- print_console_color( rgba( 25, 0, 255, 255 ), ' | ', 'vote_option ' .. vote_option, 'team ' .. team, 'entityid ' .. entityindex )
 
-        chatPrintf( ' ', "\x03", entity:GetName(), "\x01 voted", "\x05", vote_type[vote_option] ) -- I should have string.format it all
+        print_console( ' ', "\x03", entity:GetName(), "\x01 voted", "\x05", vote_type[vote_option] ) -- I should have string.format it all
     end
 
     --[[    byte	count	Number of options - up to MAX_VOTE_OPTIONS [ed: 5]
@@ -211,6 +238,7 @@ end
 
 local OnStartup = (function()
     -- https://wiki.teamfortress.com/wiki/Voting
+    print_console_color( Color( 25, 0, 255, 255 ), "hello world" )
     callbacks.Register( 'FireGameEvent', 'event_observer', event_observer )
     callbacks.Register( 'DispatchUserMessage', 'usermessage_observer', usermessage_observer )
 end)()
