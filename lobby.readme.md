@@ -1,10 +1,12 @@
-## lobby.lua by discord: Moonverse#9320
+# lobby.lua by discord: Moonverse#9320
 
-## usage 
-download `lobby.lua`
-`lua_load lobby.lua`
-open party chat gui and type '.help'
-`tf_party_chat .help`
+## How to use
+To use this script you need a brain
+
+open party chat vgui and type '.help'
+> `tf_party_chat ".help"`
+
+---
 ### version 1.0.0.0
 ```lua
 ".party: query party info", 
@@ -23,4 +25,3 @@ to be added in next update :
 ".clearqueue: cancel all matchmaking request",
 ".autoqueue multiargs", 
 ```
-.. and maybe more
