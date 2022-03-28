@@ -115,9 +115,9 @@ config = {
     fast_join = false
  }
 
-config.toggle = function( key, bAnnouce )
+config.toggle = function( key, silent )
     config[key] = not config[key]
-    if (bAnnouce) then
+    if not (silent) then
         tf_party_chat( "config:", key, "is", (config[key] and 'enabled' or 'disabled') )
     end
 end
