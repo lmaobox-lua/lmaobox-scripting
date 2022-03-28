@@ -23,21 +23,7 @@ local party_chat_commands_workshop = {
     gamerules.IsMvM()
     gamerules.GetRoundState()
 end]] -- 
-callbacks.Unregister( 'FireGameEvent', 'event_observer' )
-local event_observer = function( event )
-    if (event:GetName() == "match_invites_updated") then
-        printc( 0, 255, 0, 255, "match_invites_updated." )
-        printc( 0, 255, 0, 255, gamecoordinator.GetNumMatchInvites() ) -- 1 if after search queue found map
-        print( gamecoordinator.GetMatchAbandonStatus() ) -- 0 if invite recived, 1 if match offer accepted
-        -- when abandon or when a match is found
-    end
-
-    if (event:GetName() == "player_abandoned_match") then
-        printc( 255, 0, 0, 255, "hello" )
-        printc( 255, 0, 0, 255, gamecoordinator.GetMatchAbandonStatus() )
-    end
-end
--- callbacks.Register( 'FireGameEvent', 'event_observer', event_observer )
+callbacks.Unregister( 'DispatchUserMessage', 'usermessage_observer' )
 
 -- #region : vscode-ext inline color
 local print_console_color = function( color, text )
@@ -59,4 +45,37 @@ local _rgba = function( ... ) -- rgba to hex
     return string.format( "0x%06x", rgba )
 end
 -- #endregion : vscode-ext inline color
+
+-- rewrite this lua.
+local usermessage_cmd = {}
+usermessage_cmd[CallVoteFailed] = function( msg )
+    pcall( print( msg ) )
+end
+
+usermessage_cmd[VoteStart] = function( msg )
+    pcall( print( msg ) )
+end
+
+usermessage_cmd[VotePass] = function( msg )
+    pcall( print( msg ) )
+end
+
+usermessage_cmd[VoteFailed] = function( msg )
+    pcall( print( msg ) )
+end
+
+usermessage_cmd[VoteSetup] = function( msg )
+    pcall( print( msg ) )
+end
+
+local usermessage_observer = function( proton )
+    local id = proton:GetID()
+    local s = type( usermessage_cmd[id] ) == "function" and usermessage_cmd[id]()
+end
+
+local OnStartup = (function()
+    -- tf2 settings to make voting easier
+end)()
+
+callbacks.Register( 'DispatchUserMessage', 'usermessage_observer', usermessage_observer )
 

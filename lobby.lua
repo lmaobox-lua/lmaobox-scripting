@@ -265,7 +265,7 @@ local observe_party_chat = function( event )
     end
 
     history_steamid = steamid
-    for i, v in ipairs( { message } ) do
+    for i, v in ipairs( { message } ) do -- idk why i add loop here, basic_cmd[message] should be good enough
         local s = type( basic_cmd[v] ) == "function" and basic_cmd[v]()
         -- print( s )
         if not (s) then
@@ -320,3 +320,4 @@ local OnStartup = (function()
     end, true )
 end)()
 
+--  print( gamecoordinator.GetMatchAbandonStatus() ) -- 0 = safe to leave, 1 = abandon without pentalty, 2 = abandon with pentalty
