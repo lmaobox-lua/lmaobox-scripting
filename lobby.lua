@@ -188,11 +188,31 @@ adv_cmd['.queue'] = function( message, steamid )
         tf_party_chat( "available match group:" )
         for k, v in pairs( match_group ) do
             if (party.CanQueueForMatchGroup( v )) then
-                tf_party_chat( "queue", k ) -- todo : print command without executingself
+                tf_party_chat( "", k ) -- todo : print command without executingself
             end
         end
     else
         party.QueueUp( match_group[message] )
+    end
+end
+-- todo : shared fn
+adv_cmd['.stopqueue'] = function( message, steamid )
+    -- recreate table
+    local MatchGroups = party.GetAllMatchGroups()
+    local match_group = {}
+    for k, v in pairs( MatchGroups ) do
+        match_group[k:lower()] = v
+    end
+
+    if not (match_group[message]) then
+        tf_party_chat( "available match group:" )
+        for k, v in pairs( match_group ) do
+            if (party.CanQueueForMatchGroup( v )) then
+                tf_party_chat( "", k ) -- todo : print command without executingself
+            end
+        end
+    else
+        party.CancelQueue( match_group[message] )
     end
 
 end
@@ -258,6 +278,7 @@ local observe_party_chat = function( event )
             if found_at == 1 then -- located at the start
                 local parse = string.sub( message, #k + 2, #message ) -- from characters after [key] plus whitespace until the end
                 if (#parse < 1) then
+                    tf_party_chat( message, "has 0 argument" )
                     return
                 end
                 return v( parse, steamid )
@@ -283,11 +304,11 @@ local OnStartup = (function()
 
     -- create lobby (ghetto)
     if not (party.GetGroupID()) then
-        party.QueueUp( MatchGroups['Casual'] )
+        adv_cmd['.queue']( 'casual' )
     end
 
     settimeout( 2000, function() -- may depend on internet
-        -- party.CancelQueue( MatchGroups['Casual'] )
+        adv_cmd['.stopqueue']( 'casual' )
     end )
 
     settimeout( 5000, function()
@@ -297,7 +318,7 @@ local OnStartup = (function()
         end
 
         if #party.GetQueuedMatchGroups() == 0 and not party.IsInStandbyQueue() then
-            adv_cmd['.queue']('casual')
+            adv_cmd['.queue']( 'casual' )
         end
     end, true )
 end)()
