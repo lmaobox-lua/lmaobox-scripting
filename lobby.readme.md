@@ -1,7 +1,7 @@
 # lobby.lua by discord: Moonverse#9320
 
-``` lobby.lua is outdated due to api changes, will be back at 16PM GMT+7```
-
+>hot fix deployed </br>
+>new update in a week!
 ## How to use
 1. Load Script
 2. Open party chat vgui and type '.help'

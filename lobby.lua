@@ -11,25 +11,25 @@ callbacks.Unregister( 'FireGameEvent', 'event_observer' )
 
 -- #region WIP timeout fn
 callbacks.Unregister( 'Draw', 'settimeout_timer' )
-local _queue = {}
+local queueFN = {}
 local settimeout = function( milisecond, fn, loop_forever )
     local expire = (milisecond / 1000) + globals.RealTime()
     -- print( 'index: ' .. #_queue+1 .. ' registered, run at: ' .. expire )
     if (loop_forever) then
-        table.insert( _queue, { expire, fn, milisecond } )
+        table.insert( queueFN, { expire, fn, milisecond } )
     else
-        table.insert( _queue, { expire, fn, 0 } )
+        table.insert( queueFN, { expire, fn, 0 } )
     end
 end
 
 local settimeout_timer = function()
     local now = globals.RealTime()
-    for k, v in ipairs( _queue ) do
+    for k, v in ipairs( queueFN ) do
         local expire, fn, milisecond = v[1], v[2], v[3]
         if not (expire > now) then
             -- print( 'index: ' .. k .. ' expired' .. ' at: ' .. now )
             fn()
-            table.remove( _queue, k )
+            table.remove( queueFN, k )
             if (milisecond > 0) then
                 settimeout( milisecond, fn, true )
             end
@@ -65,23 +65,6 @@ local function PairsByValues( tbl, fn )
 end
 -- #endregion utils
 
--- #region : vscode-ext inline color
-local rgba = function( ... )
-    return { ... }
-end
-local _rgba = function( ... ) -- rgba to hex
-    -- The integer form of RGBA is 0xRRGGBBAA
-    -- Hex for red is 0xRR000000, Multiply red value by 0x1000000(16777216) to get 0xRR000000
-    -- Hex for green is 0x00GG0000, Multiply green value by 0x10000(65536) to get 0x00GG0000
-    -- Hex for blue is 0x0000BB00, Multiply blue value by 0x100(256) to get 0x0000BB00
-    -- Hex for alpha is 0x00000AA, no need to multiply since
-    local r, g, b, a = table.unpack( { ... } )
-    a = (0x100 <= a) and 255 or a
-    local rgba = (r * 0x1000000) + (g * 0x10000) + (b * 0x100) + a
-    return string.format( "0x%06x", rgba )
-end
--- #endregion : vscode-ext inline color
-
 local text_builder = function( sep, ... )
     local tb = { ... }
     if (#sep > 3) then
@@ -101,12 +84,7 @@ local print_console = function( sep, ... )
     print( final )
 end
 
-local print_console_color = function( color, sep, ... )
-    local r, g, b, a = table.unpack( color )
-    local final = text_builder( sep, ... )
-    return printc( r, g, b, a, final )
-end
-local adv_cmd, basic_cmd, config = {}, {}, {}
+local adv_cmd, msg_func, config = {}, {}, {}
 local blacklisted_steamid, superuser_steamid = {}, {}
 local queue_type = { "casual", "competitive", "bootcamp", "mannup" }
 
@@ -126,7 +104,7 @@ local allowExecute = false -- todo : chat timeout + permission
 
 -- #region basic. cmd
 
-basic_cmd['.ping'] = function()
+msg_func['.ping'] = function()
     local dataCenters = gamecoordinator.GetDataCenterPingData()
     local bestdatacenter, bestPing = '', 999
     local i = 0
@@ -144,7 +122,7 @@ basic_cmd['.ping'] = function()
     return true
 end
 
-basic_cmd['.party'] = function()
+msg_func['.party'] = function()
     local user, name
     local members = party.GetMembers()
     tf_party_chat( ' | ', "name", "steam", "online", "lobby" )
@@ -159,25 +137,25 @@ basic_cmd['.party'] = function()
     return true
 end
 
-basic_cmd['.autoqueue'] = function()
+msg_func['.autoqueue'] = function()
     config.toggle( 'auto_queue' )
 end
 
-basic_cmd['.fastjoin'] = function()
+msg_func['.fastjoin'] = function()
     config.toggle( 'fast_join' )
 end
 
-basic_cmd['.abandon'] = function() -- #testing-commands
+msg_func['.abandon'] = function() -- #testing-commands
     if (allowExecute) then
         gamecoordinator.AbandonMatch()
     end
 end
 
-basic_cmd['.stopqueue'] = function()
+msg_func['.stopqueue'] = function()
 
 end
 
-basic_cmd['.clearqueue'] = function()
+msg_func['.clearqueue'] = function()
 
 end
 
@@ -199,7 +177,24 @@ adv_cmd['.connect'] = function( message, steamid ) -- #testing-commands
 end
 
 adv_cmd['.queue'] = function( message, steamid )
-    -- todo : waiting for blackfire
+    -- recreate table
+    local MatchGroups = party.GetAllMatchGroups()
+    local match_group = {}
+    for k, v in pairs( MatchGroups ) do
+        match_group[k:lower()] = v
+    end
+
+    if not (match_group[message]) then
+        tf_party_chat( "available match group:" )
+        for k, v in pairs( match_group ) do
+            if (party.CanQueueForMatchGroup( v )) then
+                tf_party_chat( "queue", k ) -- todo : print command without executingself
+            end
+        end
+    else
+        party.QueueUp( match_group[message] )
+    end
+
 end
 
 adv_cmd['.join'] = function( message, steamid ) -- #testing-commands
@@ -222,27 +217,15 @@ end
 
 -- #endregion adv. cmd
 
-local help_resources = {  -- "lobbyinfo: query matchmaking info [see docs]", 
--- "gameinfo : query game info (if ingame)",
--- "userinfo: get script runner computer info", 
--- args
-".party: query party info", ".join [steamid64]: join lobby of this player",
-".invite [steamid64]: invite this player to lobby", ".queue: read docs", ".clearqueue: cancel all matchmaking request",
-".stopqueue: cancel the last request to queue up for a match group.", ".autoqueue : read docs",
-".abandon: i will abandon current match" -- "q casual: request to queue up for 12v12 gamemode",
--- "q comp: request to queue up for 6v6 ranked gamemode",
--- "q bootcamp: request to queue up for community mvm",
--- "q mannup: request to queue up for valve mvm",
--- ".autoaccept: auto accept pending lobby memebers for steam friend", ">see docs at github.com" 
- }
+local help_resources = { "docs : https://github.com/LewdDeveloper/lmaobox-scripting/blob/master/lobby.lua" }
 
-basic_cmd['help'] = function()
+msg_func['help'] = function()
     for i, v in ipairs( help_resources ) do
         tf_party_chat( v )
     end
     return true
 end
-basic_cmd['.help'] = basic_cmd['help']
+msg_func['.help'] = msg_func['help']
 
 --- '#>.<#\ ---
 
@@ -265,20 +248,19 @@ local observe_party_chat = function( event )
     end
 
     history_steamid = steamid
-    for i, v in ipairs( { message } ) do -- idk why i add loop here, basic_cmd[message] should be good enough
-        local s = type( basic_cmd[v] ) == "function" and basic_cmd[v]()
-        -- print( s )
-        if not (s) then
-            for k, v in pairs( adv_cmd ) do
-                local found_at = string.find( message, k )
-                -- print( foundAt )
-                if found_at == 1 then -- located at the start
-                    local parse = string.sub( message, #k + 2, #message ) -- from characters after [key] plus whitespace until the end
-                    if (#parse < 1) then
-                        return
-                    end
-                    return v( parse, steamid )
+
+    local s = type( msg_func[message] ) == "function" and msg_func[message]()
+    -- print( s )
+    if not (s) then
+        for k, v in pairs( adv_cmd ) do
+            local found_at = string.find( message, k )
+            -- print( foundAt )
+            if found_at == 1 then -- located at the start
+                local parse = string.sub( message, #k + 2, #message ) -- from characters after [key] plus whitespace until the end
+                if (#parse < 1) then
+                    return
                 end
+                return v( parse, steamid )
             end
         end
     end
@@ -301,11 +283,11 @@ local OnStartup = (function()
 
     -- create lobby (ghetto)
     if not (party.GetGroupID()) then
-        party.QueueUp( 7 )
+        party.QueueUp( MatchGroups['Casual'] )
     end
 
     settimeout( 2000, function() -- may depend on internet
-        party.CancelQueue( 7 )
+        -- party.CancelQueue( MatchGroups['Casual'] )
     end )
 
     settimeout( 5000, function()
