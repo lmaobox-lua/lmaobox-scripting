@@ -4,7 +4,7 @@
     https://github.com/LewdDeveloper/lmaobox-scripting 
 ]] -- 
 -- LuaFormatter on
-local __human_version__ = "1.0.0.0"
+local __human_version__ = "1.0.0.1"
 
 callbacks.Unregister( 'FireGameEvent', 'observe_party_chat' )
 callbacks.Unregister( 'FireGameEvent', 'event_observer' )
@@ -297,7 +297,7 @@ local OnStartup = (function()
         end
 
         if #party.GetQueuedMatchGroups() == 0 and not party.IsInStandbyQueue() then
-            party.QueueUp( 7 )
+            adv_cmd['.queue']('casual')
         end
     end, true )
 end)()
