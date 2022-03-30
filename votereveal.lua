@@ -202,13 +202,9 @@ user_message_callback.bind( VoteFailed, "MsgFunc_VoteFailed", function( msg )
     ChatPrint( color_resource[team] .. "[" .. team_index[team] .. "]", white_c .. s )
 end )
 
-local ReadShort = function( msg ) -- TODO : Bf will update UserMessage methods to work again...
-    return msg:ReadByte() + (msg:ReadByte() << 8)
-end
-
 user_message_callback.bind( CallVoteFailed, "MsgFunc_CallVoteFailed", function( msg )
     local reason<const> = msg:ReadByte() -- Failure reason (1-2, 5-10, 12-19)
-    local time<const> = ReadShort( msg ) -- 	For failure reasons 2 and 8, time in seconds until client can start another vote. 2 is per user, 8 is per vote type.
+    local time<const> = msg:ReadInt( 16 ) -- For failure reasons 2 and 8, time in seconds until client can start another vote. 2 is per user, 8 is per vote type.
 
     -- Order : enum > game_ui_localize
     local s = type( vote_call_vote_failed_localize[reason] ) ~= "function" and vote_failed_reason_t[reason] or
