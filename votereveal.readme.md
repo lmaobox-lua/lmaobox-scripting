@@ -2,6 +2,8 @@
 
 ## How to use
 
+> status : broke rn, will fix after 18PM GMT+7 <br> or you can pull request
+
 1. Load Script
 2. Enjoy
 
