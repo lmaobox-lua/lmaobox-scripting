@@ -48,6 +48,11 @@ local print_console_color = function( color, sep, ... )
     return printc( r, g, b, a, final )
 end
 
+local chatPrintf = function( sep, ... )
+    local final = text_builder( sep, ... )
+    client.ChatPrintf( final )
+end
+
 -- #endregion utils
 
 local vote_type = {
@@ -108,8 +113,8 @@ local msg_func = {}
 msg_func[CallVoteFailed] = function( msg )
     local nReason = msg:ReadByte()
     local nTime = msg:ReadByte() + (msg:ReadByte() << 8) -- how much time left before it can be voted again
-    -- print(nReason)
-    print_console( ' ', "\x01", "Cannot call a vote in", nTime, "seconds." )
+    print( nReason, vote_create_failed_t[nReason] )
+    chatPrintf( ' ', "\x01", "Cannot call a vote in", nTime, "seconds." )
     -- print_console_color( rgba( 25, 0, 255, 255 ), ' | ', 'nReason ' .. nReason, 'nTime ' .. nTime )
     -- todo : invest further
     return msg:Reset()
@@ -134,7 +139,7 @@ msg_func[VoteStart] = function( msg )
         detail_str = ": " .. detail_str
     end
 
-    print_console( ' ', "\x03", "[", team_name[m_nVoteTeamIndex], "]", initiator:GetName(), "\x01 casted", "\x05",
+    chatPrintf( ' ', "\x03", "[", team_name[m_nVoteTeamIndex], "]", initiator:GetName(), "\x01 casted", "\x05",
         display_str, detail_str )
     return msg:Reset()
 end
@@ -148,7 +153,7 @@ msg_func[VotePass] = function( msg )
         detail_str = ": " .. detail_str
     end
 
-    print_console( ' ', "\x01", "[", team_name[m_nVoteTeamIndex], "]", "\x05", passed_str, detail_str )
+    chatPrintf( ' ', "\x01", "[", team_name[m_nVoteTeamIndex], "]", "\x05", passed_str, detail_str )
 
     -- print_console_color( rgba( 25, 0, 255, 255 ), ' | ', 'm_nVoteTeamIndex ' .. m_nVoteTeamIndex,'passed_str ' .. passed_str, 'detail_str ' .. detail_str )
     return msg:Reset()
@@ -158,9 +163,9 @@ msg_func[VoteFailed] = function( msg )
     local m_nVoteTeamIndex = msg:ReadByte()
     local nReason = msg:ReadByte()
     nReason = nReason + 1 -- EDGE CASE : In Lua, table starts at 1
-    print_console_color( Color( 25, 0, 255, 255 ), ' | ', 'm_nVoteTeamIndex ' .. m_nVoteTeamIndex, 'nReason ' .. nReason )
+    -- print_console_color( Color( 25, 0, 255, 255 ), ' | ', 'm_nVoteTeamIndex ' .. m_nVoteTeamIndex, 'nReason ' .. nReason )
 
-    print_console( ' ', "\x01", "[", team_name[m_nVoteTeamIndex], "]", "\x05", vote_create_failed_t[nReason] )
+    chatPrintf( ' ', "\x01", "[", team_name[m_nVoteTeamIndex], "]", "\x05", vote_create_failed_t[nReason] )
     return msg:Reset()
 end
 
@@ -187,7 +192,7 @@ local event_observer = function( event )
         local entity = entities.GetByIndex( entityindex )
         -- print_console_color( rgba( 25, 0, 255, 255 ), ' | ', 'vote_option ' .. vote_option, 'team ' .. team, 'entityid ' .. entityindex )
 
-        print_console( ' ', "\x03", entity:GetName(), "\x01 voted", "\x05", vote_type[vote_option] ) -- I should have string.format it all
+        chatPrintf( ' ', "\x03", entity:GetName(), "\x01 voted", "\x05", vote_type[vote_option] ) -- I should have string.format it all
     end
 
     --[[    byte	count	Number of options - up to MAX_VOTE_OPTIONS [ed: 5]
@@ -204,7 +209,7 @@ end
 
 local OnStartup = (function()
     -- https://wiki.teamfortress.com/wiki/Voting
-    print_console_color( rgba( 25, 0, 255, 255 ), "hello world" )
+    ---print_console_color( rgba( 25, 0, 255, 255 ), "hello world" )
     callbacks.Register( 'FireGameEvent', 'event_observer', event_observer )
     callbacks.Register( 'DispatchUserMessage', 'usermessage_observer', usermessage_observer )
 end)()
