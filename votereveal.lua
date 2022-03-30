@@ -91,7 +91,7 @@ end)
 local ReadShort = function( msg ) -- TODO : Bf will update UserMessage methods
     return msg:ReadByte() + (msg:ReadByte() << 8)
 end
-
+-- https://wiki.alliedmods.net/Tf2_voting
 -- note : xref MsgFunc_[usermessage]
 -- this table could be inaccurate
 local vote_create_failed_t = { "VOTE_FAILED_GENERIC", "VOTE_FAILED_TRANSITIONING_PLAYERS",
@@ -105,7 +105,28 @@ local vote_create_failed_t = { "VOTE_FAILED_GENERIC", "VOTE_FAILED_TRANSITIONING
                                "VOTE_FAILED_CANNOT_KICK_FOR_TIME", "VOTE_FAILED_CANNOT_KICK_DURING_ROUND",
                                "VOTE_FAILED_VOTE_IN_PROGRESS", "VOTE_FAILED_KICK_LIMIT_REACHED",
                                "VOTE_FAILED_KICK_DENIED_BY_GC" }
-
+local vote_call_vote_failed_t = {
+    [0] = "VOTE_FAILED_GENERIC",
+    [1] = "VOTE_FAILED_TRANSITIONING_PLAYERS",
+    [2] = "VOTE_FAILED_RATE_EXCEEDED",
+    [3] = "VOTE_FAILED_YES_MUST_EXCEED_NO",
+    [4] = "VOTE_FAILED_QUORUM_FAILURE",
+    [5] = "VOTE_FAILED_ISSUE_DISABLED",
+    [6] = "VOTE_FAILED_MAP_NOT_FOUND",
+    [7] = "VOTE_FAILED_MAP_NAME_REQUIRED",
+    [8] = "VOTE_FAILED_FAILED_RECENTLY",
+    [9] = "VOTE_FAILED_TEAM_CANT_CALL",
+    [10] = "VOTE_FAILED_WAITINGFORPLAYERS",
+    [11] = "VOTE_FAILED_PLAYERNOTFOUND",
+    [12] = "VOTE_FAILED_CANNOT_KICK_ADMIN",
+    [13] = "VOTE_FAILED_SCRAMBLE_IN_PROGRESS",
+    [14] = "VOTE_FAILED_SPECTATOR",
+    [15] = "VOTE_FAILED_NEXTLEVEL_SET",
+    [16] = "VOTE_FAILED_MAP_NOT_VALID",
+    [17] = "VOTE_FAILED_CANNOT_KICK_FOR_TIME",
+    [18] = "VOTE_FAILED_CANNOT_KICK_DURING_ROUND",
+    [19] = "VOTE_FAILED_MODIFICATION_ALREADY_ACTIVE"
+ }
 -- DO NOT MODIFY local Variables in function as it has to be IN-ORDER
 -- format whatever you like, just do not modify it's order
 local msg_func = {}
@@ -113,8 +134,8 @@ local msg_func = {}
 msg_func[CallVoteFailed] = function( msg )
     local nReason = msg:ReadByte()
     local nTime = msg:ReadByte() + (msg:ReadByte() << 8) -- how much time left before it can be voted again
-    print( nReason, vote_create_failed_t[nReason] )
-    chatPrintf( ' ', "\x01", "Cannot call a vote in", nTime, "seconds." )
+    --print( nReason, vote_call_vote_failed_t[nReason] )
+    chatPrintf( ' ', "\x01", vote_call_vote_failed_t[nReason], ",", nTime, "seconds left" )
     -- print_console_color( rgba( 25, 0, 255, 255 ), ' | ', 'nReason ' .. nReason, 'nTime ' .. nTime )
     -- todo : invest further
     return msg:Reset()
@@ -165,7 +186,7 @@ msg_func[VoteFailed] = function( msg )
     nReason = nReason + 1 -- EDGE CASE : In Lua, table starts at 1
     -- print_console_color( Color( 25, 0, 255, 255 ), ' | ', 'm_nVoteTeamIndex ' .. m_nVoteTeamIndex, 'nReason ' .. nReason )
 
-    chatPrintf( ' ', "\x01", "[", team_name[m_nVoteTeamIndex], "]", "\x05", vote_create_failed_t[nReason] )
+    chatPrintf( ' ', "\x01", "[", team_name[m_nVoteTeamIndex], "]", "\x05", vote_call_vote_failed_t[nReason] )
     return msg:Reset()
 end
 
