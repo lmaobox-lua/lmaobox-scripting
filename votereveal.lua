@@ -1,247 +1,223 @@
--- i hereby claim the throne of the best vote revealer
---[[ 
-    vote revealer.lua | Test Build | Moonverse#9320 is looking for comments and suggestions
-    https://github.com/LewdDeveloper/lmaobox-scripting 
-]] -- 
+-- region: global function to local variable
+-- Returns a localized string. The localizable strings usually start with a # character, but there are exceptions. Will return nil on failure.
+-- @param key:string
+local localize = client.Localize
+local table_concat = table.concat
+-- endregion: global function to local variable
+
+-- region: ChatPrintf Wrapper
+-- LuaFormatter off
+local white_c<const>, old_c<const>, team_c<const>, location_c<const>, achievement_c<const>, black_c<const> = '\x01', '\x02', '\x03', '\x04', '\x05', '\x06'
+local  rgb_c = function( hex_no_alpha ) return '\x07' .. hex_no_alpha:gsub('#', '')  end
+local argb_c = function( hex_with_alpha ) return '\x08' .. hex_with_alpha:gsub('#', '') end
+-- LuaFormatter on
+
+-- TODO : FIXME!
+-- @param color_c 
+-- @param text
+-- @usage local ret = ChatPrint( white_c, "hello", team_c, entities.GetLocalPlayer():GetName() .. '!', rgb_c( '#ff0000' ), "Have a good", argb_c( '#8c8efcff' ), "day" )
+local ChatPrint = function( ... )
+    local va_args, ret = { ... }
+    ret = client.ChatPrintf( table.concat( va_args, ' ' ) )
+    return ret
+end -- I understand string.format exists, sorry for your incovenience!
+-- endregion: ChatPrintf Wrapper
+
 callbacks.Unregister( 'DispatchUserMessage', 'usermessage_observer' )
 callbacks.Unregister( 'FireGameEvent', "event_observer" )
 
--- #region : vscode-ext inline color
-local rgba = function( ... )
-    return { ... }
-end
-local _rgba = function( ... ) -- rgba to hex
-    -- The integer form of RGBA is 0xRRGGBBAA
-    -- Hex for red is 0xRR000000, Multiply red value by 0x1000000(16777216) to get 0xRR000000
-    -- Hex for green is 0x00GG0000, Multiply green value by 0x10000(65536) to get 0x00GG0000
-    -- Hex for blue is 0x0000BB00, Multiply blue value by 0x100(256) to get 0x0000BB00
-    -- Hex for alpha is 0x00000AA, no need to multiply since
-    local r, g, b, a = table.unpack( { ... } )
-    local rgba = (r * 0x1000000) + (g * 0x10000) + (b * 0x100) + a
-    return rgba
-    -- string.format( "0x%06x", rgba )
-end
--- #endregion : vscode-ext inline color
+-- region: UserMessage resources
+-- https://wiki.alliedmods.net/Tf2_voting
+-- http://lua-users.org/wiki/SwitchStatement
+-- https://github.dev/lua9520/source-engine-2018-hl2_src/ (note: could be outdated)
 
-local text_builder = function( sep, ... )
-    local tb = { ... }
-    if (#sep > 3) then
-        table.insert( tb, 1, sep )
-        sep = ' '
+local vote_failed_reason_t<const> = { "VOTE_FAILED_GENERIC", "VOTE_FAILED_TRANSITIONING_PLAYERS",
+                                      "VOTE_FAILED_TRANSITIONING_PLAYERS", "VOTE_FAILED_RATE_EXCEEDED",
+                                      "VOTE_FAILED_YES_MUST_EXCEED_NO", "VOTE_FAILED_QUORUM_FAILURE",
+                                      "VOTE_FAILED_ISSUE_DISABLED", "VOTE_FAILED_MAP_NOT_FOUND",
+                                      "VOTE_FAILED_MAP_NAME_REQUIRED", "VOTE_FAILED_ON_COOLDOWN",
+                                      "VOTE_FAILED_TEAM_CANT_CALL", "VOTE_FAILED_WAITINGFORPLAYERS",
+                                      "VOTE_FAILED_PLAYERNOTFOUND", "VOTE_FAILED_CANNOT_KICK_ADMIN",
+                                      "VOTE_FAILED_SCRAMBLE_IN_PROGRESS", "VOTE_FAILED_SPECTATOR",
+                                      "VOTE_FAILED_NEXTLEVEL_SET", "VOTE_FAILED_MAP_NOT_VALID",
+                                      "VOTE_FAILED_CANNOT_KICK_FOR_TIME", "VOTE_FAILED_CANNOT_KICK_DURING_ROUND",
+                                      "VOTE_FAILED_VOTE_IN_PROGRESS", "VOTE_FAILED_KICK_LIMIT_REACHED",
+                                      "VOTE_FAILED_KICK_DENIED_BY_GC" }
+
+local vote_failed_localize<const> = {
+    [0] = "#GameUI_vote_failed",
+    [3] = "#GameUI_vote_failed_yesno",
+    [4] = "#GameUI_vote_failed_quorum"
+ }
+
+local vote_call_vote_failed_localize<const> = {
+    [1] = "#GameUI_vote_failed_transition_vote",
+    [2] = function( time )
+        local response = (time > 60) and "#GameUI_vote_failed_vote_spam_min" or "#GameUI_vote_failed_vote_spam_mins"
+        return response
+    end,
+    [5] = "#GameUI_vote_failed_disabled_issue",
+    [6] = "#GameUI_vote_failed_map_not_found",
+    [7] = "#GameUI_vote_failed_map_name_required",
+    [8] = function( time )
+        local response = (time > 60) and "GameUI_vote_failed_recently_min" or "GameUI_vote_failed_recently_mins"
+        return response
+    end,
+    [9] = "#GameUI_vote_failed_team_cant_call",
+    [10] = "#GameUI_vote_failed_waitingforplayers",
+    [11] = "VOTE_FAILED_PLAYERNOTFOUND", -- doesn't appear to work
+    [12] = "#GameUI_vote_failed_cannot_kick_admin",
+    [13] = "#GameUI_vote_failed_scramble_in_prog",
+    [14] = "#GameUI_vote_failed_spectator",
+    [15] = "#GameUI_vote_failed_nextlevel_set",
+    [16] = "#GameUI_vote_failed_map_not_valid",
+    [17] = function( time ) -- VOTE_FAILED_ON_COOLDOWN
+        local response = (time > 60) and "#GameUI_vote_failed_cannot_kick_min" or "#GameUI_vote_failed_cannot_kick_mins"
+        return response
+    end,
+    [18] = "GameUI_vote_failed_round_active",
+    [19] = "#GameUI_vote_failed_event_already_active"
+ }
+
+local vote_setup_localize<const> = { "#TF_Kick", "#TF_RestartGame", "#TF_ChangeLevel", "#TF_NextLevel",
+                                     "#TF_ScrambleTeams", "#TF_ChangeMission", "#TF_TeamAutoBalance_Enable",
+                                     "#TF_TeamAutoBalance_Disable", "#TF_ClassLimit_Enable", "#TF_ClassLimit_Disable" }
+-- endregion: UserMessage resources
+
+local team_index = {
+    [0] = "All",
+    [1] = "Spectator",
+    [2] = "Red",
+    [3] = "Blu",
+    [4] = "[A]",
+    [5] = "[S]",
+    [6] = "[R]",
+    [7] = "[B]"
+ }
+
+local color_resource = {
+    [0] = argb_c( "#9EE09Eff" ),
+    [1] = argb_c( "#cfcfc4ff" ),
+    [2] = argb_c( "#ff6663ff" ),
+    [3] = argb_c( "#9EC1CFff" )
+ }
+
+local user_message_callback = {
+    [CallVoteFailed] = {}, -- Note: Sent to a player when they attempt to call a vote and fail.
+    [VoteStart] = {}, -- Note: Sent to all players currently online. The default implementation also sends it to bots.
+    [VotePass] = {}, -- Note: Sent to all players after a vote passes.
+    [VoteFailed] = {}, -- Note: Sent to all players after a vote fails.
+    [VoteSetup] = {} -- Note: Sent to a player when they load the Call Vote screen (which sends the callvote command to the server), lists what votes are allowed on the server
+ }
+
+user_message_callback.bind = function( id, unique, callback )
+    local s = user_message_callback[id]
+    unique = unique or #s + 1
+    if type( s ) ~= "table" then
+        print( "user_message_callback.bind fails to create callback: " .. unique )
     end
-    return table.concat( tb, sep )
+    s[unique] = callback
+    return unique
 end
 
-local tf_party_chat = function( sep, ... )
-    local final = text_builder( sep, ... )
-    client.Command( table.concat( { 'tf_party_chat \"', final, "\"" } ), true )
+user_message_callback.unbind = function( id, unique )
+    local s = user_message_callback[id]
+    if type( s ) ~= "table" then
+        print( "user_message_callback.unbind fails to remove callback: " .. unique )
+    end
+    s[unique] = undef
+    return true
 end
-
-local print_console = function( sep, ... )
-    local final = text_builder( sep, ... )
-    print( final )
-end
-
-local print_console_color = function( color, sep, ... )
-    local r, g, b, a = table.unpack( color )
-    local final = text_builder( sep, ... )
-    return printc( r, g, b, a, final )
-end
-
-local chatPrintf = function( sep, ... )
-    local final = text_builder( sep, ... )
-    client.ChatPrintf( final )
-end
-
--- #endregion utils
 
 local vote_type = {
     [0] = "Yes",
-    "No"
+    [1] = "No"
  }
 
-local team_name = {
-    [0] = "Unassigned",
-    [1] = "Spectator",
-    [2] = "Red",
-    [3] = "Blu"
- }
+callbacks.Register( 'FireGameEvent', 'event_observer', function( event )
+    if (event:GetName() == "vote_options") then
+        local count = event:GetInt( 'count' )
+        -- local option1, option2, option3, option4, option5 = event:GetString( 'option1' ), event:GetString( 'option2' ), event:GetString( 'option3' ), event:GetString( 'option4' ), event:GetString( 'option5' )
+        for i = 1, count, 1 do
+            vote_type[i - 1] = event:GetString( 'option' .. i )
+        end
+    end
 
-local to_team_name = (function( entityindex )
-    local team_number = entityindex:GetTeamNumber()
-    return team_name[team_number]
-end)
+    if (event:GetName() == "vote_cast") then
+        local vote_option<const> = event:GetInt( 'vote_option' )
+        local team<const> = event:GetInt( 'team' )
+        local entityindex<const> = event:GetInt( 'entityid' )
 
-local class_name = {
-    [1] = 'Scout',
-    [3] = 'Soldier',
-    [7] = 'Pyro',
-    [4] = 'Demoman',
-    [6] = 'Heavy',
-    [9] = 'Engineer',
-    [5] = 'Medic',
-    [2] = 'Sniper',
-    [8] = 'Spy'
- }
-local to_class_name = (function( entityindex )
-    local class_number = entityindex:GetPropInt( 'm_iClass' )
-    return class_name[class_number]
-end)
+        local entity = entities.GetByIndex( entityindex )
+        local plr_team = entity:GetTeamNumber()
+        ChatPrint( color_resource[plr_team] .. team_index[plr_team + 4], white_c .. entity:GetName(), "voted",
+            achievement_c .. vote_type[vote_option] )
+    end
+end )
 
-local ReadShort = function( msg ) -- TODO : Bf will update UserMessage methods
+callbacks.Register( 'DispatchUserMessage', 'usermessage_observer', function( msg )
+    local msg_enum = msg:GetID()
+    local s = user_message_callback[msg_enum]
+    if (type( s ) == "table") then
+        for k, v in pairs( s ) do
+            local fn = type( s[k] ) == "function" and s[k]( msg )
+            msg:Reset()
+        end
+    end
+end )
+
+-- region: core function
+user_message_callback.bind( VoteStart, "MsgFunc_VoteStart", function( msg )
+    local team<const> = msg:ReadByte() -- Team index or 0 for all
+    local ent_idx<const> = msg:ReadByte() -- Client index of person who started the vote, or 99 for the server.
+    local disp_str<const> = msg:ReadString( 256 ) -- Vote issue translation string
+    local details_str<const> = msg:ReadString( 256 ) -- Vote issue text
+    local is_yes_no_vote<const> = msg:ReadByte() -- true for Yes/No, false for Multiple choice
+    local target_ent_idx<const> = msg:ReadByte()
+
+    local s = localize( disp_str ) or disp_str
+    local fmt = (#details_str > 0) and ":" or ""
+    ChatPrint( color_resource[team] .. "[" .. team_index[team] .. "]", white_c .. s .. fmt, details_str )
+    print( target_ent_idx, target_ent_idx:GetName() )
+end )
+
+user_message_callback.bind( VotePass, "MsgFunc_VotePass", function( msg )
+    local team<const> = msg:ReadByte() -- Team index or 0 for all
+    local disp_str<const> = msg:ReadString( 256 ) -- Vote success translation string
+    local details_str = msg:ReadString( 256 ) -- Vote winner
+
+    local s = localize( disp_str ) or disp_str
+    local fmt = (#details_str > 0) and ":" or ""
+    ChatPrint( color_resource[team] .. "[" .. team_index[team] .. "]", white_c .. s .. fmt, details_str )
+end )
+
+user_message_callback.bind( VoteFailed, "MsgFunc_VoteFailed", function( msg )
+    local team<const> = msg:ReadByte() -- Team index or 0 for all
+    local reason<const> = msg:ReadByte() -- Failure reason code (0, 3-4)
+
+    -- Order : game_ui_localize > enum
+    local s = vote_call_vote_failed_localize[reason] or vote_failed_reason_t[reason]
+
+    s = localize( reason ) or reason
+    ChatPrint( color_resource[team] .. "[" .. team_index[team] .. "]", white_c .. s )
+end )
+
+local ReadShort = function( msg ) -- TODO : Bf will update UserMessage methods to work again...
     return msg:ReadByte() + (msg:ReadByte() << 8)
 end
--- https://wiki.alliedmods.net/Tf2_voting
--- note : xref MsgFunc_[usermessage]
--- this table could be inaccurate
-local vote_create_failed_t = { "VOTE_FAILED_GENERIC", "VOTE_FAILED_TRANSITIONING_PLAYERS",
-                               "VOTE_FAILED_TRANSITIONING_PLAYERS", "VOTE_FAILED_RATE_EXCEEDED",
-                               "VOTE_FAILED_YES_MUST_EXCEED_NO", "VOTE_FAILED_QUORUM_FAILURE",
-                               "VOTE_FAILED_ISSUE_DISABLED", "VOTE_FAILED_MAP_NOT_FOUND",
-                               "VOTE_FAILED_MAP_NAME_REQUIRED", "VOTE_FAILED_ON_COOLDOWN", "VOTE_FAILED_TEAM_CANT_CALL",
-                               "VOTE_FAILED_WAITINGFORPLAYERS", "VOTE_FAILED_PLAYERNOTFOUND",
-                               "VOTE_FAILED_CANNOT_KICK_ADMIN", "VOTE_FAILED_SCRAMBLE_IN_PROGRESS",
-                               "VOTE_FAILED_SPECTATOR", "VOTE_FAILED_NEXTLEVEL_SET", "VOTE_FAILED_MAP_NOT_VALID",
-                               "VOTE_FAILED_CANNOT_KICK_FOR_TIME", "VOTE_FAILED_CANNOT_KICK_DURING_ROUND",
-                               "VOTE_FAILED_VOTE_IN_PROGRESS", "VOTE_FAILED_KICK_LIMIT_REACHED",
-                               "VOTE_FAILED_KICK_DENIED_BY_GC" }
-local vote_call_vote_failed_t = {
-    [0] = "VOTE_FAILED_GENERIC",
-    [1] = "VOTE_FAILED_TRANSITIONING_PLAYERS",
-    [2] = "VOTE_FAILED_RATE_EXCEEDED",
-    [3] = "VOTE_FAILED_YES_MUST_EXCEED_NO",
-    [4] = "VOTE_FAILED_QUORUM_FAILURE",
-    [5] = "VOTE_FAILED_ISSUE_DISABLED",
-    [6] = "VOTE_FAILED_MAP_NOT_FOUND",
-    [7] = "VOTE_FAILED_MAP_NAME_REQUIRED",
-    [8] = "VOTE_FAILED_FAILED_RECENTLY",
-    [9] = "VOTE_FAILED_TEAM_CANT_CALL",
-    [10] = "VOTE_FAILED_WAITINGFORPLAYERS",
-    [11] = "VOTE_FAILED_PLAYERNOTFOUND",
-    [12] = "VOTE_FAILED_CANNOT_KICK_ADMIN",
-    [13] = "VOTE_FAILED_SCRAMBLE_IN_PROGRESS",
-    [14] = "VOTE_FAILED_SPECTATOR",
-    [15] = "VOTE_FAILED_NEXTLEVEL_SET",
-    [16] = "VOTE_FAILED_MAP_NOT_VALID",
-    [17] = "VOTE_FAILED_CANNOT_KICK_FOR_TIME",
-    [18] = "VOTE_FAILED_CANNOT_KICK_DURING_ROUND",
-    [19] = "VOTE_FAILED_MODIFICATION_ALREADY_ACTIVE"
- }
--- DO NOT MODIFY local Variables in function as it has to be IN-ORDER
--- format whatever you like, just do not modify it's order
-local msg_func = {}
--- local k_MAX_VOTE_NAME_LENGTH = 256
-msg_func[CallVoteFailed] = function( msg )
-    local nReason = msg:ReadByte()
-    local nTime = msg:ReadByte() + (msg:ReadByte() << 8) -- how much time left before it can be voted again
-    --print( nReason, vote_call_vote_failed_t[nReason] )
-    chatPrintf( ' ', "\x01", vote_call_vote_failed_t[nReason], ",", nTime, "seconds left" )
-    -- print_console_color( rgba( 25, 0, 255, 255 ), ' | ', 'nReason ' .. nReason, 'nTime ' .. nTime )
-    -- todo : invest further
-    return msg:Reset()
-end
 
-msg_func[VoteStart] = function( msg )
-    local m_nVoteTeamIndex = msg:ReadByte() -- Is this a team-only vote?
-    local m_iVoteCallerIdx = msg:ReadByte() -- Entity calling the vote
-    local display_str = msg:ReadString( 256 )
-    local detail_str = msg:ReadString( 256 )
-    local m_bIsYesNoVote = msg:ReadByte()
-    local iTargetEntIndex = msg:ReadByte()
+user_message_callback.bind( CallVoteFailed, "MsgFunc_CallVoteFailed", function( msg )
+    local reason<const> = msg:ReadByte() -- Failure reason (1-2, 5-10, 12-19)
+    local time<const> = ReadShort( msg ) -- 	For failure reasons 2 and 8, time in seconds until client can start another vote. 2 is per user, 8 is per vote type.
 
-    --[[print_console_color( rgba( 100, 70, 255, 255 ), ' | ', initiator:GetName(), to_team_name( initiator ), display_str,
-        detail_str )
-    print_console_color( rgba( 25, 0, 255, 255 ), ' | ', 'm_nVoteTeamIndex ' .. m_nVoteTeamIndex,
-        'm_iVoteCallerIdx ' .. m_iVoteCallerIdx, 'm_bIsYesNoVote ' .. m_bIsYesNoVote,
-        'iTargetEntIndex ' .. iTargetEntIndex )]]
-    local initiator = entities.GetByIndex( m_iVoteCallerIdx )
+    -- Order : enum > game_ui_localize
+    local s = type( vote_call_vote_failed_localize[reason] ) ~= "function" and vote_failed_reason_t[reason] or
+                  vote_call_vote_failed_localize[reason]( time ) or vote_call_vote_failed_localize[reason]
 
-    if (#detail_str > 0) then
-        detail_str = ": " .. detail_str
-    end
+    -- s = localize( s ) or s
 
-    chatPrintf( ' ', "\x03", "[", team_name[m_nVoteTeamIndex], "]", initiator:GetName(), "\x01 casted", "\x05",
-        display_str, detail_str )
-    return msg:Reset()
-end
-
-msg_func[VotePass] = function( msg )
-    local m_nVoteTeamIndex = msg:ReadByte()
-    local passed_str = msg:ReadString( 256 )
-    local detail_str = msg:ReadString( 256 )
-
-    if (#detail_str > 0) then
-        detail_str = ": " .. detail_str
-    end
-
-    chatPrintf( ' ', "\x01", "[", team_name[m_nVoteTeamIndex], "]", "\x05", passed_str, detail_str )
-
-    -- print_console_color( rgba( 25, 0, 255, 255 ), ' | ', 'm_nVoteTeamIndex ' .. m_nVoteTeamIndex,'passed_str ' .. passed_str, 'detail_str ' .. detail_str )
-    return msg:Reset()
-end
-
-msg_func[VoteFailed] = function( msg )
-    local m_nVoteTeamIndex = msg:ReadByte()
-    local nReason = msg:ReadByte()
-    nReason = nReason + 1 -- EDGE CASE : In Lua, table starts at 1
-    -- print_console_color( Color( 25, 0, 255, 255 ), ' | ', 'm_nVoteTeamIndex ' .. m_nVoteTeamIndex, 'nReason ' .. nReason )
-
-    chatPrintf( ' ', "\x01", "[", team_name[m_nVoteTeamIndex], "]", "\x05", vote_call_vote_failed_t[nReason] )
-    return msg:Reset()
-end
-
-msg_func[VoteSetup] = function( msg )
-    local nIssueCount
-    -- todo : invest further
-    return msg:Reset()
-end
-
-local usermessage_observer = function( proton )
-    local id, data_bits, data_bytes = proton:GetID(), proton:GetDataBits(), proton:GetDataBytes()
-    -- print( 'usermessage captured: ' .. id )
-    local s = type( msg_func[id] ) == "function" and msg_func[id]( proton )
-end
-
-local event_observer = function( event )
-    --[[    byte	vote_option	which option the player voted on
-            short	team	[Ed: Usually -1, but team-specific votes can be 2 for RED or 3 for BLU]
-            long	entityid	entity id of the voter ]] --
-    if (event:GetName() == "vote_cast") then
-        local vote_option = event:GetInt( 'vote_option' )
-        local team = event:GetInt( 'team' )
-        local entityindex = event:GetInt( 'entityid' )
-        local entity = entities.GetByIndex( entityindex )
-        -- print_console_color( rgba( 25, 0, 255, 255 ), ' | ', 'vote_option ' .. vote_option, 'team ' .. team, 'entityid ' .. entityindex )
-
-        chatPrintf( ' ', "\x03", entity:GetName(), "\x01 voted", "\x05", vote_type[vote_option] ) -- I should have string.format it all
-    end
-
-    --[[    byte	count	Number of options - up to MAX_VOTE_OPTIONS [ed: 5]
-                    string	option1	
-                    string	option2	
-                    string	option3	
-                    string	option4	
-                    string	option5	]] --
-    if (event:GetName() == "vote_options") then
-        local count
-        local option1, option2, option3, option4, option5
-    end
-end
-
-local OnStartup = (function()
-    -- https://wiki.teamfortress.com/wiki/Voting
-    ---print_console_color( rgba( 25, 0, 255, 255 ), "hello world" )
-    callbacks.Register( 'FireGameEvent', 'event_observer', event_observer )
-    callbacks.Register( 'DispatchUserMessage', 'usermessage_observer', usermessage_observer )
-end)()
-
---[[
-    \x01 - White color
-    \x02 - Old color
-    \x03 - Player name color
-    \x04 - Location color
-    \x05 - Achievement color
-    \x06 - Black color
-    \x07 - Custom color, read from next 6 characters as HEX
-    \x08 - Custom color with alpha, read from next 8 characters as HEX
-]]
+    local me = entities.GetLocalPlayer()
+    ChatPrint( color_resource[me:GetTeamNumber()] .. "[YOU]", rgb_c( "#FDFD97" ) .. time, white_c,
+        (time <= 1 and "second" or "seconds"), "left to wait before casting another vote." )
+end )
+-- endregion: core function
