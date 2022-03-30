@@ -22,3 +22,8 @@ default win vote ratio is 0.6 (60% yes vote)
 
 config system
 + allow intercom from lobby.lua + a/b config system
+
+---
+new luas idea 
+
+turn off autoscope if target < 50hp or round ended

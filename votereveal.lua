@@ -7,53 +7,19 @@ callbacks.Unregister( 'DispatchUserMessage', 'usermessage_observer' )
 callbacks.Unregister( 'FireGameEvent', "event_observer" )
 
 -- #region : vscode-ext inline color
-local Color = {
-    __index = {},
-    [1] = rgba_color_t,
-    [2] = hex_color_t,
-    [3] = hsv_color_t
- }
-Color.rgba = function( r, g, b, a )
-    return setmetatable( { r, g, b, a }, Color )
+local rgba = function( ... )
+    return { ... }
 end
-Color.hex = function( hex )
-    return setmetatable( { hex }, Color )
-end
-
-function Color:to_hex( color_type, to_string_format )
-    local s = type( color_type ) == "number" and Color[tostring( color_type )]()
-end
-
--- @param color_type
--- @param to_string_format (optional)
--- @return hexadecimal color codes
-function Color:rgba_to_hex()
-    --[[ rgba_to_hex 
-            -- The integer form of RGBA is 0xRRGGBBAA
-            -- Hex for red is 0xRR000000, Multiply red value by 0x1000000(16777216) to get 0xRR000000
-            -- Hex for green is 0x00GG0000, Multiply green value by 0x10000(65536) to get 0x00GG0000
-            -- Hex for blue is 0x0000BB00, Multiply blue value by 0x100(256) to get 0x0000BB00
-            -- Hex for alpha is 0x00000AA, thus no need to multiply
-    ]] -- 
-
-    local r, g, b, a = self.r, self.g, self.b, self.a
-    a = (0x100 <= a) and 255 or a
-    local hex = (r * 0x1000000) + (g * 0x10000) + (b * 0x100) + a
-    if not (to_string_format) then
-        self.hex = hex
-    else
-        --[[ 
-            '0x%06x':format( hex ) -> '0xRRGGBBAA'
-            '#%06x':format( hex ) -> '#RRGGBBAA'
-            '%06x':format( hex ) -> 'RRGGBBAA'
-        ]] --
-        self.hex = (to_string_format):format( hex )
-    end
-    return self.hex
-end
-
-function Color:hex_to_rgba( color_type, to_string_format )
-
+local _rgba = function( ... ) -- rgba to hex
+    -- The integer form of RGBA is 0xRRGGBBAA
+    -- Hex for red is 0xRR000000, Multiply red value by 0x1000000(16777216) to get 0xRR000000
+    -- Hex for green is 0x00GG0000, Multiply green value by 0x10000(65536) to get 0x00GG0000
+    -- Hex for blue is 0x0000BB00, Multiply blue value by 0x100(256) to get 0x0000BB00
+    -- Hex for alpha is 0x00000AA, no need to multiply since
+    local r, g, b, a = table.unpack( { ... } )
+    local rgba = (r * 0x1000000) + (g * 0x10000) + (b * 0x100) + a
+    return rgba
+    -- string.format( "0x%06x", rgba )
 end
 -- #endregion : vscode-ext inline color
 
@@ -238,7 +204,7 @@ end
 
 local OnStartup = (function()
     -- https://wiki.teamfortress.com/wiki/Voting
-    print_console_color( Color( 25, 0, 255, 255 ), "hello world" )
+    print_console_color( rgba( 25, 0, 255, 255 ), "hello world" )
     callbacks.Register( 'FireGameEvent', 'event_observer', event_observer )
     callbacks.Register( 'DispatchUserMessage', 'usermessage_observer', usermessage_observer )
 end)()

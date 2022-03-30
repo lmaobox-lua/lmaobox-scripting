@@ -100,6 +100,8 @@ function Color:rgba_to_hex( to_string_format )
             '0x%06x':format( hex ) -> '0xRRGGBBAA'
             '#%06x':format( hex ) -> '#RRGGBBAA'
             '%06x':format( hex ) -> 'RRGGBBAA'
+            -- this is wrong, 08x for padding is correct
+            -- pasted COLOR library
         ]] --
     self.hex = (to_string_format .. "%06x"):format( hex )
     return self.hex
