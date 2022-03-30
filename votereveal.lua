@@ -181,11 +181,12 @@ user_message_callback.bind( VoteStart, "MsgFunc_VoteStart", function( msg )
     -- local target_ent_idx<const> = msg:ReadByte()
 
     local s = localize( disp_str ) or disp_str
-
     local cond = (#details_str > 0)
 
+    string.format(s, details_str)
+
     ChatPrint( { color_resource[team], team_index[team] }, { white_c, s }, (cond and ":" or ""),
-        (cond and { color_resource[team], details_str } or '') )
+        (cond and { white_c, details_str } or '') )
 end )
 
 user_message_callback.bind( VotePass, "MsgFunc_VotePass", function( msg )
@@ -194,8 +195,10 @@ user_message_callback.bind( VotePass, "MsgFunc_VotePass", function( msg )
     local details_str = msg:ReadString( 256 ) -- Vote winner
 
     local s = localize( disp_str ) or disp_str
-
     local cond = (#details_str > 0)
+
+    -- todo : remove c str format
+    s:gsub( '%p[[%]]', '' ):gsub( '^s1', '' ):gsub( '^s2', '' )
 
     ChatPrint( { color_resource[team], team_index[team] }, { white_c, s }, (cond and ":" or ""),
         (cond and { color_resource[team], details_str } or '') )
@@ -210,7 +213,7 @@ user_message_callback.bind( VoteFailed, "MsgFunc_VoteFailed", function( msg )
 
     s = localize( s ) or s
 
-    ChatPrint( { color_resource[team], team_index[team] }, { white_c, s } )
+    ChatPrint( { color_resource[team], team_index[team] }, { achievement_c, s } )
 end )
 
 user_message_callback.bind( CallVoteFailed, "MsgFunc_CallVoteFailed", function( msg )
