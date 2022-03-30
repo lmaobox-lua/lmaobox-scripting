@@ -1,7 +1,4 @@
 reference
-vendor
-1.lua
-2.lua
+script_ignored
 test.lua
 *.txt
-
