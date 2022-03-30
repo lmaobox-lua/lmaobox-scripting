@@ -183,10 +183,11 @@ user_message_callback.bind( VoteStart, "MsgFunc_VoteStart", function( msg )
     local s = localize( disp_str ) or disp_str
     local cond = (#details_str > 0)
 
-    string.format(s, details_str)
+    -- TODO : cstr format
+    s = s:gsub( "s1", "s" )
+    s = string.format( s, details_str )
 
-    ChatPrint( { color_resource[team], team_index[team] }, { white_c, s }, (cond and ":" or ""),
-        (cond and { white_c, details_str } or '') )
+    ChatPrint( { color_resource[team], team_index[team] }, { white_c, s } ) -- , (cond and ":" or ""), (cond and { white_c, details_str } or '') )
 end )
 
 user_message_callback.bind( VotePass, "MsgFunc_VotePass", function( msg )
@@ -197,11 +198,11 @@ user_message_callback.bind( VotePass, "MsgFunc_VotePass", function( msg )
     local s = localize( disp_str ) or disp_str
     local cond = (#details_str > 0)
 
-    -- todo : remove c str format
-    s:gsub( '%p[[%]]', '' ):gsub( '^s1', '' ):gsub( '^s2', '' )
+    -- TODO : cstr format
+    s = s:gsub( "s1", "s" )
+    s = string.format( s, details_str )
 
-    ChatPrint( { color_resource[team], team_index[team] }, { white_c, s }, (cond and ":" or ""),
-        (cond and { color_resource[team], details_str } or '') )
+    ChatPrint( { color_resource[team], team_index[team] }, { white_c, s } ) -- , (cond and ":" or ""), (cond and { white_c, details_str } or '') )
 end )
 
 user_message_callback.bind( VoteFailed, "MsgFunc_VoteFailed", function( msg )
