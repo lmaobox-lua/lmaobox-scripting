@@ -12,8 +12,8 @@ callbacks.Unregister( 'FireGameEvent', "event_observer" )
 -- region: custom string builder
 -- LuaFormatter off
 local white_c<const>, old_c<const>, team_c<const>, location_c<const>, achievement_c<const>, black_c<const> = '\x01', '\x02', '\x03', '\x04', '\x05', '\x06'
-local  rgb_c = function( hex_no_alpha ) return '\x07' .. hex_no_alpha:gsub('#', '')  end
-local argb_c = function( hex_with_alpha ) return '\x08' .. hex_with_alpha:gsub('#', '') end
+local  rgb_c = function( hex_no_alpha ) return '\x07' .. string.sub(hex_no_alpha, 2, #hex_no_alpha)  end
+local argb_c = function( hex_with_alpha ) return '\x08' .. string.sub(hex_with_alpha, 2, #hex_with_alpha) end
 
 --@param { color_c, text } or text
 local ChatPrint = function( ... )
@@ -115,7 +115,13 @@ local color_resource = {
     [0] = argb_c( "#9EE09Eff" ),
     [1] = argb_c( "#cfcfc4ff" ),
     [2] = argb_c( "#ff6663ff" ),
-    [3] = argb_c( "#9EC1CFff" )
+    [3] = argb_c( "#9EC1CFff" ),
+    --
+    [4] = argb_c( "#B4CFB0ff" ),
+    [5] = argb_c( "#D885A3ff" ),
+    [6] = argb_c( "#D885A3ff" ),
+    [7] = argb_c( "#F6D7A7ff" ),
+    [8] = argb_c( "#87AAAAff" )
  }
 
 local user_message_callback = {
@@ -167,8 +173,8 @@ callbacks.Register( 'FireGameEvent', 'event_observer', function( event )
         local entity = entities.GetByIndex( entityindex )
         local plr_team = entity:GetTeamNumber()
         ChatPrint( { color_resource[plr_team], team_index[plr_team] }, { white_c, entity:GetName() }, "voted",
-            { achievement_c, vote_type[vote_option] } )
-
+            { color_resource[vote_option + 4], vote_type[vote_option] } )
+        -- TODO vote_option + 4 is lazy variable naming 
     end
 end )
 
