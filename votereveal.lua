@@ -15,7 +15,7 @@ local white_c<const>, old_c<const>, team_c<const>, location_c<const>, achievemen
 local  rgb_c = function( hex_no_alpha ) return '\x07' .. hex_no_alpha:gsub('#', '')  end
 local argb_c = function( hex_with_alpha ) return '\x08' .. hex_with_alpha:gsub('#', '') end
 
---@param { color_c, text }
+--@param { color_c, text } or text
 local ChatPrint = function( ... )
     local buf = {}
     for k, v in ipairs({...}) do
@@ -39,18 +39,30 @@ end
 -- http://lua-users.org/wiki/SwitchStatement
 -- https://github.dev/lua9520/source-engine-2018-hl2_src/ (note: could be outdated)
 
-local vote_failed_reason_t<const> = { "VOTE_FAILED_GENERIC", "VOTE_FAILED_TRANSITIONING_PLAYERS",
-                                      "VOTE_FAILED_TRANSITIONING_PLAYERS", "VOTE_FAILED_RATE_EXCEEDED",
-                                      "VOTE_FAILED_YES_MUST_EXCEED_NO", "VOTE_FAILED_QUORUM_FAILURE",
-                                      "VOTE_FAILED_ISSUE_DISABLED", "VOTE_FAILED_MAP_NOT_FOUND",
-                                      "VOTE_FAILED_MAP_NAME_REQUIRED", "VOTE_FAILED_ON_COOLDOWN",
-                                      "VOTE_FAILED_TEAM_CANT_CALL", "VOTE_FAILED_WAITINGFORPLAYERS",
-                                      "VOTE_FAILED_PLAYERNOTFOUND", "VOTE_FAILED_CANNOT_KICK_ADMIN",
-                                      "VOTE_FAILED_SCRAMBLE_IN_PROGRESS", "VOTE_FAILED_SPECTATOR",
-                                      "VOTE_FAILED_NEXTLEVEL_SET", "VOTE_FAILED_MAP_NOT_VALID",
-                                      "VOTE_FAILED_CANNOT_KICK_FOR_TIME", "VOTE_FAILED_CANNOT_KICK_DURING_ROUND",
-                                      "VOTE_FAILED_VOTE_IN_PROGRESS", "VOTE_FAILED_KICK_LIMIT_REACHED",
-                                      "VOTE_FAILED_KICK_DENIED_BY_GC" }
+local vote_failed_reason_t<const> = {
+    [0] = "VOTE_FAILED_GENERIC",
+    [1] = "VOTE_FAILED_TRANSITIONING_PLAYERS",
+    [2] = "VOTE_FAILED_RATE_EXCEEDED",
+    [3] = "VOTE_FAILED_YES_MUST_EXCEED_NO",
+    [4] = "VOTE_FAILED_QUORUM_FAILURE",
+    [5] = "VOTE_FAILED_ISSUE_DISABLED",
+    [6] = "VOTE_FAILED_MAP_NOT_FOUND",
+    [7] = "VOTE_FAILED_MAP_NAME_REQUIRED",
+    [8] = "VOTE_FAILED_ON_COOLDOWN",
+    [9] = "VOTE_FAILED_TEAM_CANT_CALL",
+    [10] = "VOTE_FAILED_WAITINGFORPLAYERS",
+    [11] = "VOTE_FAILED_PLAYERNOTFOUND",
+    [12] = "VOTE_FAILED_CANNOT_KICK_ADMIN",
+    [13] = "VOTE_FAILED_SCRAMBLE_IN_PROGRESS",
+    [14] = "VOTE_FAILED_SPECTATOR",
+    [15] = "VOTE_FAILED_NEXTLEVEL_SET",
+    [16] = "VOTE_FAILED_MAP_NOT_VALID",
+    [17] = "VOTE_FAILED_CANNOT_KICK_FOR_TIME",
+    [18] = "VOTE_FAILED_CANNOT_KICK_DURING_ROUND",
+    [19] = "VOTE_FAILED_VOTE_IN_PROGRESS",
+    [20] = "VOTE_FAILED_KICK_LIMIT_REACHED",
+    [21] = "VOTE_FAILED_KICK_DENIED_BY_GC"
+ }
 
 local vote_failed_localize<const> = {
     [0] = "#GameUI_vote_failed",
@@ -183,11 +195,13 @@ user_message_callback.bind( VoteStart, "MsgFunc_VoteStart", function( msg )
     local s = localize( disp_str ) or disp_str
     local cond = (#details_str > 0)
 
-    -- TODO : cstr format
-    s = s:gsub( "s1", "s" )
+    s = string.gsub( s, "%S+", { -- convert lua format
+        ["%s1"] = "%s",
+        ["%s2"] = "%s"
+     } )
     s = string.format( s, details_str )
 
-    ChatPrint( { color_resource[team], team_index[team] }, { white_c, s } ) -- , (cond and ":" or ""), (cond and { white_c, details_str } or '') )
+    ChatPrint( { color_resource[team], team_index[team] }, { white_c, s } )
 end )
 
 user_message_callback.bind( VotePass, "MsgFunc_VotePass", function( msg )
@@ -198,21 +212,23 @@ user_message_callback.bind( VotePass, "MsgFunc_VotePass", function( msg )
     local s = localize( disp_str ) or disp_str
     local cond = (#details_str > 0)
 
-    -- TODO : cstr format
-    s = s:gsub( "s1", "s" )
+    s = string.gsub( s, "%S+", { -- convert lua format
+        ["%s1"] = "%s",
+        ["%s2"] = "%s"
+     } )
     s = string.format( s, details_str )
 
-    ChatPrint( { color_resource[team], team_index[team] }, { white_c, s } ) -- , (cond and ":" or ""), (cond and { white_c, details_str } or '') )
+    ChatPrint( { color_resource[team], team_index[team] }, { white_c, s } )
 end )
 
 user_message_callback.bind( VoteFailed, "MsgFunc_VoteFailed", function( msg )
     local team<const> = msg:ReadByte() -- Team index or 0 for all
     local reason<const> = msg:ReadByte() -- Failure reason code (0, 3-4)
 
-    -- Order : game_ui_localize > enum
-    local s = vote_failed_localize[reason] or vote_failed_reason_t[reason]
+    -- Order : game_ui_localize, enum fallback
+    local s = vote_failed_localize[reason]
 
-    s = localize( s ) or s
+    s = (#localize( s ) > 0) and localize( s ) or vote_failed_reason_t[reason]
 
     ChatPrint( { color_resource[team], team_index[team] }, { achievement_c, s } )
 end )
@@ -221,14 +237,23 @@ user_message_callback.bind( CallVoteFailed, "MsgFunc_CallVoteFailed", function( 
     local reason<const> = msg:ReadByte() -- Failure reason (1-2, 5-10, 12-19)
     local time<const> = msg:ReadInt( 16 ) -- For failure reasons 2 and 8, time in seconds until client can start another vote. 2 is per user, 8 is per vote type.
 
-    -- Order : enum > game_ui_localize
-    local s = type( vote_call_vote_failed_localize[reason] ) ~= "function" and vote_failed_reason_t[reason] or
+    -- Order : game_ui_localize, enum fallback
+    --[[
+    local s = type( vote_call_vote_failed_localize[reason] ) == "function" and
                   vote_call_vote_failed_localize[reason]( time ) or vote_call_vote_failed_localize[reason]
 
-    -- s = localize( s ) or s
+    s = (#localize( s ) > 0) and localize( s ) or vote_failed_reason_t[reason]
 
+    s = string.gsub( s, "%S+", { -- convert lua format
+        ["%s1"] = "%s",
+        ["%s2"] = "%s"
+     } )
+    s = string.format( s, time )]] --
+
+    local s = vote_failed_reason_t[reason]
     local me = entities.GetLocalPlayer()
     ChatPrint( { color_resource[me:GetTeamNumber()], "[YOU]" }, { argb_c( "#FDFD97FF" ), time },
-        { white_c, (time <= 1 and "second" or "seconds") }, "left to wait before casting another vote." )
+        { white_c, (time <= 1 and "second" or "seconds") }, "left to wait before casting another vote.",
+        { achievement_c, s } )
 end )
 -- endregion: core function

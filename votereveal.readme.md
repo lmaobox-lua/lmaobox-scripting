@@ -2,7 +2,7 @@
 
 ## How to use
 
-> status : broke rn, will fix after 18PM GMT+7 <br> or you can pull request
+> Need Help! : If you can change my custom ChatPrint to string.format equivalent i'd be appriciated.
 
 1. Load Script
 2. Enjoy
