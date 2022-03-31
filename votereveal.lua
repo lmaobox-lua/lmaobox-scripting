@@ -124,6 +124,31 @@ local color_resource = {
     [8] = argb_c( "#87AAAAff" )
  }
 
+-- TODO #1
+-- vote_prediction_outcome
+local outcome = {
+    [1] = 0, -- option1
+    [2] = 0, -- option2
+    [3] = 0, -- option3
+    [4] = 0, -- option4
+    [5] = 0, -- option5
+    [6] = 0, -- voting
+    is_yes_no_vote = nil,
+    free_for_all_vote = nil
+ }
+function outcome:clear()
+    for k, v in ipairs( outcome ) do
+        -- print( 'key: ' .. tostring( k ) )
+        outcome[k] = 0
+    end
+    self.is_yes_no_vote = nil
+    self.free_for_all_vote = nil
+end
+function outcome:add( k, v )
+    self[k] = v + v
+    return true
+end
+
 local user_message_callback = {
     [CallVoteFailed] = {}, -- Note: Sent to a player when they attempt to call a vote and fail.
     [VoteStart] = {}, -- Note: Sent to all players currently online. The default implementation also sends it to bots.
@@ -134,9 +159,12 @@ local user_message_callback = {
 
 user_message_callback.bind = function( id, unique, callback )
     local s = user_message_callback[id]
-    unique = unique or #s + 1
     if type( s ) ~= "table" then
         print( "user_message_callback.bind fails to create callback: " .. unique )
+    end
+    if (type( unique ) == 'function') then
+        callback = unique
+        unique = tostring( math.randomseed( os.time() ) )
     end
     s[unique] = callback
     return unique
@@ -172,10 +200,50 @@ callbacks.Register( 'FireGameEvent', 'event_observer', function( event )
 
         local entity = entities.GetByIndex( entityindex )
         local plr_team = entity:GetTeamNumber()
+        --- 
+
         ChatPrint( { color_resource[plr_team], team_index[plr_team] }, { white_c, entity:GetName() }, "voted",
             { color_resource[vote_option + 4], vote_type[vote_option] } )
         -- TODO vote_option + 4 is lazy variable naming 
     end
+end )
+
+user_message_callback.bind( VoteStart, function( msg )
+    local team<const> = msg:ReadByte()
+    local ent_idx<const> = msg:ReadByte()
+    local disp_str<const> = msg:ReadString( 256 )
+    local details_str<const> = msg:ReadString( 256 )
+    local is_yes_no_vote<const> = msg:ReadByte()
+
+    local players = entities.FindByClass( "CTFPlayer" )
+
+    if (team == 0) then
+        outcome.free_for_all_vote = true
+        for k, v in ipairs( players ) do
+            if (client.GetPlayerInfo( v:GetIndex() )['IsBot'] == false) then
+                outcome:add( 6, 1 )
+            end
+        end
+    else
+        outcome.free_for_all_vote = false
+        for k, v in ipairs( players ) do
+            if (v:GetTeamNumber() == team and client.GetPlayerInfo( v:GetIndex() )['IsBot'] == false) then
+                outcome:add( 6, 1 )
+            end
+        end
+    end
+    outcome.is_yes_no_vote = is_yes_no_vote
+end )
+
+user_message_callback.bind( VotePass, function( msg )
+    print( outcome.free_for_all_vote )
+    print( outcome.is_yes_no_vote )
+    print( "outcome.voting: " .. tostring( outcome.voting ) )
+
+    outcome:clear()
+end )
+user_message_callback.bind( VoteFailed, function( msg )
+    outcome:clear()
 end )
 
 callbacks.Register( 'DispatchUserMessage', 'usermessage_observer', function( msg )
@@ -198,13 +266,8 @@ user_message_callback.bind( VoteStart, "MsgFunc_VoteStart", function( msg )
     local is_yes_no_vote<const> = msg:ReadByte() -- true for Yes/No, false for Multiple choice
     -- local target_ent_idx<const> = msg:ReadByte()
 
-    local s = localize( disp_str ) or disp_str
-    local cond = (#details_str > 0)
-
-    s = string.gsub( s, "%S+", { -- convert lua format
-        ["%s1"] = "%s",
-        ["%s2"] = "%s"
-     } )
+    local s = (#localize( disp_str ) > 0) and localize( disp_str ) or disp_str
+    s = string.gsub(s, "%%s%d" , "%%s")
     s = string.format( s, details_str )
 
     ChatPrint( { color_resource[team], team_index[team] }, { white_c, s } )
@@ -215,13 +278,8 @@ user_message_callback.bind( VotePass, "MsgFunc_VotePass", function( msg )
     local disp_str<const> = msg:ReadString( 256 ) -- Vote success translation string
     local details_str = msg:ReadString( 256 ) -- Vote winner
 
-    local s = localize( disp_str ) or disp_str
-    local cond = (#details_str > 0)
-
-    s = string.gsub( s, "%S+", { -- convert lua format
-        ["%s1"] = "%s",
-        ["%s2"] = "%s"
-     } )
+    local s = (#localize( disp_str ) > 0) and localize( disp_str ) or disp_str
+    s = string.gsub(s, "%%s%d" , "%%s") --s = string.gsub(s, "s%d" , "s")
     s = string.format( s, details_str )
 
     ChatPrint( { color_resource[team], team_index[team] }, { white_c, s } )
@@ -263,3 +321,5 @@ user_message_callback.bind( CallVoteFailed, "MsgFunc_CallVoteFailed", function( 
         { achievement_c, s } )
 end )
 -- endregion: core function
+
+printLuaTable( client.GetPlayerInfo( entities.GetLocalPlayer():GetIndex() ) )
