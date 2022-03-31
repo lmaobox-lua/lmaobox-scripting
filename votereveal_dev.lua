@@ -267,8 +267,8 @@ user_message_callback.bind( VoteStart, "MsgFunc_VoteStart", function( msg )
     -- local target_ent_idx<const> = msg:ReadByte()
 
     local s = (#localize( disp_str ) > 0) and localize( disp_str ) or disp_str
-    s = string.gsub(s, "%%s%d" , "%%s")
-    s = string.format( s, details_str )
+    s = string.gsub(s, "%%s%d" , details_str)
+    --s = string.format( s, details_str )
 
     ChatPrint( { color_resource[team], team_index[team] }, { white_c, s } )
 end )
@@ -279,8 +279,8 @@ user_message_callback.bind( VotePass, "MsgFunc_VotePass", function( msg )
     local details_str = msg:ReadString( 256 ) -- Vote winner
 
     local s = (#localize( disp_str ) > 0) and localize( disp_str ) or disp_str
-    s = string.gsub(s, "%%s%d" , "%%s") --s = string.gsub(s, "s%d" , "s")
-    s = string.format( s, details_str )
+    s = string.gsub(s, "%%s%d" , details_str) --s = string.gsub(s, "s%d" , "s")
+    -- s = string.format( s, details_str )
 
     ChatPrint( { color_resource[team], team_index[team] }, { white_c, s } )
 end )
