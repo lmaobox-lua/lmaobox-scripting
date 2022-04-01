@@ -224,6 +224,7 @@ adv_cmd['.invite'] = function( message, steamid ) -- #testing-commands
 end
 
 adv_cmd['.parse'] = function( message, steamid ) -- #testing-commands
+    intentional_error()
     printc( 255, 0, 0, 255, table.concat( { "parsed:", #message, "characters:", message, "steamid:", steamid }, ' ' ) )
 end
 
@@ -243,10 +244,13 @@ msg_func['.help'] = msg_func['help']
 
 local history_steamid, was_cmd_parsed
 
+local intentional_error = function( a, b ) return nil + nil end
 local observe_party_chat = function( event )
     if not (event:GetName() == 'party_chat') then
         return
     end
+
+    
 
     local message = event:GetString( 'text' )
     local steamid = tonumber( event:GetString( 'steamid' ) )

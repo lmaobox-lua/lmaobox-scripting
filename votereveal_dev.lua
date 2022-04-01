@@ -32,7 +32,7 @@ local ChatPrint = function( ... )
     return chat_print_f(e)
 end
 -- LuaFormatter on
--- endregion
+-- endregion:
 
 -- region: UserMessage resources
 -- https://wiki.alliedmods.net/Tf2_voting
@@ -118,35 +118,23 @@ local color_resource = {
     [3] = argb_c( "#9EC1CFff" ),
     --
     [4] = argb_c( "#B4CFB0ff" ),
-    [5] = argb_c( "#D885A3ff" ),
+    [5] = argb_c( "#c085d8ff" ),
     [6] = argb_c( "#D885A3ff" ),
     [7] = argb_c( "#F6D7A7ff" ),
     [8] = argb_c( "#87AAAAff" )
  }
 
--- TODO #1
--- vote_prediction_outcome
-local outcome = {
-    [1] = 0, -- option1
-    [2] = 0, -- option2
-    [3] = 0, -- option3
-    [4] = 0, -- option4
-    [5] = 0, -- option5
-    [6] = 0, -- voting
-    is_yes_no_vote = nil,
-    free_for_all_vote = nil
+local vote_type = {
+    [0] = "Yes",
+    [1] = "No"
  }
-function outcome:clear()
-    for k, v in ipairs( outcome ) do
-        -- print( 'key: ' .. tostring( k ) )
-        outcome[k] = 0
-    end
-    self.is_yes_no_vote = nil
-    self.free_for_all_vote = nil
+
+local is_bot = function( entityindex )
+    return client.GetPlayerInfo( entityindex )['IsBot']
 end
-function outcome:add( k, v )
-    self[k] = v + v
-    return true
+
+local intentional_error = function( a, b )
+    return nil + nil
 end
 
 local user_message_callback = {
@@ -179,10 +167,99 @@ user_message_callback.unbind = function( id, unique )
     return true
 end
 
-local vote_type = {
-    [0] = "Yes",
-    [1] = "No"
+-- region: vote prediction
+function max( t, fn )
+    if #t == 0 then
+        return nil, nil
+    end
+    local key, value = 1, t[1]
+    for i = 2, #t do
+        if fn( value, t[i] ) then
+            key, value = i, t[i]
+        end
+    end
+    return key, value
+end
+
+-- todo move options to separate table
+local outcome = {
+    [1] = 0, -- option1
+    [2] = 0, -- option2
+    [3] = 0, -- option3
+    [4] = 0, -- option4
+    [5] = 0, -- option5
+    voting = 0,
+    is_yes_no_vote = nil,
+    free_for_all_vote = nil
  }
+-- LuaFormatter off
+function outcome:clear()
+    for i, v in ipairs( self ) do self[i] = 0 end
+    for k, v in pairs( self ) do if type( v ) == "number" then return else self[k] = nil end end
+end
+function outcome:add( i, v )
+    self[i] = self[i] + v 
+end
+-- LuaFormatter on
+function outcome:probability()
+    local voted = 0
+    -- LuaFormatter off
+    for i, v in ipairs( self ) do
+        voted = voted + v 
+    end
+    if voted == 0 then return "bad" end
+    -- LuaFormatter on
+    local options = {}
+    local weight = voted + self.voting -- todo : need testing
+    for i, v in ipairs( self ) do
+        if v > 0 then
+            local data = v / weight
+            options[i] = data
+        end
+    end
+    options = (next( options ) == nil) and "bad" or options
+
+    return options
+end
+
+local outcome_callback_linking = function( event )
+    local vote_option<const>, team<const>, entityindex<const> = event:GetInt( 'vote_option' ), event:GetInt( 'team' ),
+        event:GetInt( 'entityid' )
+    local display_str, result
+    outcome:add( vote_option + 1, 1 ) -- it should be impossible for any player to vote twice
+    result = outcome:probability()
+    printLuaTable( result )
+end
+
+user_message_callback.bind( VoteStart, function( msg )
+    local team<const>, ent_idx<const>, disp_str<const>, details_str<const>, is_yes_no_vote<const> = msg:ReadByte(),
+        msg:ReadByte(), msg:ReadString( 256 ), msg:ReadString( 256 ), msg:ReadByte()
+
+    local players = entities.FindByClass( "CTFPlayer" )
+
+    if team == 0 then
+        outcome.free_for_all_vote = true
+        -- LuaFormatter off
+        for k, v in ipairs( players ) do if is_bot(v:GetIndex()) == false then outcome:add( 'voting', 1 ) end end
+        -- LuaFormatter on
+    else
+        outcome.free_for_all_vote = false
+        -- LuaFormatter off
+        for k, v in ipairs( players ) do if (v:GetTeamNumber() == team and is_bot(v:GetIndex()) == false) then outcome:add( 'voting', 1 ) end end
+        -- LuaFormatter on
+    end
+
+    outcome.is_yes_no_vote = is_yes_no_vote
+end )
+
+user_message_callback.bind( VotePass, function()
+    return outcome:clear()
+end )
+user_message_callback.bind( VoteFailed, function()
+    return outcome:clear()
+end )
+
+-- endregion:
 
 callbacks.Register( 'FireGameEvent', 'event_observer', function( event )
     if (event:GetName() == "vote_options") then
@@ -201,6 +278,7 @@ callbacks.Register( 'FireGameEvent', 'event_observer', function( event )
         local entity = entities.GetByIndex( entityindex )
         local plr_team = entity:GetTeamNumber()
         --- 
+        outcome_callback_linking( event )
 
         ChatPrint( { color_resource[plr_team], team_index[plr_team] }, { white_c, entity:GetName() }, "voted",
             { color_resource[vote_option + 4], vote_type[vote_option] } )
@@ -208,50 +286,13 @@ callbacks.Register( 'FireGameEvent', 'event_observer', function( event )
     end
 end )
 
-user_message_callback.bind( VoteStart, function( msg )
-    local team<const> = msg:ReadByte()
-    local ent_idx<const> = msg:ReadByte()
-    local disp_str<const> = msg:ReadString( 256 )
-    local details_str<const> = msg:ReadString( 256 )
-    local is_yes_no_vote<const> = msg:ReadByte()
-
-    local players = entities.FindByClass( "CTFPlayer" )
-
-    if (team == 0) then
-        outcome.free_for_all_vote = true
-        for k, v in ipairs( players ) do
-            if (client.GetPlayerInfo( v:GetIndex() )['IsBot'] == false) then
-                outcome:add( 6, 1 )
-            end
-        end
-    else
-        outcome.free_for_all_vote = false
-        for k, v in ipairs( players ) do
-            if (v:GetTeamNumber() == team and client.GetPlayerInfo( v:GetIndex() )['IsBot'] == false) then
-                outcome:add( 6, 1 )
-            end
-        end
-    end
-    outcome.is_yes_no_vote = is_yes_no_vote
-end )
-
-user_message_callback.bind( VotePass, function( msg )
-    print( outcome.free_for_all_vote )
-    print( outcome.is_yes_no_vote )
-    print( "outcome.voting: " .. tostring( outcome.voting ) )
-
-    outcome:clear()
-end )
-user_message_callback.bind( VoteFailed, function( msg )
-    outcome:clear()
-end )
-
 callbacks.Register( 'DispatchUserMessage', 'usermessage_observer', function( msg )
     local msg_enum = msg:GetID()
     local s = user_message_callback[msg_enum]
     if (type( s ) == "table") then
         for k, v in pairs( s ) do
-            local fn = type( s[k] ) == "function" and s[k]( msg )
+            local fn, err = type( s[k] ) == "function" and pcall( s[k], msg )
+            print( "index: " .. k .. " " .. (fn and "no error" or "has an error!") )
             msg:Reset()
         end
     end
@@ -267,8 +308,8 @@ user_message_callback.bind( VoteStart, "MsgFunc_VoteStart", function( msg )
     -- local target_ent_idx<const> = msg:ReadByte()
 
     local s = (#localize( disp_str ) > 0) and localize( disp_str ) or disp_str
-    s = string.gsub(s, "%%s%d" , details_str)
-    --s = string.format( s, details_str )
+    s = string.gsub( s, "%%s%d", details_str )
+    -- s = string.format( s, details_str )
 
     ChatPrint( { color_resource[team], team_index[team] }, { white_c, s } )
 end )
@@ -279,7 +320,7 @@ user_message_callback.bind( VotePass, "MsgFunc_VotePass", function( msg )
     local details_str = msg:ReadString( 256 ) -- Vote winner
 
     local s = (#localize( disp_str ) > 0) and localize( disp_str ) or disp_str
-    s = string.gsub(s, "%%s%d" , details_str) --s = string.gsub(s, "s%d" , "s")
+    s = string.gsub( s, "%%s%d", details_str ) -- s = string.gsub(s, "s%d" , "s")
     -- s = string.format( s, details_str )
 
     ChatPrint( { color_resource[team], team_index[team] }, { white_c, s } )
@@ -322,4 +363,3 @@ user_message_callback.bind( CallVoteFailed, "MsgFunc_CallVoteFailed", function( 
 end )
 -- endregion: core function
 
-printLuaTable( client.GetPlayerInfo( entities.GetLocalPlayer():GetIndex() ) )

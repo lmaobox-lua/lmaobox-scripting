@@ -159,7 +159,6 @@ local vote_type = {
 callbacks.Register( 'FireGameEvent', 'event_observer', function( event )
     if (event:GetName() == "vote_options") then
         local count = event:GetInt( 'count' )
-        -- local option1, option2, option3, option4, option5 = event:GetString( 'option1' ), event:GetString( 'option2' ), event:GetString( 'option3' ), event:GetString( 'option4' ), event:GetString( 'option5' )
         for i = 1, count, 1 do
             vote_type[i - 1] = event:GetString( 'option' .. i )
         end
