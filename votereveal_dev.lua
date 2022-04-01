@@ -12,8 +12,21 @@ callbacks.Unregister( 'FireGameEvent', "event_observer" )
 -- region: custom string builder
 -- LuaFormatter off
 local white_c<const>, old_c<const>, team_c<const>, location_c<const>, achievement_c<const>, black_c<const> = '\x01', '\x02', '\x03', '\x04', '\x05', '\x06'
-local  rgb_c = function( hex_no_alpha ) return '\x07' .. string.sub(hex_no_alpha, 2, #hex_no_alpha)  end
-local argb_c = function( hex_with_alpha ) return '\x08' .. string.sub(hex_with_alpha, 2, #hex_with_alpha) end
+local  rgb_c = function( hex_six ) return '\x07' .. string.sub(hex_six, 2, #hex_six) end
+local argb_c = function( hex_eight ) return '\x08' .. string.sub(hex_eight, 2, #hex_eight) end 
+local to_rgb = function( hex_six )
+    local decimal = tonumber( ("%06x"):format(hex_six) )
+    local r, b, g = ( (decimal >> 16) & 0xFF ) / 255.0, ( (decimal >> 8) & 0xFF ) / 255.0, ( (decimal) & 0xFF ) / 255.0
+    return { r, b, g }
+end
+local to_rgba = function( hex_eight )
+    local decimal = tonumber( ("%06x"):format(hex_eight) )
+    local r, b, g, a = ( (decimal >> 24) & 0xFF ) / 255.0, ( (decimal >> 16) & 0xFF ) / 255.0, ( (decimal >> 8) & 0xFF ) / 255.0, ( (decimal) & 0xFF ) / 255.0
+    return { r, b, g }
+end
+
+-- '0x%08x':format( hex ) -> '0xRRGGBBAA' -> integer value
+-- '#%08x':format( hex ) -> '#RRGGBBAA' -> string representation
 
 --@param { color_c, text } or text
 local ChatPrint = function( ... )
@@ -35,6 +48,7 @@ end
 -- endregion:
 
 -- region: UserMessage resources
+-- https://wiki.teamfortress.com/wiki/Voting
 -- https://wiki.alliedmods.net/Tf2_voting
 -- http://lua-users.org/wiki/SwitchStatement
 -- https://github.dev/lua9520/source-engine-2018-hl2_src/ (note: could be outdated)
@@ -129,12 +143,16 @@ local vote_type = {
     [1] = "No"
  }
 
-local is_bot = function( entityindex )
-    return client.GetPlayerInfo( entityindex )['IsBot']
-end
+local is_valid_voter = function( entityindex )
+    -- bot : SteamID: [U:1:0] 
+    local ret = false
+    local player_info = client.GetPlayerInfo( entityindex )
+    local sv_vote_allow_spectators = client.GetConVar( "sv_vote_allow_spectators" )
+    if not (player_info['IsBot'] or player_info['IsHLTV']) and not (sv_vote_allow_spectators and entityindex) then
+        ret = true
+    end
 
-local intentional_error = function( a, b )
-    return nil + nil
+    return ret
 end
 
 local user_message_callback = {
@@ -181,42 +199,64 @@ function max( t, fn )
     return key, value
 end
 
--- todo move options to separate table
-local outcome = {
+--[[
+    availability status (in order)
+    event , usermessage
+    option -> event
+    voting, is_yes_no_vote, free_for_all_vote -> usermessage
+    ---
+    Matchmaking :
+    Kick vote : if player leaves during vote -> ban for 15 minutes
+    quorum is 0.6
+]]
+local votecontroller = {
     [1] = 0, -- option1
     [2] = 0, -- option2
     [3] = 0, -- option3
     [4] = 0, -- option4
     [5] = 0, -- option5
-    voting = 0,
+    potentional_votes = 0, -- potetional votes (subtract by 1 once a vote is drawn)
     is_yes_no_vote = nil,
-    free_for_all_vote = nil
+    anyone_can_vote = nil
  }
 -- LuaFormatter off
-function outcome:clear()
-    for i, v in ipairs( self ) do self[i] = 0 end
-    for k, v in pairs( self ) do if type( v ) == "number" then return else self[k] = nil end end
+function votecontroller:clear()
+    for i, v in ipairs( votecontroller ) do votecontroller[i] = 0 end
+    for k, v in pairs( votecontroller ) do if type( v ) == "number" then return else votecontroller[k] = nil end end
 end
-function outcome:add( i, v )
-    self[i] = self[i] + v 
+function votecontroller:add( i, v )
+    votecontroller[i] = votecontroller[i] + v 
 end
 -- LuaFormatter on
-function outcome:probability()
+function votecontroller:probability()
     local voted = 0
-    -- LuaFormatter off
-    for i, v in ipairs( self ) do
-        voted = voted + v 
+    for i, v in ipairs( votecontroller ) do
+        voted = voted + v
     end
-    if voted == 0 then return "bad" end
-    -- LuaFormatter on
+    if voted < 1 then
+        printc( 255, 255, 255, 255, "[probability] need info update." )
+        return
+    end
     local options = {}
-    local weight = voted + self.voting -- todo : need testing
-    for i, v in ipairs( self ) do
-        if v > 0 then
-            local data = v / weight
-            options[i] = data
+    if votecontroller.is_yes_no_vote then
+        local yes_votes, no_votes = options[1], options[2]
+        if (yes_votes > 0 and no_votes > 0) then
+            options[1] = yes_votes / voted
+            options[2] = no_votes + votecontroller.potentional_votes / voted
+        else
+            options[1] = (yes_votes == 0) and 1 / voted or options[1]
+            options[2] = (no_votes == 0) and 1 + votecontroller.potentional_votes / voted +
+                             votecontroller.potentional_votes or options[2]
+        end
+    else
+        for i, v in ipairs( votecontroller ) do
+            if v > 0 then
+                local data = v / voted
+                options[i] = data
+            end
         end
     end
+
     options = (next( options ) == nil) and "bad" or options
 
     return options
@@ -226,8 +266,8 @@ local outcome_callback_linking = function( event )
     local vote_option<const>, team<const>, entityindex<const> = event:GetInt( 'vote_option' ), event:GetInt( 'team' ),
         event:GetInt( 'entityid' )
     local display_str, result
-    outcome:add( vote_option + 1, 1 ) -- it should be impossible for any player to vote twice
-    result = outcome:probability()
+    votecontroller:add( vote_option + 1, 1 ) -- it should be impossible for any player to vote twice
+    result = votecontroller:probability()
     printLuaTable( result )
 end
 
@@ -238,25 +278,29 @@ user_message_callback.bind( VoteStart, function( msg )
     local players = entities.FindByClass( "CTFPlayer" )
 
     if team == 0 then
-        outcome.free_for_all_vote = true
-        -- LuaFormatter off
-        for k, v in ipairs( players ) do if is_bot(v:GetIndex()) == false then outcome:add( 'voting', 1 ) end end
-        -- LuaFormatter on
+        votecontroller.anyone_can_vote = true
+        for k, v in ipairs( players ) do
+            if is_valid_voter( v:GetIndex() ) == false then
+                votecontroller:add( 'potentional_votes', 1 )
+            end
+        end
     else
-        outcome.free_for_all_vote = false
-        -- LuaFormatter off
-        for k, v in ipairs( players ) do if (v:GetTeamNumber() == team and is_bot(v:GetIndex()) == false) then outcome:add( 'voting', 1 ) end end
-        -- LuaFormatter on
+        votecontroller.anyone_can_vote = false
+        for k, v in ipairs( players ) do
+            if (v:GetTeamNumber() == team and is_valid_voter( v:GetIndex() ) == false) then
+                votecontroller:add( 'potentional_votes', 1 )
+            end
+        end
     end
 
-    outcome.is_yes_no_vote = is_yes_no_vote
+    votecontroller.is_yes_no_vote = is_yes_no_vote
 end )
 
 user_message_callback.bind( VotePass, function()
-    return outcome:clear()
+    return votecontroller:clear()
 end )
 user_message_callback.bind( VoteFailed, function()
-    return outcome:clear()
+    return votecontroller:clear()
 end )
 
 -- endregion:
