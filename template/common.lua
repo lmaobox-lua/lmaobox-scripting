@@ -44,8 +44,8 @@ function insert_name_callback:iterate_and_call( id, ... )
     local s = self.id
     if (type( s ) == "table") then
         for k, v in pairs( s ) do
-            local va_args = table.unpack { ... }
-            local ret, ret_on_error = type( s[k] ) == "function" and pcall( s[k], va_args )
+            local va_args = { ... }
+            local ret, ret_on_error = type( s[k] ) == "function" and pcall( s[k], table.unpack(va_args) )
             if (ret == false) then
                 ret_on_error = table.pack( ret_on_error )
                 printLuaTable( ret_on_error )
