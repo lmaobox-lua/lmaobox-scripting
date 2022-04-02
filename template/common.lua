@@ -45,10 +45,10 @@ function insert_name_callback:iterate_and_call( id, ... )
     if (type( s ) == "table") then
         for k, v in pairs( s ) do
             local va_args = { ... }
-            local ret, ret_on_error = type( s[k] ) == "function" and pcall( s[k], table.unpack(va_args) )
-            if (ret == false) then
-                ret_on_error = table.pack( ret_on_error )
-                printLuaTable( ret_on_error )
+            local status, ret = type( s[k] ) == "function" and pcall( s[k], table.unpack(va_args) )
+            if not status then
+                ret = table.pack( ret )
+                printLuaTable( ret )
             end
         end
     end
@@ -128,3 +128,9 @@ insert_name_callback.bind = function( id, unique, callback )
 end]] --
 
 -- endregion: callback library
+
+--[[
+    https://www.lua.org/pil/2.2.html
+    Conditionals (such as the ones in control structures) consider false and nil as false and anything else as true. 
+    Beware that, unlike some other scripting languages, Lua considers both zero and the empty string as true in conditional tests
+]]
