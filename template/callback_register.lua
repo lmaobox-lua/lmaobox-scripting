@@ -35,4 +35,33 @@
     - no oop, metamethod / reason : more complicated than it already should have been
 
     if you have better idea, go pr, i would like to know --
-]]-- 
+]] -- 
+local insert_name_callback = {}
+
+insert_name_callback.unbind = function( id, unique )
+    local s = insert_name_callback[id]
+    if type( s ) ~= "table" then
+        print(
+            table.concat( { ".unbind fails to remove callback:", tostring( unique ), "table: ", tostring( id ) }, " " ) )
+        return
+    end
+    s[unique] = undef
+    return true
+end
+
+insert_name_callback.bind = function( id, unique, callback )
+    local s = insert_name_callback[id]
+    if type( s ) ~= "table" then
+        print( table.concat( { ".bind fails to create callback:", tostring( unique ), "table: ", tostring( id ) }, " " ) )
+        return
+    end
+    if (type( unique ) == 'function') then
+        callback = unique
+        unique = tostring( math.randomseed( os.time() ) )
+    end
+    s[unique] = callback
+
+    return unique
+end
+
+-- test

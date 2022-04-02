@@ -50,9 +50,9 @@ local posX, posY = round_number( middleScreenX / 5 * 3.25 ), round_number( middl
 local backUpX, backUpY = posX, posY
 
 local function mydraw()
-    -- if engine.Con_IsVisible() or engine.IsGameUIVisible() then
-    --   return
-    -- end
+    if engine.Con_IsVisible() or engine.IsGameUIVisible() then
+       return
+    end
 
     -- get aimbot, aimbot method, dt values using gui
     local aimbot = gui.GetValue( "aim bot" )
@@ -122,7 +122,6 @@ local drag = function()
         rel_start = rel
     end
 
-    print( "dragging" )
     posX = cursor_x - rel_start[1]
     posY = cursor_y - rel_start[2]
     backUpX, backUpY = posX, posY

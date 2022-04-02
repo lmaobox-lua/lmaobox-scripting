@@ -14,16 +14,6 @@ callbacks.Unregister( 'FireGameEvent', "event_observer" )
 local white_c<const>, old_c<const>, team_c<const>, location_c<const>, achievement_c<const>, black_c<const> = '\x01', '\x02', '\x03', '\x04', '\x05', '\x06'
 local  rgb_c = function( hex_six ) return '\x07' .. string.sub(hex_six, 2, #hex_six) end
 local argb_c = function( hex_eight ) return '\x08' .. string.sub(hex_eight, 2, #hex_eight) end 
-local to_rgb = function( hex_six )
-    local decimal = tonumber( ("%06x"):format(hex_six) )
-    local r, b, g = ( (decimal >> 16) & 0xFF ) / 255.0, ( (decimal >> 8) & 0xFF ) / 255.0, ( (decimal) & 0xFF ) / 255.0
-    return { r, b, g }
-end
-local to_rgba = function( hex_eight )
-    local decimal = tonumber( ("%06x"):format(hex_eight) )
-    local r, b, g, a = ( (decimal >> 24) & 0xFF ) / 255.0, ( (decimal >> 16) & 0xFF ) / 255.0, ( (decimal >> 8) & 0xFF ) / 255.0, ( (decimal) & 0xFF ) / 255.0
-    return { r, b, g }
-end
 
 -- '0x%08x':format( hex ) -> '0xRRGGBBAA' -> integer value
 -- '#%08x':format( hex ) -> '#RRGGBBAA' -> string representation
