@@ -1,3 +1,5 @@
+-- aid common tasks with neglectable performance cost
+
 -- region: print+color library
 -- @param red, green, blue, alpha [0-255]
 -- @return #RRGGBBAA
@@ -23,16 +25,16 @@ local print_console = function( sep, ... )
     return print( table.concat( { ... }, sep ) )
 end
 
-local print_console_color = function( rgba, sep, ... )
-    local r, g, b, a = table.unpack( rgba )
+local print_console_color = function( hex, sep, ... )
+    local r, g, b, a = table.unpack( to_rgba( hex ) )
     sep = (sep and #sep < 4) and sep or " "
     return printc( r, g, b, a, table.concat( { ... }, sep ) )
 end
 
 -- region: test module: color library
 print_console( " | ", "[1]", "[2]", "[3]", "Omega" )
-print_console_color( to_rgba( "#4af3ffff" ), nil, "hello" )
-print_console_color( to_rgba( "#285828ff" ), ", ", "magestic", "core", "value", "sastify" )
+print_console_color( "#4af3ffff", nil, "hello" )
+print_console_color( "#285828ff", ", ", "magestic", "core", "value", "sastify" )
 -- endregion: test module: color library
 
 -- region: print+color library
@@ -45,7 +47,7 @@ function insert_name_callback:iterate_and_call( id, ... )
     if (type( s ) == "table") then
         for k, v in pairs( s ) do
             local va_args = { ... }
-            local status, ret = type( s[k] ) == "function" and pcall( s[k], table.unpack(va_args) )
+            local status, ret = type( s[k] ) == "function" and pcall( s[k], table.unpack( va_args ) )
             if not status then
                 ret = table.pack( ret )
                 printLuaTable( ret )
@@ -128,6 +130,10 @@ insert_name_callback.bind = function( id, unique, callback )
 end]] --
 
 -- endregion: callback library
+
+-- region: delay call using timer as callbacks.Register('Draw')
+
+-- endregion: delay call using timer as callbacks.Register('Draw')
 
 --[[
     https://www.lua.org/pil/2.2.html
