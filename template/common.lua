@@ -1,4 +1,4 @@
--- aid common tasks with neglectable performance cost
+-- aid common tasks with "neglectable" (foreshadow) performance cost
 
 -- region: print+color library
 -- @param red, green, blue, alpha [0-255]
@@ -38,6 +38,31 @@ print_console_color( "#285828ff", ", ", "magestic", "core", "value", "sastify" )
 -- endregion: test module: color library
 
 -- region: print+color library
+
+-- region: custom formatter
+local localize_and_format = function( key, ... )
+    local text = key
+    local va_args, order = { ... }, {}
+    text = text:gsub( '%%s(%d+)', function( i )
+        return "%" .. tonumber( i ) -- .. "s" -> %%(%d+)s
+    end )
+    text = text:gsub( '%%(%d+)', function( i )
+        table.insert( order, va_args[tonumber( i )] )
+        return '%s'
+    end )
+    print( text )
+    text = string.format( text, table.unpack( order ) )
+    return text
+end
+
+local test_localize_and_format = (function()
+    local example = "%s3 killed %s1, but %s2 refragged for %1s"
+    local text = localize_and_format( example, "cool", "stuff", "bro", "xd")
+    local text_1 = string.format( example, "cool", "stuff", "bro", "xd")
+    print( "with custom fmt: " .. text )
+    print( "with string.format: ", text_1 )
+end)
+-- endregion: custom formatter
 
 -- region: callback library (adv.)
 local insert_name_callback = {}

@@ -1,43 +1,70 @@
--- region: global function to local variable
--- Returns a localized string. The localizable strings usually start with a # character, but there are exceptions. Will return nil on failure.
--- @param key:string
-local localize = client.Localize
-local table_insert, table_concat, string_format, chat_print_f = table.insert, table.concat, string.format,
-    client.ChatPrintf
--- endregion: global function to local variable
-
 callbacks.Unregister( 'DispatchUserMessage', 'usermessage_observer' )
 callbacks.Unregister( 'FireGameEvent', "event_observer" )
+-- region: global to local variable
+-- todo
+-- endregion: global to local variable
 
--- region: custom string builder
+-- region: constant and helper function
 -- LuaFormatter off
 local white_c<const>, old_c<const>, team_c<const>, location_c<const>, achievement_c<const>, black_c<const> = '\x01', '\x02', '\x03', '\x04', '\x05', '\x06'
-local  rgb_c = function( hex_no_alpha ) return '\x07' .. string.sub(hex_no_alpha, 2, #hex_no_alpha)  end
-local argb_c = function( hex_with_alpha ) return '\x08' .. string.sub(hex_with_alpha, 2, #hex_with_alpha) end
-
---@param { color_c, text } or text
-local ChatPrint = function( ... )
-    local buf = {}
-    for k, v in ipairs({...}) do
-        local f, g
-        if (type(v) == "table") then
-             f, g = v[1], v[2]
-            table_insert(buf, f .. g)
-        else 
-            f = v
-            table_insert(buf, f)
-        end 
-    end
-    local e = table_concat(buf, " ")
-    return chat_print_f(e)
-end
+local  rgb_c = function( hexcodes ) return '\x07' .. string.sub(hexcodes, 2, #hexcodes)  end
+local argb_c = function( hexcodes_a ) return '\x08' .. string.sub(hexcodes_a, 2, #hexcodes_a) end
 -- LuaFormatter on
--- endregion
+local try_localize_key = function( key, fallback )
+    local localized = client.Localize( key )
+    key = (#localized > 0 and localized ~= nil) and localized or fallback or key
+    return key
+end
+
+local localize_and_format = function( key, ... )
+    local text = try_localize_key( key )
+    local va_args, order = { ... }, {}
+    text = text:gsub( '%%s(%d+)', function( i )
+        return "%" .. tonumber( i ) -- .. "s" -> %%(%d+)s
+    end )
+    text = text:gsub( '%%(%d+)', function( i )
+        table.insert( order, va_args[tonumber( i )] or "nil" )
+        return '%s'
+    end )
+    print( text )
+    text = string.format( text, table.unpack( order ) )
+    return text
+end
+-- endregion: constant and helper function
+
+-- region: callback handler
+local user_message_callback = {
+    [CallVoteFailed] = {}, -- Note: Sent to a player when they attempt to call a vote and fail.
+    [VoteStart] = {}, -- Note: Sent to all players currently online. The default implementation also sends it to bots.
+    [VotePass] = {}, -- Note: Sent to all players after a vote passes.
+    [VoteFailed] = {}, -- Note: Sent to all players after a vote fails.
+    [VoteSetup] = {} -- Note: Sent to a player when they load the Call Vote screen (which sends the callvote command to the server), lists what votes are allowed on the server
+ }
+
+user_message_callback.bind = function( id, unique, callback )
+    local s = user_message_callback[id]
+    unique = unique or #s + 1
+    if type( s ) ~= "table" then
+        print( "user_message_callback.bind fails to create callback: " .. unique )
+    end
+    s[unique] = callback
+    return unique
+end
+
+user_message_callback.unbind = function( id, unique )
+    local s = user_message_callback[id]
+    if type( s ) ~= "table" then
+        print( "user_message_callback.unbind fails to remove callback: " .. unique )
+    end
+    s[unique] = undef
+    return true
+end
+-- endregion: callback handler
 
 -- region: UserMessage resources
 -- https://wiki.alliedmods.net/Tf2_voting
 -- http://lua-users.org/wiki/SwitchStatement
--- https://github.dev/lua9520/source-engine-2018-hl2_src/ (note: could be outdated)
+-- https://github.dev/lua9520/source-engine-2018-hl2_src/ (note: reference only)
 
 local vote_failed_reason_t<const> = {
     [0] = "VOTE_FAILED_GENERIC",
@@ -99,24 +126,24 @@ local vote_call_vote_failed_localize<const> = {
     [19] = "#GameUI_vote_failed_event_already_active"
  }
 
-local vote_setup_localize<const> = { "#TF_Kick", "#TF_RestartGame", "#TF_ChangeLevel", "#TF_NextLevel",
-                                     "#TF_ScrambleTeams", "#TF_ChangeMission", "#TF_TeamAutoBalance_Enable",
-                                     "#TF_TeamAutoBalance_Disable", "#TF_ClassLimit_Enable", "#TF_ClassLimit_Disable" }
+local vote_setup_localize<const> = { "#TF_Kick", "#TF_RestartGame", "#TF_ChangeLevel", "#TF_NextLevel", "#TF_ScrambleTeams",
+                                     "#TF_ChangeMission", "#TF_TeamAutoBalance_Enable", "#TF_TeamAutoBalance_Disable",
+                                     "#TF_ClassLimit_Enable", "#TF_ClassLimit_Disable" }
 -- endregion: UserMessage resources
 
-local team_index = {
+-- region:
+local team_t = {
     [0] = "[All]",
     [1] = "[Spectator]",
     [2] = "[Red]",
     [3] = "[Blu]"
  }
 
-local color_resource = {
+local colors = {
     [0] = argb_c( "#9EE09Eff" ),
     [1] = argb_c( "#cfcfc4ff" ),
     [2] = argb_c( "#ff6663ff" ),
     [3] = argb_c( "#9EC1CFff" ),
-    --
     [4] = argb_c( "#B4CFB0ff" ),
     [5] = argb_c( "#D885A3ff" ),
     [6] = argb_c( "#D885A3ff" ),
@@ -124,43 +151,16 @@ local color_resource = {
     [8] = argb_c( "#87AAAAff" )
  }
 
-local user_message_callback = {
-    [CallVoteFailed] = {}, -- Note: Sent to a player when they attempt to call a vote and fail.
-    [VoteStart] = {}, -- Note: Sent to all players currently online. The default implementation also sends it to bots.
-    [VotePass] = {}, -- Note: Sent to all players after a vote passes.
-    [VoteFailed] = {}, -- Note: Sent to all players after a vote fails.
-    [VoteSetup] = {} -- Note: Sent to a player when they load the Call Vote screen (which sends the callvote command to the server), lists what votes are allowed on the server
- }
-
-user_message_callback.bind = function( id, unique, callback )
-    local s = user_message_callback[id]
-    unique = unique or #s + 1
-    if type( s ) ~= "table" then
-        print( "user_message_callback.bind fails to create callback: " .. unique )
-    end
-    s[unique] = callback
-    return unique
-end
-
-user_message_callback.unbind = function( id, unique )
-    local s = user_message_callback[id]
-    if type( s ) ~= "table" then
-        print( "user_message_callback.unbind fails to remove callback: " .. unique )
-    end
-    s[unique] = undef
-    return true
-end
-
-local vote_type = {
+local vote_t = {
     [0] = "Yes",
     [1] = "No"
  }
 
 callbacks.Register( 'FireGameEvent', 'event_observer', function( event )
-    if (event:GetName() == "vote_options") then
+    if (event:GetName() == "vote_options") then -- called when there's a new voteissue
         local count = event:GetInt( 'count' )
-        for i = 1, count, 1 do
-            vote_type[i - 1] = event:GetString( 'option' .. i )
+        for i = 1, count do
+            vote_t[i - 1] = event:GetString( 'option' .. i )
         end
     end
 
@@ -168,85 +168,73 @@ callbacks.Register( 'FireGameEvent', 'event_observer', function( event )
         local vote_option<const> = event:GetInt( 'vote_option' )
         local team<const> = event:GetInt( 'team' )
         local entityindex<const> = event:GetInt( 'entityid' )
-
+        ---
         local entity = entities.GetByIndex( entityindex )
-        local plr_team = entity:GetTeamNumber()
-        ChatPrint( { color_resource[plr_team], team_index[plr_team] }, { white_c, entity:GetName() }, "voted",
-            { color_resource[vote_option + 4], vote_type[vote_option] } )
-        -- TODO vote_option + 4 is lazy variable naming 
+        local final = string.format( "%s%s %s%s %s %s%s", --
+        colors[team], team_t[team], -- %1s%2s
+        white_c, entity:GetName(), -- %3s%4s
+        "voted", -- %5s
+        colors[vote_option + 4], vote_t[vote_option] -- %6s%7s
+         )
+        client.ChatPrintf( final )
+        -- todo vote_option + 4 is lazy variable naming 
     end
 end )
 
 callbacks.Register( 'DispatchUserMessage', 'usermessage_observer', function( msg )
-    local msg_enum = msg:GetID()
-    local s = user_message_callback[msg_enum]
-    if (type( s ) == "table") then
+    local id = msg:GetID()
+    local s = user_message_callback[id]
+    if type( s ) == "table" then
         for k, v in pairs( s ) do
             local fn = type( s[k] ) == "function" and s[k]( msg )
+            assert( fn, "[error]" )
             msg:Reset()
         end
     end
 end )
 
--- region: core function
 user_message_callback.bind( VoteStart, "MsgFunc_VoteStart", function( msg )
     local team<const> = msg:ReadByte() -- Team index or 0 for all
     local ent_idx<const> = msg:ReadByte() -- Client index of person who started the vote, or 99 for the server.
     local disp_str<const> = msg:ReadString( 256 ) -- Vote issue translation string
     local details_str<const> = msg:ReadString( 256 ) -- Vote issue text
     local is_yes_no_vote<const> = msg:ReadByte() -- true for Yes/No, false for Multiple choice
-    -- local target_ent_idx<const> = msg:ReadByte()
-
-    local s = (#localize( disp_str ) > 0) and localize( disp_str ) or disp_str
-    s = string.gsub( s, "%%s%d", details_str )
-
-    ChatPrint( { color_resource[team], team_index[team] }, { white_c, s } )
+    ---
+    local s = localize_and_format( disp_str, details_str )
+    local text = table.concat( { colors[team], team_t[team], " ", white_c, s } )
+    client.ChatPrintf( text )
 end )
 
 user_message_callback.bind( VotePass, "MsgFunc_VotePass", function( msg )
     local team<const> = msg:ReadByte() -- Team index or 0 for all
     local disp_str<const> = msg:ReadString( 256 ) -- Vote success translation string
     local details_str = msg:ReadString( 256 ) -- Vote winner
-
-    local s = (#localize( disp_str ) > 0) and localize( disp_str ) or disp_str
-    s = string.gsub( s, "%%s%d", details_str )
-
-    ChatPrint( { color_resource[team], team_index[team] }, { white_c, s } )
+    ---
+    local s = localize_and_format( disp_str, details_str )
+    local text = table.concat( { colors[team], team_t[team], " ", white_c, s } )
+    client.ChatPrintf( text )
 end )
 
 user_message_callback.bind( VoteFailed, "MsgFunc_VoteFailed", function( msg )
     local team<const> = msg:ReadByte() -- Team index or 0 for all
     local reason<const> = msg:ReadByte() -- Failure reason code (0, 3-4)
-
-    -- Order : game_ui_localize, enum fallback
-    local s = vote_failed_localize[reason]
-
-    s = (#localize( s ) > 0) and localize( s ) or vote_failed_reason_t[reason]
-
-    ChatPrint( { color_resource[team], team_index[team] }, { achievement_c, s } )
+    ---
+    local s = localize_and_format( vote_failed_localize[reason] )
+    local text = table.concat( { colors[team], team_t[team], " ", achievement_c, s } )
+    client.ChatPrintf( text )
 end )
 
 user_message_callback.bind( CallVoteFailed, "MsgFunc_CallVoteFailed", function( msg )
     local reason<const> = msg:ReadByte() -- Failure reason (1-2, 5-10, 12-19)
     local time<const> = msg:ReadInt( 16 ) -- For failure reasons 2 and 8, time in seconds until client can start another vote. 2 is per user, 8 is per vote type.
-
-    -- Order : game_ui_localize, enum fallback
-    --[[
-    local s = type( vote_call_vote_failed_localize[reason] ) == "function" and
-                  vote_call_vote_failed_localize[reason]( time ) or vote_call_vote_failed_localize[reason]
-
-    s = (#localize( s ) > 0) and localize( s ) or vote_failed_reason_t[reason]
-
-    s = string.gsub( s, "%S+", { -- convert lua format
-        ["%s1"] = "%s",
-        ["%s2"] = "%s"
-     } )
-    s = string.format( s, time )]] --
-
-    local s = vote_failed_reason_t[reason]
+    ---
     local me = entities.GetLocalPlayer()
-    ChatPrint( { color_resource[me:GetTeamNumber()], "[YOU]" }, { argb_c( "#FDFD97FF" ), time },
-        { white_c, (time <= 1 and "second" or "seconds") }, "left to wait before casting another vote.",
-        { achievement_c, s } )
+    local text = string.format( "%s%s %s%s %s%s left to wait before casting another vote. \r\n%s%s", --
+    colors[me:GetTeamNumber()], "[YOU]", -- %1s%2s
+    argb_c( "#FDFD97FF" ), time, -- %3s%4s
+    white_c, (time <= 1 and "second" or "seconds"), -- %5s%6s
+    achievement_c, vote_failed_reason_t[reason] -- %7s%8s
+     )
+    client.ChatPrintf( text )
 end )
--- endregion: core function
+-- endregion:
