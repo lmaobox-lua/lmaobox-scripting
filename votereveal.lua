@@ -27,7 +27,6 @@ local localize_and_format = function( key, ... )
         table.insert( order, va_args[tonumber( i )] or "nil" )
         return '%s'
     end )
-    print( text )
     text = string.format( text, table.unpack( order ) )
     return text
 end
@@ -44,19 +43,19 @@ local user_message_callback = {
 
 user_message_callback.bind = function( id, unique, callback )
     local s = user_message_callback[id]
+    assert( type( s ) == "table",
+        string.format( "user_message_callback.bind fails to create callback: <line: %s, id: %s, unique: %s, table: %s>",
+            debug.getinfo( 2, 'l' ).currentline, id, unique, s ) )
     unique = unique or #s + 1
-    if type( s ) ~= "table" then
-        print( "user_message_callback.bind fails to create callback: " .. unique )
-    end
     s[unique] = callback
     return unique
 end
 
 user_message_callback.unbind = function( id, unique )
     local s = user_message_callback[id]
-    if type( s ) ~= "table" then
-        print( "user_message_callback.unbind fails to remove callback: " .. unique )
-    end
+    assert( type( s ) == "table",
+        string.format( "user_message_callback.unbind fails to remove callback: <line: %s, id: %s, unique: %s, table: %s>",
+            debug.getinfo( 2, 'l' ).currentline, id, unique, s ) )
     s[unique] = undef
     return true
 end
@@ -188,8 +187,11 @@ callbacks.Register( 'DispatchUserMessage', 'usermessage_observer', function( msg
     if type( s ) == "table" then
         for k, v in pairs( s ) do
             local fn = type( s[k] ) == "function" and s[k]( msg )
-            assert( fn ~= true, string.format( "[execution error] <id: %s, name: %s>", id, k ) )
             msg:Reset()
+            -- todo assert didn't work here, donno why.
+            if type( fn ) ~= "boolean" then
+                printc( 255, 0, 0, 255, string.format( "[%s] <id: %s, unique: %s, table : %s>", GetScriptName(), id, k, s ) )
+            end
         end
     end
 end )
@@ -226,6 +228,9 @@ user_message_callback.bind( VoteFailed, "MsgFunc_VoteFailed", function( msg )
 end )
 
 user_message_callback.bind( CallVoteFailed, "MsgFunc_CallVoteFailed", function( msg )
+    if true then
+        return
+    end
     local reason<const> = msg:ReadByte() -- Failure reason (1-2, 5-10, 12-19)
     local time<const> = msg:ReadInt( 16 ) -- For failure reasons 2 and 8, time in seconds until client can start another vote. 2 is per user, 8 is per vote type.
     ---
