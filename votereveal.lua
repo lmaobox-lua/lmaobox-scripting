@@ -1,5 +1,6 @@
 callbacks.Unregister( 'DispatchUserMessage', 'usermessage_observer' )
 callbacks.Unregister( 'FireGameEvent', "event_observer" )
+
 -- region: global to local variable
 -- todo
 -- endregion: global to local variable
@@ -177,7 +178,7 @@ callbacks.Register( 'FireGameEvent', 'event_observer', function( event )
         colors[vote_option + 4], vote_t[vote_option] -- %6s%7s
          )
         client.ChatPrintf( final )
-        -- todo vote_option + 4 is lazy variable naming 
+        -- todo colors[vote_option + 4] could be misleading!
     end
 end )
 
@@ -187,7 +188,7 @@ callbacks.Register( 'DispatchUserMessage', 'usermessage_observer', function( msg
     if type( s ) == "table" then
         for k, v in pairs( s ) do
             local fn = type( s[k] ) == "function" and s[k]( msg )
-            assert( fn, "[error]" )
+            assert( fn ~= true, string.format( "[execution error] <id: %s, name: %s>", id, k ) )
             msg:Reset()
         end
     end
@@ -202,7 +203,7 @@ user_message_callback.bind( VoteStart, "MsgFunc_VoteStart", function( msg )
     ---
     local s = localize_and_format( disp_str, details_str )
     local text = table.concat( { colors[team], team_t[team], " ", white_c, s } )
-    client.ChatPrintf( text )
+    return client.ChatPrintf( text )
 end )
 
 user_message_callback.bind( VotePass, "MsgFunc_VotePass", function( msg )
@@ -212,7 +213,7 @@ user_message_callback.bind( VotePass, "MsgFunc_VotePass", function( msg )
     ---
     local s = localize_and_format( disp_str, details_str )
     local text = table.concat( { colors[team], team_t[team], " ", white_c, s } )
-    client.ChatPrintf( text )
+    return client.ChatPrintf( text )
 end )
 
 user_message_callback.bind( VoteFailed, "MsgFunc_VoteFailed", function( msg )
@@ -221,7 +222,7 @@ user_message_callback.bind( VoteFailed, "MsgFunc_VoteFailed", function( msg )
     ---
     local s = localize_and_format( vote_failed_localize[reason] )
     local text = table.concat( { colors[team], team_t[team], " ", achievement_c, s } )
-    client.ChatPrintf( text )
+    return client.ChatPrintf( text )
 end )
 
 user_message_callback.bind( CallVoteFailed, "MsgFunc_CallVoteFailed", function( msg )
@@ -235,6 +236,12 @@ user_message_callback.bind( CallVoteFailed, "MsgFunc_CallVoteFailed", function( 
     white_c, (time <= 1 and "second" or "seconds"), -- %5s%6s
     achievement_c, vote_failed_reason_t[reason] -- %7s%8s
      )
-    client.ChatPrintf( text )
+    return client.ChatPrintf( text )
 end )
 -- endregion:
+
+--[[
+    todo : multilang support + seralization
+    cvar ref:
+    cl_language lang ; english 1 
+]] -- 
