@@ -160,7 +160,7 @@ local vote_t = {}
 
 callbacks.Register( 'FireGameEvent', 'event_observer', function( event )
     if (event:GetName() == "vote_options") then -- called when there's a new voteissue
-        -- todo : this seems bugged atm, too lazy to find where problem is
+        -- todo : this seems bugged atm, too lazy to find where problem is, plus idk how multi-option vote works
         local count = event:GetInt( 'count' )
         if (count < 3) then
             vote_t = vote_default_t
