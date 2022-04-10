@@ -151,14 +151,21 @@ local colors = {
     [8] = argb_c( "#87AAAAff" )
  }
 
-local vote_t = {
+local vote_default_t = {
     [0] = "Yes",
     [1] = "No"
  }
 
+local vote_t = {}
+
 callbacks.Register( 'FireGameEvent', 'event_observer', function( event )
     if (event:GetName() == "vote_options") then -- called when there's a new voteissue
+        -- todo : this seems bugged atm, too lazy to find where problem is
         local count = event:GetInt( 'count' )
+        if (count < 3) then
+            vote_t = vote_default_t
+            return
+        end
         for i = 1, count do
             vote_t[i - 1] = event:GetString( 'option' .. i )
         end
@@ -228,9 +235,6 @@ user_message_callback.bind( VoteFailed, "MsgFunc_VoteFailed", function( msg )
 end )
 
 user_message_callback.bind( CallVoteFailed, "MsgFunc_CallVoteFailed", function( msg )
-    if true then
-        return
-    end
     local reason<const> = msg:ReadByte() -- Failure reason (1-2, 5-10, 12-19)
     local time<const> = msg:ReadInt( 16 ) -- For failure reasons 2 and 8, time in seconds until client can start another vote. 2 is per user, 8 is per vote type.
     ---
@@ -246,7 +250,8 @@ end )
 -- endregion:
 
 --[[
-    todo : multilang support + seralization
+    bf : ChatPrintf in game doesnt support wide characters so (https://t.me/c/1767303226/3273)
+    todo : multilang support + seralization (maybe lol)
     cvar ref:
     cl_language lang ; english 1 
 ]] -- 
