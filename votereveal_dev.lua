@@ -1,9 +1,7 @@
-callbacks.Unregister( 'DispatchUserMessage', 'usermessage_observer' )
 callbacks.Unregister( 'FireGameEvent', "event_observer" )
 callbacks.Unregister( 'FireGameEvent', 'votecounting' )
 
 -- region: global to local variable
--- todo
 -- endregion: global to local variable
 
 -- region: constant and helper function
@@ -12,6 +10,17 @@ local white_c<const>, old_c<const>, team_c<const>, location_c<const>, achievemen
 local  rgb_c = function( hexcodes ) return '\x07' .. string.sub(hexcodes, 2, #hexcodes)  end
 local argb_c = function( hexcodes_a ) return '\x08' .. string.sub(hexcodes_a, 2, #hexcodes_a) end
 -- LuaFormatter on
+local to_rgba = function( hexcodes_a )
+    local integer = tonumber( "0x" .. hexcodes_a:sub( 2, #hexcodes_a ) )
+    assert( integer < 4294967295, "hexcodes cannot go over 32bits" )
+    local r, g, b, a
+    a = integer & 0xFF
+    r = integer >> 24 & 0xFF
+    g = integer >> 16 & 0xFF
+    b = integer >> 8 & 0xFF
+    return r, g, b, a
+end
+
 local try_localize_key = function( key, fallback )
     local localized = client.Localize( key )
     key = (#localized > 0 and localized ~= nil) and localized or fallback or key
@@ -34,71 +43,55 @@ end
 -- endregion: constant and helper function
 
 -- region: callback handler
-local user_message_callback = {
-    [CallVoteFailed] = {}, -- Note: Sent to a player when they attempt to call a vote and fail.
-    [VoteStart] = {}, -- Note: Sent to all players currently online. The default implementation also sends it to bots.
-    [VotePass] = {}, -- Note: Sent to all players after a vote passes.
-    [VoteFailed] = {}, -- Note: Sent to all players after a vote fails.
-    [VoteSetup] = {} -- Note: Sent to a player when they load the Call Vote screen (which sends the callvote command to the server), lists what votes are allowed on the server
+--[[
+    when to ipairs vs pairs, dumbed down version
+    use ipairs to iterate ALL over table when table doesn't contain String keys
+        , MUST contain first numeric key: example: luatable[1]
+        , numeric keys must not smaller than 1: example: luatable[0] will get ignored
+        , numeric keys are in sequence (ordered lists of numbers represented by the formula n+1) 
+    ---
+    run this example: 
+        luatable = { [0] = "a", "b", [3] = "g", "c", "f", [3] = "e", [99] = "h", ['99'] = "h" }
+        luatable[3] = "what"
+        for key,value in ipairs(luatable) do print(key,value,type(key)) end
+        for key,value in pairs(luatable) do print(key,value,type(key)) end
+    ..remove the line contains: luatable[3] = "what" and run the example again.
+]]
+local user_message_callbacks = {
+    [CallVoteFailed] = {}, -- Sent to a player when they attempt to call a vote and fail.
+    [VoteStart] = {}, -- Sent to all players currently online. The default implementation also sends it to bots.
+    [VotePass] = {}, -- Sent to all players after a vote passes.
+    [VoteFailed] = {}, -- Sent to all players after a vote fails.
+    [VoteSetup] = {} -- Sent to a player when they load the Call Vote screen (which sends the callvote command to the server), lists what votes are allowed on the server
  }
 
---[[[
-local assertc = function( eval, hexcodes_a, text )
-    if not eval == true then
-        local integer = tonumber( "0x" .. hexcodes_a:sub( 2, #hexcodes_a ) )
-        local r, g, b, a
-        a = integer & 0xFF
-        r = integer >> 24 & 0xFF
-        g = integer >> 16 & 0xFF
-        b = integer >> 8 & 0xFF
-        printc( r, g, b, a, text )
-        error( 'assertc breakpoint.', 2 )
-    end
-end
-
-user_message_callback.bind = function( id, unique, callback )
-    local s = user_message_callback[id]
-    assertc( type( s ) == "table" and type( unique ) == "string" and type( callback ) == "function", '#ffc400ff',
-        string.format( "user_message_callback.bind fails to create callback: <line: %s, id: %s, unique: %s, table: %s>",
-            debug.getinfo( 2, 'l' ).currentline, id, unique, s ) )
-    s[unique] = callback
+user_message_callbacks.new = function( id, unique, callback ) -- this has noticable delay
+    assert( type( id ) == "number" and type( unique ) == "string" and type( callback ) == "function",
+        string.format( "user_message_callback.new failed to register callbacks: <line: %s, id: %s, unique: %s>",
+            debug.getinfo( 2, 'l' ).currentline, id, unique ) )
+    callbacks.Unregister( 'DispatchUserMessage', unique )
+    callbacks.Register( 'DispatchUserMessage', unique, function( msg )
+        if (msg:GetID() == id) then
+            callback( msg )
+        end
+    end )
+    table.insert( user_message_callbacks[id], unique )
     return unique
 end
 
-user_message_callback.unbind = function( id, unique )
-    local s = user_message_callback[id]
-    assertc( type( s ) == "table" and type( unique ) == "string", '#ffc400ff',
-        string.format( "user_message_callback.unbind fails to remove callback: <line: %s, id: %s, unique: %s, table: %s>",
-            debug.getinfo( 2, 'l' ).currentline, id, unique, s ) )
-    s[unique] = undef
-    return true
-end
-
-callbacks.Register( 'DispatchUserMessage', 'usermessage_observer', function( msg )
-    local id = msg:GetID()
-    local s = user_message_callback[id]
-    if type( s ) == "table" then
-        for k, v in pairs( s ) do
-            local evaluation = type( s[k] ) == "function" and s[k]( msg )
-            msg:Reset()
-            if not evaluation then
-                user_message_callback.unbind( id, k )
-                assertc( evaluation, "#ffc400ff", string.format( "[%s] <id: %s, unique: %s, table : %s>, valueof(fn): %s", GetScriptName(), id, k, s, evaluation ) )
+callbacks.Register( 'Unload', function()
+    -- normally this isn't needed, but knowing i may fuck it up this is the final cleanup
+    for i, v in pairs( user_message_callbacks ) do
+        if type( v ) == "table" and next( v ) ~= nil then
+            for i1, v1 in pairs( v ) do
+                callbacks.Unregister( 'DispatchUserMessage', v1 )
             end
         end
     end
-end )]]
+    local r, g, b, a = to_rgba( '#39b83dff' )
+    printc( r, g, b, a, string.format( "[%s] previous instance:\n%s was unloaded", os.date( '%c' ), GetScriptName() ) )
+end )
 
-user_message_callback.new = function( id, unique, callbacks )
-    callbacks.Register( 'DispatchUserMessage', unique, function( msg )
-        if (msg:GetID() == id) then
-            callbacks( msg )
-        end
-    end )
-end
-user_message_callback.delete = function(id, unique)
-    
-end
 -- endregion: callback handler
 
 -- region: UserMessage resources
@@ -222,13 +215,6 @@ function tally:get_eligible_voter( team )
 
     for index, ent in ipairs( entities.FindByClass( 'CTFPlayer' ) ) do
         repeat
-            -- check if player haven't already voted 
-            for i, e in ipairs( self.poll ) do
-                if index == i then
-                    break
-                end
-            end
-
             local playerinfo = client.GetPlayerInfo( index )
             if playerinfo.IsBot or playerinfo.IsHLTV then
                 filter[index] = string.format( "[filter] L1 | IsBot: %s, IsHLTV: %s", playerinfo.IsBot, playerinfo.IsHLTV )
@@ -250,11 +236,17 @@ function tally:get_eligible_voter( team )
         until true
     end
 
+    -- override said logic if player has already voted
+    for playerindex, voteoption in pairs( self.poll ) do
+        filter[playerindex] = true
+    end
+
     for i, v in ipairs( filter ) do
         if v == true then
             self.eligible[#self.eligible + 1] = i
         end
     end
+
 end
 
 function tally:begin( count )
@@ -270,33 +262,45 @@ local talley_counting = function( event )
     local team<const> = event:GetInt( 'team' )
     local entityindex<const> = event:GetInt( 'entityid' )
 
-    -- check table is empty
-    if next( tally.eligible ) == nil or next( tally.count ) == nil then
-        return ''
+    tally.poll[entityindex] = vote_option
+
+    local count = 0
+    for i, v in pairs( tally.poll ) do
+        count = count + 1
     end
 
-    local str = ''
-    local count = #tally.eligible
-    local key = table.concat( { 'o', vote_option - 1 } ) -- table starts from 1, but vote_option enum starts from 0
-
-    for i, v in ipairs( tally.eligible ) do
-        if v == entityindex then
-            table.insert( tally[key], entityindex )
-        end
+    if next( tally.eligible ) == nil or tally.count == nil then
     end
+
+    local text = ''
+
+    local a, b, c, d, e = 0, 0, 0, 0, 0
+    local voted, al, bl, cl, dl, el
+
+    -- truly gay code
+    for i, v in pairs( tally.poll ) do
+        repeat
+            if v == 0 then
+                a = a + 1
+            elseif v == 1 then
+                b = b + 1
+            elseif v == 2 then
+                c = c + 1
+            end
+        until true
+    end
+
+    voted = a + b
+    al = (a) / count * 100
+    bl = (b + count - voted) / count * 100 -- because hasn't voted also count as no vote
+    text = string.format( '| Yes: %s, No: %s', al, bl )
+    
+    -- this thing needs to be logged into console, no way to retrack valve weight on f2p votes and p2p votes man.
+    print( a, b, count )
 
     -- calculate completion percentage
-    local a, b, c, d, e, al, bl, cl, dl, el
-    if talley.is_yes_no_vote then
-        a, b = #tally.o1, #tally.o2
-        al = (a / count) * 100
-        bl = (b + (count - a - b) / count) * 100 -- because hasn't voted also count as no vote
-        str = string.format( '| Yes: %s, No: %s', al, bl )
-    else
-
-    end
-    print( str )
-    return str
+    print( text )
+    return text
 end
 -- C:\Users\localuser\AppData\Local//lbox/votereveal_dev.lua:275: attempt to perform arithmetic on a nil value (field '?')
 
@@ -307,7 +311,7 @@ callbacks.Register( 'FireGameEvent', 'tally_count', function( event )
 end )
 
 -- 1 byte = 8 bits
-user_message_callback.bind( VoteStart, "tally_vote_start", function( msg )
+user_message_callbacks.new( VoteStart, "tally_vote_start", function( msg )
     local team<const> = msg:ReadByte() -- Team index or 0 for all
     msg:SetCurBit( 192 )
     local is_yes_no_vote<const> = msg:ReadByte() -- true for Yes/No, false for Multiple choice
@@ -352,7 +356,7 @@ callbacks.Register( 'FireGameEvent', 'event_observer', function( event )
     end
 end )
 
-user_message_callback.bind( VoteStart, "MsgFunc_VoteStart", function( msg )
+user_message_callbacks.new( VoteStart, "MsgFunc_VoteStart", function( msg )
     local team<const> = msg:ReadByte() -- Team index or 0 for all
     local ent_idx<const> = msg:ReadByte() -- Client index of person who started the vote, or 99 for the server.
     local disp_str<const> = msg:ReadString( 256 ) -- Vote issue translation string
@@ -364,7 +368,7 @@ user_message_callback.bind( VoteStart, "MsgFunc_VoteStart", function( msg )
     client.ChatPrintf( text )
 end )
 
-user_message_callback.bind( VotePass, "MsgFunc_VotePass", function( msg )
+user_message_callbacks.new( VotePass, "MsgFunc_VotePass", function( msg )
     local team<const> = msg:ReadByte() -- Team index or 0 for all
     local disp_str<const> = msg:ReadString( 256 ) -- Vote success translation string
     local details_str<const> = msg:ReadString( 256 ) -- Vote winner
@@ -374,7 +378,7 @@ user_message_callback.bind( VotePass, "MsgFunc_VotePass", function( msg )
     client.ChatPrintf( text )
 end )
 
-user_message_callback.bind( VoteFailed, "MsgFunc_VoteFailed", function( msg )
+user_message_callbacks.new( VoteFailed, "MsgFunc_VoteFailed", function( msg )
     local team<const> = msg:ReadByte() -- Team index or 0 for all
     local reason<const> = msg:ReadByte() -- Failure reason code (0, 3-4)
     ---
@@ -383,7 +387,7 @@ user_message_callback.bind( VoteFailed, "MsgFunc_VoteFailed", function( msg )
     client.ChatPrintf( text )
 end )
 
-user_message_callback.bind( CallVoteFailed, "MsgFunc_CallVoteFailed", function( msg )
+user_message_callbacks.new( CallVoteFailed, "MsgFunc_CallVoteFailed", function( msg )
     local reason<const> = msg:ReadByte() -- Failure reason (1-2, 5-10, 12-19)
     local time<const> = msg:ReadInt( 16 ) -- For failure reasons 2 and 8, time in seconds until client can start another vote. 2 is per user, 8 is per vote type.
     ---

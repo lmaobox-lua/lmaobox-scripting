@@ -3,7 +3,7 @@
 -- region: print+color library
 -- @param red, green, blue, alpha [0-255]
 -- @return #RRGGBBAA
-local to_hex = function( r, g, b, a )
+local to_hexcodes = function( r, g, b, a )
     a = (0x100 <= a) and 255 or a
     local hex = (r * 0x1000000) + (g * 0x10000) + (b * 0x100) + a
     return ("#%08x"):format( hex )
