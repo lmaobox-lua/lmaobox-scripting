@@ -41,19 +41,18 @@ local user_message_callback = {
     [VoteSetup] = {} -- Note: Sent to a player when they load the Call Vote screen (which sends the callvote command to the server), lists what votes are allowed on the server
  }
 
-user_message_callback.bind = function( id, unique, callback )
+ user_message_callback.bind = function( id, unique, callback )
     local s = user_message_callback[id]
-    assert( type( s ) == "table",
+    assert( type( s ) == "table" and type( unique ) == "string",
         string.format( "user_message_callback.bind fails to create callback: <line: %s, id: %s, unique: %s, table: %s>",
             debug.getinfo( 2, 'l' ).currentline, id, unique, s ) )
-    unique = unique or #s + 1
     s[unique] = callback
     return unique
 end
 
 user_message_callback.unbind = function( id, unique )
     local s = user_message_callback[id]
-    assert( type( s ) == "table",
+    assert( type( s ) == "table" and type( unique ) == "string" ,
         string.format( "user_message_callback.unbind fails to remove callback: <line: %s, id: %s, unique: %s, table: %s>",
             debug.getinfo( 2, 'l' ).currentline, id, unique, s ) )
     s[unique] = undef
@@ -218,7 +217,7 @@ end )
 user_message_callback.bind( VotePass, "MsgFunc_VotePass", function( msg )
     local team<const> = msg:ReadByte() -- Team index or 0 for all
     local disp_str<const> = msg:ReadString( 256 ) -- Vote success translation string
-    local details_str = msg:ReadString( 256 ) -- Vote winner
+    local details_str<const> = msg:ReadString( 256 ) -- Vote winner
     ---
     local s = localize_and_format( disp_str, details_str )
     local text = table.concat( { colors[team], team_t[team], " ", white_c, s } )

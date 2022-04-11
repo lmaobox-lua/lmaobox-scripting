@@ -10,8 +10,8 @@ local to_hex = function( r, g, b, a )
 end
 -- @param #RRGGBBAA
 -- @return table: red, green, blue, alpha 
-local to_rgba = function( hex_eight )
-    local integer = tonumber( "0x" .. hex_eight:sub( 2, #hex_eight ) )
+local to_rgba = function( hexcodes_a )
+    local integer = tonumber( "0x" .. hexcodes_a:sub( 2, #hexcodes_a ) )
     local r, g, b, a
     a = integer & 0xFF
     r = integer >> 24 & 0xFF

@@ -1,5 +1,6 @@
 callbacks.Unregister( 'DispatchUserMessage', 'usermessage_observer' )
 callbacks.Unregister( 'FireGameEvent', "event_observer" )
+callbacks.Unregister( 'FireGameEvent', 'votecounting' )
 
 -- region: global to local variable
 -- todo
@@ -41,23 +42,62 @@ local user_message_callback = {
     [VoteSetup] = {} -- Note: Sent to a player when they load the Call Vote screen (which sends the callvote command to the server), lists what votes are allowed on the server
  }
 
+--[[[
+local assertc = function( eval, hexcodes_a, text )
+    if not eval == true then
+        local integer = tonumber( "0x" .. hexcodes_a:sub( 2, #hexcodes_a ) )
+        local r, g, b, a
+        a = integer & 0xFF
+        r = integer >> 24 & 0xFF
+        g = integer >> 16 & 0xFF
+        b = integer >> 8 & 0xFF
+        printc( r, g, b, a, text )
+        error( 'assertc breakpoint.', 2 )
+    end
+end
+
 user_message_callback.bind = function( id, unique, callback )
     local s = user_message_callback[id]
-    assert( type( s ) == "table",
+    assertc( type( s ) == "table" and type( unique ) == "string" and type( callback ) == "function", '#ffc400ff',
         string.format( "user_message_callback.bind fails to create callback: <line: %s, id: %s, unique: %s, table: %s>",
             debug.getinfo( 2, 'l' ).currentline, id, unique, s ) )
-    unique = unique or #s + 1
     s[unique] = callback
     return unique
 end
 
 user_message_callback.unbind = function( id, unique )
     local s = user_message_callback[id]
-    assert( type( s ) == "table",
+    assertc( type( s ) == "table" and type( unique ) == "string", '#ffc400ff',
         string.format( "user_message_callback.unbind fails to remove callback: <line: %s, id: %s, unique: %s, table: %s>",
             debug.getinfo( 2, 'l' ).currentline, id, unique, s ) )
     s[unique] = undef
     return true
+end
+
+callbacks.Register( 'DispatchUserMessage', 'usermessage_observer', function( msg )
+    local id = msg:GetID()
+    local s = user_message_callback[id]
+    if type( s ) == "table" then
+        for k, v in pairs( s ) do
+            local evaluation = type( s[k] ) == "function" and s[k]( msg )
+            msg:Reset()
+            if not evaluation then
+                user_message_callback.unbind( id, k )
+                assertc( evaluation, "#ffc400ff", string.format( "[%s] <id: %s, unique: %s, table : %s>, valueof(fn): %s", GetScriptName(), id, k, s, evaluation ) )
+            end
+        end
+    end
+end )]]
+
+user_message_callback.new = function( id, unique, callbacks )
+    callbacks.Register( 'DispatchUserMessage', unique, function( msg )
+        if (msg:GetID() == id) then
+            callbacks( msg )
+        end
+    end )
+end
+user_message_callback.delete = function(id, unique)
+    
 end
 -- endregion: callback handler
 
@@ -132,6 +172,7 @@ local vote_setup_localize<const> = { "#TF_Kick", "#TF_RestartGame", "#TF_ChangeL
 -- endregion: UserMessage resources
 
 -- region:
+local TFUnassigned<const>, TFSpectator<const>, TFRed<const>, TFBlu<const> = 0, 1, 2, 3
 local team_t = {
     [0] = "[All]",
     [1] = "[Spectator]",
@@ -151,18 +192,143 @@ local colors = {
     [8] = argb_c( "#87AAAAff" )
  }
 
-local vote_t = {
+local vote_default_t = {
     [0] = "Yes",
     [1] = "No"
  }
 
+local vote_t = {}
+
+-- region: predict vote outcome [exprimental feature, and pretty spaghetti]
+-- LuaFormatter off
+local tally = {
+    --o1, o2, o3, o4, o5, -- (table) playerindex of player choosed option
+    eligible, -- (table) playerindex of member allowed to vote for this issue
+    poll, -- (table) playerindex of member already voted with value being the chosen option
+    count, -- (vote_options) number of options can be voted in this issue (max: 5)
+    is_yes_no_vote, -- (usermessage or vote_options: count <= 2: is_yes_no_vote , count > 2 : multi-option vote )
+    team_t, -- (usermessage) which team can vote
+}
+-- LuaFormatter on
+
+-- if usual, vote_cast and vote_options gets called before usermessages
+
+function tally:get_eligible_voter( team )
+    self.team_t = team
+    local is_yes_no_vote = not (self.count > 2)
+    local free_for_all_vote = team == TFUnassigned
+    local sv_vote_allow_spectators = tonumber( client.GetConVar( 'sv_vote_allow_spectators' ) )
+    local filter = {}
+
+    for index, ent in ipairs( entities.FindByClass( 'CTFPlayer' ) ) do
+        repeat
+            -- check if player haven't already voted 
+            for i, e in ipairs( self.poll ) do
+                if index == i then
+                    break
+                end
+            end
+
+            local playerinfo = client.GetPlayerInfo( index )
+            if playerinfo.IsBot or playerinfo.IsHLTV then
+                filter[index] = string.format( "[filter] L1 | IsBot: %s, IsHLTV: %s", playerinfo.IsBot, playerinfo.IsHLTV )
+                break
+            end
+            if sv_vote_allow_spectators == 0 and ent:GetTeamNumber() == TFSpectator then
+                filter[index] = string.format( "[filter] L2 | sv_vote_allow_spectators: %s, team: %s", sv_vote_allow_spectators,
+                    ent:GetTeamNumber() )
+                break
+            end
+            if not free_for_all_vote and ent:GetTeamNumber() ~= self.team_t then
+                filter[index] = string.format( "[filter] L3 | free_for_all_vote: %s, team: %s", free_for_all_vote, ent:GetTeamNumber() )
+                break
+            end
+            -- todo : need further testing
+            if gamerules.IsMvM() and ent:GetTeamNumber() ~= TFRed then
+            end
+            filter[index] = true
+        until true
+    end
+
+    for i, v in ipairs( filter ) do
+        if v == true then
+            self.eligible[#self.eligible + 1] = i
+        end
+    end
+end
+
+function tally:begin( count )
+    self.count = count
+    local is_yes_no_vote = not (self.count > 2)
+    self.is_yes_no_vote = is_yes_no_vote
+    self.poll = {}
+    self.eligible = {}
+end
+
+local talley_counting = function( event )
+    local vote_option<const> = event:GetInt( 'vote_option' )
+    local team<const> = event:GetInt( 'team' )
+    local entityindex<const> = event:GetInt( 'entityid' )
+
+    -- check table is empty
+    if next( tally.eligible ) == nil or next( tally.count ) == nil then
+        return ''
+    end
+
+    local str = ''
+    local count = #tally.eligible
+    local key = table.concat( { 'o', vote_option - 1 } ) -- table starts from 1, but vote_option enum starts from 0
+
+    for i, v in ipairs( tally.eligible ) do
+        if v == entityindex then
+            table.insert( tally[key], entityindex )
+        end
+    end
+
+    -- calculate completion percentage
+    local a, b, c, d, e, al, bl, cl, dl, el
+    if talley.is_yes_no_vote then
+        a, b = #tally.o1, #tally.o2
+        al = (a / count) * 100
+        bl = (b + (count - a - b) / count) * 100 -- because hasn't voted also count as no vote
+        str = string.format( '| Yes: %s, No: %s', al, bl )
+    else
+
+    end
+    print( str )
+    return str
+end
+-- C:\Users\localuser\AppData\Local//lbox/votereveal_dev.lua:275: attempt to perform arithmetic on a nil value (field '?')
+
+callbacks.Register( 'FireGameEvent', 'tally_count', function( event )
+    if (event:GetName() == "vote_options") then
+        tally:begin( event:GetInt( 'count' ) )
+    end
+end )
+
+-- 1 byte = 8 bits
+user_message_callback.bind( VoteStart, "tally_vote_start", function( msg )
+    local team<const> = msg:ReadByte() -- Team index or 0 for all
+    msg:SetCurBit( 192 )
+    local is_yes_no_vote<const> = msg:ReadByte() -- true for Yes/No, false for Multiple choice
+    tally.get_eligible_voter( tally, team ) -- main problem is yes/no already counted before usermessage gets calledd
+    -- we have to change our logic
+    return true
+end )
+
+-- endregion: predict vote outcome
+
 callbacks.Register( 'FireGameEvent', 'event_observer', function( event )
     if (event:GetName() == "vote_options") then -- called when there's a new voteissue
+        -- todo : this seems bugged atm, too lazy to find where problem is, plus idk how multi-option vote works
         local count = event:GetInt( 'count' )
+        if (count < 3) then
+            vote_t = vote_default_t
+            return
+        end
         for i = 1, count do
             vote_t[i - 1] = event:GetString( 'option' .. i )
         end
-        printLuaTable(vote_t)
     end
 
     if (event:GetName() == "vote_cast") then
@@ -171,29 +337,18 @@ callbacks.Register( 'FireGameEvent', 'event_observer', function( event )
         local entityindex<const> = event:GetInt( 'entityid' )
         ---
         local entity = entities.GetByIndex( entityindex )
-        local final = string.format( "%s%s %s%s %s %s%s", --
+        local player_name = entity:GetName() or '<player left>'
+        local str = talley_counting( event )
+
+        local final = string.format( "%s%s %s%s %s %s%s %s%s", --
         colors[team], team_t[team], -- %1s%2s
-        white_c, entity:GetName(), -- %3s%4s
+        white_c, player_name, -- %3s%4s
         "voted", -- %5s
-        colors[vote_option + 4], vote_t[vote_option] -- %6s%7s
+        colors[vote_option + 4], vote_t[vote_option], -- %6s%7s
+        white_c, str -- %8s%9s
          )
         client.ChatPrintf( final )
         -- todo colors[vote_option + 4] could be misleading!
-    end
-end )
-
-callbacks.Register( 'DispatchUserMessage', 'usermessage_observer', function( msg )
-    local id = msg:GetID()
-    local s = user_message_callback[id]
-    if type( s ) == "table" then
-        for k, v in pairs( s ) do
-            local fn = type( s[k] ) == "function" and s[k]( msg )
-            msg:Reset()
-            -- todo assert didn't work here, donno why.
-            if type( fn ) ~= "boolean" then
-                printc( 255, 0, 0, 255, string.format( "[%s] <id: %s, unique: %s, table : %s>", GetScriptName(), id, k, s ) )
-            end
-        end
     end
 end )
 
@@ -206,17 +361,17 @@ user_message_callback.bind( VoteStart, "MsgFunc_VoteStart", function( msg )
     ---
     local s = localize_and_format( disp_str, details_str )
     local text = table.concat( { colors[team], team_t[team], " ", white_c, s } )
-    return client.ChatPrintf( text )
+    client.ChatPrintf( text )
 end )
 
 user_message_callback.bind( VotePass, "MsgFunc_VotePass", function( msg )
     local team<const> = msg:ReadByte() -- Team index or 0 for all
     local disp_str<const> = msg:ReadString( 256 ) -- Vote success translation string
-    local details_str = msg:ReadString( 256 ) -- Vote winner
+    local details_str<const> = msg:ReadString( 256 ) -- Vote winner
     ---
     local s = localize_and_format( disp_str, details_str )
     local text = table.concat( { colors[team], team_t[team], " ", white_c, s } )
-    return client.ChatPrintf( text )
+    client.ChatPrintf( text )
 end )
 
 user_message_callback.bind( VoteFailed, "MsgFunc_VoteFailed", function( msg )
@@ -225,13 +380,10 @@ user_message_callback.bind( VoteFailed, "MsgFunc_VoteFailed", function( msg )
     ---
     local s = localize_and_format( vote_failed_localize[reason] )
     local text = table.concat( { colors[team], team_t[team], " ", achievement_c, s } )
-    return client.ChatPrintf( text )
+    client.ChatPrintf( text )
 end )
 
 user_message_callback.bind( CallVoteFailed, "MsgFunc_CallVoteFailed", function( msg )
-    if true then
-        return
-    end
     local reason<const> = msg:ReadByte() -- Failure reason (1-2, 5-10, 12-19)
     local time<const> = msg:ReadInt( 16 ) -- For failure reasons 2 and 8, time in seconds until client can start another vote. 2 is per user, 8 is per vote type.
     ---
@@ -242,6 +394,6 @@ user_message_callback.bind( CallVoteFailed, "MsgFunc_CallVoteFailed", function( 
     white_c, (time <= 1 and "second" or "seconds"), -- %5s%6s
     achievement_c, vote_failed_reason_t[reason] -- %7s%8s
      )
-    return client.ChatPrintf( text )
+    client.ChatPrintf( text )
 end )
 -- endregion:
