@@ -2,8 +2,6 @@
 
 ## How to use
 
-> Need Help! : If you can change my custom ChatPrint to string.format equivalent i'd be appriciated.
-
 1. Load Script
 2. Enjoy
 
