@@ -61,6 +61,12 @@ end
     ..remove the line contains: luatable[3] = "what" and run the example again.
 ]]
 
+-- todo : Looks pretty complicated, i should rewrite this in a near future.
+-- 13/4/2022
+--  the use case of callbacks.register without unique is when we only register the id once in script lifetime
+-- register the same unique will override the previous unique (im thinking do i have to manually write code to unload callbacks again)
+-- UnloadScript takes absolute path, hmmm
+
 local um = {
     [CallVoteFailed] = {}, -- Sent to a player when they attempt to call a vote and fail.
     [VoteStart] = {}, -- Sent to all players currently online. The default implementation also sends it to bots.
@@ -321,6 +327,7 @@ events.new( 'vote_cast', function( event )
     end
     max = max / count_players_can_vote * 100
 
+    -- percentage of most picked vote
     vote.details_str = string.format( "(option%s: %.f%s)", index, max, "%%" )
     -- Using default values, votes require a minimum of 60% of the team to vote Yes for the vote to succeed. This is controlled with the server command sv_vote_quorum_ratio.
     -- But idk how valve calculates vote kick on matchmaking so it's your turn to contribute
