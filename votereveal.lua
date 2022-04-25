@@ -236,6 +236,7 @@ function vote:begin( count )
     self.options = count -- number: options can be voted in this issue (max: 5) (from vote_options)
     self.is_yes_no_vote = count ~= 2 -- boolean: true for Yes/No, false for Multiple choice (from VoteStart, but checking count =~ 2 is adequate enough)
     self.team_can_vote = nil -- ?number: which team can vote (from VoteStart)
+    self.players = entities.FindByClass( 'CTFPlayer' ) -- table: [ipairs]
     self.details_str = '' -- string: used for visualising
 end
 
@@ -244,7 +245,7 @@ end
 function vote:query_voting_status()
     local team = self.team_can_vote
     local filter = {} -- table: [pairs]
-    local players = entities.FindByClass( 'CTFPlayer' ) -- table: [ipairs]
+    local players = self.players
 
     if not team then
         -- note : game_event is called before user_message, maybe teamid hasn't been dispatched yet.
@@ -378,7 +379,6 @@ callbacks.Register( 'FireGameEvent', 'event_observer', function( event )
         white_c, str -- %8s%9s
          )
         client.ChatPrintf( final )
-        -- todo colors[vote_option + 4] could be misleading!
     end
 end )
 
