@@ -43,7 +43,9 @@ print_console_color( "#285828ff", ", ", "magestic", "core", "value", "sastify" )
 local localize_and_format = function( key, ... )
     local text = key
     local va_args, order = { ... }, {}
-    text = (text:gsub( '%%s(%d+)', "%%%1"))
+    text = text:gsub( '%%s(%d+)', function( i )
+        return "%" .. tonumber( i ) -- .. "s" -> %%(%d+)s
+    end )
     text = text:gsub( '%%(%d+)', function( i )
         table.insert( order, va_args[tonumber( i )] )
         return '%s'

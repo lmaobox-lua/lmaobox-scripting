@@ -14,8 +14,6 @@
 
 ### version 1.0.0.0
 
-do i look like i want to write docs
-
 ```lua
 "basic usermessage integration"
 "vote_cast event"
