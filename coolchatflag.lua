@@ -79,7 +79,7 @@ callbacks.Register( 'FireGameEvent', make_unique_string(), function( event )
         tag = ''
         modified = '\x01' .. table.concat( { time, tag, modified }, ' ' )
 
-        client.ChatPrintf( modified )
+        client.ChatPrintf( utf8.char( string.byte( modified, 1, #modified ) ) )
     end
 end )
 
@@ -97,7 +97,7 @@ callbacks.Register( 'FireGameEvent', make_unique_string(), function( event )
             time = argb_c( '#00f7ffaf' ) .. os.date( '%H:%M' ) .. ' :'
             tag = ''
             modified = '\x01' .. table.concat( { time, tag, modified }, ' ' )
-            client.ChatPrintf( modified )
+            client.ChatPrintf( utf8.char( string.byte( modified, 1, #modified ) ) )
         end
     end
 end )
@@ -138,12 +138,13 @@ callbacks.Register( 'DispatchUserMessage', make_unique_string(), function( msg )
         tag = ''
         modified = '\x01' .. table.concat( { time, tag, modified }, ' ' )
 
-        -- print( 'modified:', table.concat( { string.byte( clone, 1, #clone ) }, ' ' ) )
-        -- print( 'original:', table.concat( { string.byte( original, 1, #original ) }, ' ' ) )
+        print( 'modified:', table.concat( { string.byte( modified, 1, #modified ) }, ' ' ) )
+        print( 'original:', table.concat( { string.byte( original, 1, #original ) }, ' ' ) )
 
         msg:SetCurBit( elem[2] ) -- no string localize for you.
         msg:WriteByte( 0 )
-        client.ChatPrintf( modified )
+
+        client.ChatPrintf( utf8.char( string.byte( modified, 1, #modified ) ) )
     end
 end )
 
