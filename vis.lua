@@ -35,4 +35,4 @@ callbacks.Register( "Draw", function()
     end
 end )
 
---  UnloadScript( GetScriptName() )
+UnloadScript( GetScriptName() )

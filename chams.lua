@@ -39,7 +39,7 @@ setInterval( 0.5, function()
     UnloadScript(GetScriptName())
 end )]]
 local custom_materials = {
-    [0] = { 'mat1', 'mat2', 'mat3', 'mat4' }, -- material name (has to be lowercase, name should be unique)
+    [0] = { 'mat1', 'mat2', 'mat3', 'mat4' }, -- material name (has to be lowercase and unique)
     [1] = [["VertexLitGeneric" {
         $basetexture "vgui/white_additive"
         $bumpmap "vgui/white_additive"
@@ -68,6 +68,14 @@ for i = 1, #custom_materials do
     custom_materials[i] = type( material ) == 'userdata' and material or materials.Create( name, vmt )
 end
 
+-- test for duplicate, lmao
+local result = {}
+materials.Enumerate( function( material )
+    local name = material:GetName()
+    if name:find( 'mat(%d+)' ) then result[name] = (result[name] or 0) + 1 end
+end )
+printLuaTable( result )
+
 local guicolor_to_rgba = function( path )
     local ref = gui.GetValue( path )
     -- LuaFormatter off
@@ -90,13 +98,24 @@ callbacks.Register( 'DrawModel', tostring( engine.RandomFloat( 0, 1000 ) ), func
     -- m_hViewModel
     local ent = ctx:GetEntity()
     local me = entities.GetLocalPlayer()
-    if not ent or ent:IsValid() ~= true or (not me and me:IsValid()) then return end
+
+    local material = custom_materials[1]
+    material:SetMaterialVarFlag( MATERIAL_VAR_IGNOREZ, false )
+    material:SetMaterialVarFlag( MATERIAL_VAR_WIREFRAME, true )
+    if not me and not me:IsValid() then return end
+    if not ent or ent:IsValid() ~= true then
+        local model_name = ctx:GetModelName()
+        -- print( model_name )
+        if string.find( model_name, 'c_models' ) then 
+            ctx:ForcedMaterialOverride( material ) 
+            ctx:DrawExtraPass()
+        end
+        
+        return
+    end
     -- print(me:GetPropEntity( 'm_hViewModel[0]' ))
     local str = string.format( 'id: %s, name: %s, class: %s', ent:GetIndex(), ent:GetName(), ent:GetClass() )
     -- print( str )
-
-    local material = custom_materials[2]
-    material:SetMaterialVarFlag( MATERIAL_VAR_IGNOREZ, false )
 
     if ent:IsWeapon() then
         ctx:ForcedMaterialOverride( material )
@@ -108,7 +127,25 @@ callbacks.Register( 'DrawModel', tostring( engine.RandomFloat( 0, 1000 ) ), func
         material:ColorModulate( r, g, b )
         -- material:SetShaderParam( "$color2", Vector3( r, g, b, a ) )
         ctx:ForcedMaterialOverride( material )
+    elseif ent:GetClass() == 'CTFWearable' then
+        local owner = ent:GetPropEntity( 'm_hOwnerEntity' )
+        if owner:IsAlive() then
+            local itemDefinitionIndex = ent:GetPropInt( 'm_iItemDefinitionIndex' )
+            local itemDefinition = itemschema.GetItemDefinitionByID( itemDefinitionIndex )
+            print( itemDefinition:GetLoadoutSlot(), itemDefinition:GetName() )
+            if (itemDefinition:GetLoadoutSlot() == LOADOUT_POSITION_MISC) then ctx:ForcedMaterialOverride( material ) end
+        end
     end
     -- buf:write(str)
 end )
---  for proc in io.popen(string.format([[code %q]], os.getenv('APPDATA'))):lines() do print(proc) end
+--  for proc in io.popen(string.format([[code %q]], os.getenv('LOCALAPPDATA'))):lines() do print(proc) end
+
+-- purpose : get pair entries length
+local pairlen = function( t )
+    local i, k = 0, nil
+    repeat
+        k = next( t, k )
+        i = i + 1
+    until k == nil
+    return i
+end

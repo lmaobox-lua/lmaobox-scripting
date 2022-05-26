@@ -110,6 +110,33 @@ insert_name_callback.bind = function( id, unique, callback )
     return method
 end
 
+local self_unload_module = (function()
+    local _, __, filepath = pcall( debug.getlocal, 4, 1 )
+    for id, lib in pairs( package.loaded ) do
+            local matched = string.match( GetScriptName(), id, 1, true )
+            if matched then
+                printc( 0, 255, 0, 255, string.format( '[packages.loaded]| found: %q', matched ) )
+                package.loaded[matched] = undef
+                printc( 0, 255, 255, 255, string.format( '[packages.loaded]| %q is unloaded (method called on : %q)', matched, filepath ) )
+            end
+    end
+end)
+
+
+-- Generic parser
+local get_variable_and_arg = function( var, feed )
+    for name, callback in pairs( var ) do
+        local i, j = string.find( feed, name, 1, true )
+        if i == 1 then
+            local cmd = string.match(feed, name)
+            local a = {}
+            for w in feed:sub( j + 1, #feed ):gmatch( '%S+' ) do a[#a + 1] = w end
+            cvar.Set = function( any ) return cmd:Set( any ) end
+            return callback( cmd, #a, table.unpack( a ) )
+        end
+    end
+end
+
 -- region: test callback library
 insert_name_callback[0] = {}
 insert_name_callback.bind( nil, nil, nil ) -- test fail check

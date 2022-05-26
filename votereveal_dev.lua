@@ -409,9 +409,7 @@ callbacks.Register( 'FireGameEvent', 'event_observer', function( event )
     end
 end )
 
-local um = listener( 'DispatchUserMessage' )
-um.add( function( msg )
-    if not msg:GetID() == VoteStart then return end
+um.new( VoteStart, 'MsgFunc_VoteStart', function( msg )
     local team<const> = msg:ReadByte() -- Team index or 0 for all
     local ent_idx<const> = msg:ReadByte() -- Client index of person who started the vote, or 99 for the server.
     local disp_str<const> = msg:ReadString( 256 ) -- Vote issue translation string
@@ -423,8 +421,7 @@ um.add( function( msg )
     client.ChatPrintf( text )
 end )
 
-um.add( function( msg )
-    if not msg:GetID() == VotePass then return end
+um.new( VotePass, 'MsgFunc_VotePass', function( msg )
     local team<const> = msg:ReadByte() -- Team index or 0 for all
     local disp_str<const> = msg:ReadString( 256 ) -- Vote success translation string
     local details_str<const> = msg:ReadString( 256 ) -- Vote winner
@@ -433,8 +430,7 @@ um.add( function( msg )
     local text = table.concat( { colors[team], team_can_vote[team], ' ', white_c, s } )
     client.ChatPrintf( text )
 end )
-um.add( function( msg )
-    if not msg:GetID() == VoteFailed then return end
+um.new( VoteFailed, 'MsgFunc_VoteFailed', function( msg )
     local team<const> = msg:ReadByte() -- Team index or 0 for all
     local reason<const> = msg:ReadByte() -- Failure reason code (0, 3-4)
     ---
@@ -442,8 +438,7 @@ um.add( function( msg )
     local text = table.concat( { colors[team], team_can_vote[team], ' ', achievement_c, s } )
     client.ChatPrintf( text )
 end )
-um.add( function( msg )
-    if not msg:GetID() == CallVoteFailed then return end
+um.new( CallVoteFailed, 'MsgFunc_CallVoteFailed', function( msg )
     local reason<const> = msg:ReadByte() -- Failure reason (1-2, 5-10, 12-19)
     local time<const> = msg:ReadInt( 16 ) -- For failure reasons 2 and 8, time in seconds until client can start another vote. 2 is per user, 8 is per vote type.
     ---
