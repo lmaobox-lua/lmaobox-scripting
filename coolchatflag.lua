@@ -42,8 +42,8 @@ local querytag = function( playerindex )
     if steam.IsFriend( info.SteamID ) == true then
         return argb_c('#9EE09EFF') .. "[Friend]"
     end
-
-    if info.SteamID == "[U:1:874317011]" then
+    print(steam.ToSteamID64( info.SteamID ), type(steam.ToSteamID64( info.SteamID )) )
+    if steam.ToSteamID64( info.SteamID ) == 76561198834582739 then
         return argb_c('#CC99C9FF') .. "[Creator]"
     end
 
