@@ -71,6 +71,7 @@ callbacks.Register( 'FireGameEvent', make_unique_string(), function( event )
         -- print( 'base:', table.concat( { string.byte( clone, 1, #clone ) }, ' ' ) )
 
         local original = string.format( base, player_name, chat_text )
+        original = utf8.char( string.byte( original, 1, #original ) )
         local modified = colorize_string( original, player_name )
 
         -- add additional info
@@ -92,6 +93,7 @@ callbacks.Register( 'FireGameEvent', make_unique_string(), function( event )
             local base = client.Localize( 'Game_connected' )
             base = base:gsub( '%%(.)%d+', '%%%1' ) -- remove number after format specifier 
             local original = string.format( base, player_name )
+            original = utf8.char( string.byte( original, 1, #original ) )
             local modified = colorize_string( original, player_name )
             local time, tag
             time = argb_c( '#00f7ffaf' ) .. os.date( '%H:%M' ) .. ' :'
@@ -124,6 +126,7 @@ callbacks.Register( 'DispatchUserMessage', make_unique_string(), function( msg )
         -- print( 'base:', table.concat( { string.byte( clone, 1, #clone ) }, ' ' ) )
 
         local original = string.format( base, player_name, chat_text )
+        original = utf8.char( string.byte( original, 1, #original ) )
         local modified = colorize_string( original, player_name )
         print( chat_type, #chat_type )
         if chat_type == '#TF_Name_Change' then
@@ -138,13 +141,13 @@ callbacks.Register( 'DispatchUserMessage', make_unique_string(), function( msg )
         tag = ''
         modified = '\x01' .. table.concat( { time, tag, modified }, ' ' )
 
-        print( 'modified:', table.concat( { string.byte( modified, 1, #modified ) }, ' ' ) )
-        print( 'original:', table.concat( { string.byte( original, 1, #original ) }, ' ' ) )
+        -- print( 'modified:', table.concat( { string.byte( modified, 1, #modified ) }, ' ' ) )
+        -- print( 'original:', table.concat( { string.byte( original, 1, #original ) }, ' ' ) )
 
         msg:SetCurBit( elem[2] ) -- no string localize for you.
         msg:WriteByte( 0 )
 
-        client.ChatPrintf( utf8.char( string.byte( modified, 1, #modified ) ) )
+        client.ChatPrintf( modified, 1, #modified )
     end
 end )
 
