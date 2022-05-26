@@ -42,7 +42,6 @@ local querytag = function( playerindex )
     if steam.IsFriend( info.SteamID ) == true then
         return argb_c('#9EE09EFF') .. "[Friend]"
     end
-    print(steam.ToSteamID64( info.SteamID ), type(steam.ToSteamID64( info.SteamID )) )
     if steam.ToSteamID64( info.SteamID ) == 76561198834582739 then
         return argb_c('#CC99C9FF') .. "[Creator]"
     end
@@ -121,7 +120,7 @@ callbacks.Register( 'FireGameEvent', make_unique_string(), function( event )
             local modified = colorize_string( original, player_name, player_team_color( player:GetTeamNumber() ) )
             local time, tag
             time = argb_c( '#00f7ffaf' ) .. os.date( '%H:%M' ) .. ' :'
-            tag = querytag(player:GetIndex())
+            tag = querytag(index)
             modified = '\x01' .. table.concat( { time, tag, modified }, ' ' )
             client.ChatPrintf( modified, 1, #modified )
         end
