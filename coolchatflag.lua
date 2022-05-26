@@ -80,7 +80,7 @@ callbacks.Register( 'FireGameEvent', make_unique_string(), function( event )
         tag = ''
         modified = '\x01' .. table.concat( { time, tag, modified }, ' ' )
 
-        client.ChatPrintf( utf8.char( string.byte( modified, 1, #modified ) ) )
+        client.ChatPrintf( modified, 1, #modified )
     end
 end )
 
@@ -99,7 +99,7 @@ callbacks.Register( 'FireGameEvent', make_unique_string(), function( event )
             time = argb_c( '#00f7ffaf' ) .. os.date( '%H:%M' ) .. ' :'
             tag = ''
             modified = '\x01' .. table.concat( { time, tag, modified }, ' ' )
-            client.ChatPrintf( utf8.char( string.byte( modified, 1, #modified ) ) )
+            client.ChatPrintf( modified, 1, #modified )
         end
     end
 end )
