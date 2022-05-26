@@ -66,12 +66,12 @@ callbacks.Register( 'FireGameEvent', make_unique_string(), function( event )
         local player_name, chat_text = player:GetName(), client.Localize( class_name[event:GetInt( 'class' )] )
 
         local base = client.Localize( 'TF_Class_Change' )
+        base = utf8.char( string.byte( base, 1, #base ) )
         base = base:gsub( '%%(.)%d+', '%%%1' ) -- remove number after format specifier 
         -- base:gsub( '%%([acdlpsuwxz])%d+', '%%%1' ) : for lua
         -- print( 'base:', table.concat( { string.byte( clone, 1, #clone ) }, ' ' ) )
 
         local original = string.format( base, player_name, chat_text )
-        original = utf8.char( string.byte( original, 1, #original ) )
         local modified = colorize_string( original, player_name )
 
         -- add additional info
@@ -91,9 +91,9 @@ callbacks.Register( 'FireGameEvent', make_unique_string(), function( event )
         if bot == 0 or bot == 1 and engine.GetServerIP() == 'loopback' then
             local player_name = name
             local base = client.Localize( 'Game_connected' )
+            base = utf8.char( string.byte( base, 1, #base ) )
             base = base:gsub( '%%(.)%d+', '%%%1' ) -- remove number after format specifier 
             local original = string.format( base, player_name )
-            original = utf8.char( string.byte( original, 1, #original ) )
             local modified = colorize_string( original, player_name )
             local time, tag
             time = argb_c( '#00f7ffaf' ) .. os.date( '%H:%M' ) .. ' :'
@@ -121,12 +121,12 @@ callbacks.Register( 'DispatchUserMessage', make_unique_string(), function( msg )
         player_name, chat_text = make_clean_string( player_name ), make_clean_string( chat_text )
 
         local base = client.Localize( chat_type )
+        base = utf8.char( string.byte( base, 1, #base ) )
         base = base:gsub( '%%(.)%d+', '%%%1' ) -- remove number after format specifier 
         -- base:gsub( '%%([acdlpsuwxz])%d+', '%%%1' ) : for lua
         -- print( 'base:', table.concat( { string.byte( clone, 1, #clone ) }, ' ' ) )
 
         local original = string.format( base, player_name, chat_text )
-        original = utf8.char( string.byte( original, 1, #original ) )
         local modified = colorize_string( original, player_name )
         print( chat_type, #chat_type )
         if chat_type == '#TF_Name_Change' then
