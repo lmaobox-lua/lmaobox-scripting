@@ -28,6 +28,15 @@ function rainbow.make()
     return rainbow[rainbow.index]
 end
 
+local player_team_color = function( team_num )
+    local t = {
+        [3] = '#99ccffff',
+        [2] = '#ff4040ff',
+        [0] = '#f5e5c4ff',
+     }
+    return argb_c( t[team_num] )
+end
+
 local make_unique_string = function( prefix ) return table.concat( { prefix or '', engine.RandomFloat( 0, 1 ), GetScriptName() }, '_' ) end
 
 local make_clean_string = function( original )
@@ -72,7 +81,8 @@ callbacks.Register( 'FireGameEvent', make_unique_string(), function( event )
         -- print( 'base:', table.concat( { string.byte( clone, 1, #clone ) }, ' ' ) )
 
         local original = string.format( base, player_name, chat_text )
-        local modified = colorize_string( original, player_name )
+        local modified = colorize_string( original, player_name, player_team_color( player:GetTeamNumber() ) )
+        modified = colorize_string( original, chat_text, argb_c(rainbow.make()) )
 
         -- add additional info
         local time, tag
@@ -88,13 +98,14 @@ callbacks.Register( 'FireGameEvent', make_unique_string(), function( event )
     if event:GetName() == 'player_connect_client' then
         local name, userid, networkid, bot = event:GetString( 'name' ), event:GetInt( 'userid' ), event:GetInt( 'networkid' ),
                                              event:GetInt( 'bot' )
+        local player = entities.GetByUserID(userid)
         if bot == 0 or bot == 1 and engine.GetServerIP() == 'loopback' then
             local player_name = name
             local base = client.Localize( 'Game_connected' )
             base = utf8.char( string.byte( base, 1, #base ) )
             base = base:gsub( '%%(.)%d+', '%%%1' ) -- remove number after format specifier 
             local original = string.format( base, player_name )
-            local modified = colorize_string( original, player_name )
+            local modified = colorize_string( original, player_name, player_team_color( player:GetTeamNumber() ) )
             local time, tag
             time = argb_c( '#00f7ffaf' ) .. os.date( '%H:%M' ) .. ' :'
             tag = ''
@@ -120,6 +131,8 @@ callbacks.Register( 'DispatchUserMessage', make_unique_string(), function( msg )
 
         player_name, chat_text = make_clean_string( player_name ), make_clean_string( chat_text )
 
+        local player = entities.GetByIndex( ent_idx )
+
         local base = client.Localize( chat_type )
         base = utf8.char( string.byte( base, 1, #base ) )
         base = base:gsub( '%%(.)%d+', '%%%1' ) -- remove number after format specifier 
@@ -127,7 +140,7 @@ callbacks.Register( 'DispatchUserMessage', make_unique_string(), function( msg )
         -- print( 'base:', table.concat( { string.byte( clone, 1, #clone ) }, ' ' ) )
 
         local original = string.format( base, player_name, chat_text )
-        local modified = colorize_string( original, player_name )
+        local modified = colorize_string( original, player_name, player_team_color( player:GetTeamNumber() ) )
         print( chat_type, #chat_type )
         if chat_type == '#TF_Name_Change' then
             -- bit & 0x000002 = 0

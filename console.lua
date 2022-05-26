@@ -35,7 +35,8 @@ cvar.RegisterCommand( 'info', function( argc, ... )
     print( table.concat( { ... }, '\n' ) )
 end )
 
-cvar.RegisterCommand( 'unload', function( argc, to_unload )
+-- because unload command is used in beta version of the cheat to uninject.
+cvar.RegisterCommand( 'lua_unload', function( argc, to_unload )
     cvar.Set( '' )
     local argcc = argc > 0 and argc or 1
     local dir = os.getenv('LOCALAPPDATA')
