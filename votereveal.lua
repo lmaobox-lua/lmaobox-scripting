@@ -267,9 +267,8 @@ function vote:query_voting_status()
     -- returns int, num if convar value is a number and 0, 0.0 otherwise
     -- in lua, conditionals consider false and nil as false and anything else as true. 
 
-    for i = 1, #players do
+    for i, ent in pairs(players) do
         local ent, t, c
-        ent = players[i]
         t = ent:GetTeamNumber()
         c = client.GetPlayerInfo( i )
         repeat
