@@ -37,6 +37,19 @@ local player_team_color = function( team_num )
     return argb_c( t[team_num] )
 end
 
+local querytag = function( playerindex )
+    local info = client.GetPlayerInfo( playerindex )
+    if steam.IsFriend( info.SteamID ) == true then
+        return argb_c('#9EE09EFF') .. "[Friend]"
+    end
+
+    if info.SteamID == "[U:1:874317011]" then
+        return argb_c('#CC99C9FF') .. "[Creator]"
+    end
+
+    return ''
+end
+
 local make_unique_string = function( prefix ) return table.concat( { prefix or '', engine.RandomFloat( 0, 1 ), GetScriptName() }, '_' ) end
 
 local make_clean_string = function( original )
@@ -48,7 +61,7 @@ local make_clean_string = function( original )
 end
 
 local colorize_string = function( original, to_colorize, prefix, suffix )
-    prefix = prefix or '\x03'
+    prefix = prefix or '\x02'
     suffix = suffix or '\x01'
     local m, original = {}, original:gsub( '\x02', '' )
     local i, j = original:find( to_colorize, 1, true )
@@ -87,7 +100,7 @@ callbacks.Register( 'FireGameEvent', make_unique_string(), function( event )
         -- add additional info
         local time, tag
         time = argb_c( '#00f7ffaf' ) .. os.date( '%H:%M' ) .. ' :'
-        tag = ''
+        tag = querytag(player:GetIndex())
         modified = '\x01' .. table.concat( { time, tag, modified }, ' ' )
 
         client.ChatPrintf( modified, 1, #modified )
@@ -96,9 +109,9 @@ end )
 
 callbacks.Register( 'FireGameEvent', make_unique_string(), function( event )
     if event:GetName() == 'player_connect_client' then
-        local name, userid, networkid, bot = event:GetString( 'name' ), event:GetInt( 'userid' ), event:GetInt( 'networkid' ),
+        local name, index, userid, networkid, bot = event:GetString( 'name' ), event:GetInt( 'index' ), event:GetInt( 'userid' ), event:GetInt( 'networkid' ),
                                              event:GetInt( 'bot' )
-        local player = entities.GetByUserID(userid)
+        local player = entities.GetByIndex( index )
         if bot == 0 or bot == 1 and engine.GetServerIP() == 'loopback' then
             local player_name = name
             local base = client.Localize( 'Game_connected' )
@@ -108,7 +121,7 @@ callbacks.Register( 'FireGameEvent', make_unique_string(), function( event )
             local modified = colorize_string( original, player_name, player_team_color( player:GetTeamNumber() ) )
             local time, tag
             time = argb_c( '#00f7ffaf' ) .. os.date( '%H:%M' ) .. ' :'
-            tag = ''
+            tag = querytag(player:GetIndex())
             modified = '\x01' .. table.concat( { time, tag, modified }, ' ' )
             client.ChatPrintf( modified, 1, #modified )
         end
@@ -151,7 +164,11 @@ callbacks.Register( 'DispatchUserMessage', make_unique_string(), function( msg )
         -- add additional info
         local time, tag
         time = argb_c( '#00f7ffaf' ) .. os.date( '%H:%M' ) .. ' :'
-        tag = ''
+        tag = querytag( ent_idx )
+
+        -- steam friend thingy
+        
+
         modified = '\x01' .. table.concat( { time, tag, modified }, ' ' )
 
         -- print( 'modified:', table.concat( { string.byte( modified, 1, #modified ) }, ' ' ) )
