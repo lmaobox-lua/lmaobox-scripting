@@ -1,7 +1,7 @@
 callbacks.Unregister( 'FireGameEvent', 'event_observer' )
 
--- region: global to local variable
--- endregion: global to local variable
+--- region: global to local variable
+--- endregion: global to local variable
 
 -- region: constant and helper function
 -- LuaFormatter off
@@ -215,132 +215,14 @@ local colors = {
     [8] = argb_c( '#87AAAAff' ),
  }
 
+local cc_color = { { 207, 207, 196, 255 }, { 158, 224, 158, 255 }, { 158, 193, 207, 255 }, -- blu
+{ 255, 100, 97, 255 } -- red
+ }
+
 local vote_default_t = {
     [0] = 'Yes',
     [1] = 'No',
  }
-
-local vote_t = {}
-
--- region: predict vote outcome
-local vote = { has_voted, can_vote, options, is_yes_no_vote, team_can_vote, details_str }
-
--- @param count: number
-function vote:begin( count )
-    self.players_voted = {} -- table: [pairs] playerindex | option, of player already chosed an option in this issue 
-    self.players_can_vote = {} -- table: [ipairs] playerindex, of player allowed to vote in this issue 
-    self.options = count -- number: options can be voted in this issue (max: 5) (from vote_options)
-    self.is_yes_no_vote = count ~= 2 -- boolean: true for Yes/No, false for Multiple choice (from VoteStart, but checking count =~ 2 is adequate enough)
-    self.team_can_vote = nil -- ?number: which team can vote (from VoteStart)
-    self.players = entities.FindByClass( 'CTFPlayer' ) -- table: [ipairs]
-    self.details_str = '' -- string: used for visualising
-end
-
--- @table vote
--- @return can_vote 
-function vote:query_voting_status()
-    local team = self.team_can_vote
-    local filter = {} -- table: [pairs]
-    local players = self.players
-
-    if not team then
-        -- note : game_event is called before user_message, maybe teamid hasn't been dispatched yet.
-        players = {}
-    end
-
-    -- note : f2p opinion does not count
-    local count_players_can_vote, count_player_has_voted = 0, 0
-    local options = {
-        [1] = 0,
-        [2] = 0,
-        [3] = 0,
-        [4] = 0,
-        [5] = 0,
-     }
-    local all_vote = team == TFUnassigned
-    local vote_allow_spectators = client.GetConVar( 'sv_vote_allow_spectators' ) ~= 0 -- networked convar
-    -- client.GetConVar returns int, num, string
-    -- returns int, num if convar value is a number and 0, 0.0 otherwise
-    -- in lua, conditionals consider false and nil as false and anything else as true. 
-
-    for i, ent in pairs( players ) do
-        local t, c
-        t = ent:GetTeamNumber()
-        c = client.GetPlayerInfo( i )
-        repeat
-            if not t then -- skip if player is not valid
-                filter[i] = nil
-                break
-            end
-            if c.IsBot or c.IsHLTV then
-                filter[i] = string.format( '[filter] L1 | IsBot: %s, IsHLTV: %s', c.IsBot, c.IsHLTV )
-                break
-            elseif not vote_allow_spectators and t == TFSpectator then
-                filter[i] = string.format( '[filter] L2 | sv_vote_allow_spectators: %s, teamid: %s', vote_allow_spectators, t )
-                break
-            elseif not all_vote and t ~= team then
-                filter[i] = string.format( '[filter] L3 | free_for_all_vote: %s, team: %s', all_vote, t )
-                break
-            elseif gamerules.IsMvM() and t ~= TFRed then
-                -- todo : donno what this does.
-            else
-                filter[i] = true
-                break
-            end
-        until (true)
-    end
-
-    -- if player has already voted, count player as valid voter
-    -- @table players_voted[entityindex] = vote_option
-    for k, v in pairs( self.players_voted ) do
-        filter[k] = true
-        count_player_has_voted = count_player_has_voted + 1
-        options[v + 1] = options[v + 1] + 1 -- __add
-    end
-
-    for k, v in pairs( filter ) do
-        if v == true then
-            self.players_can_vote[#self.players_can_vote + 1] = i
-            count_players_can_vote = count_players_can_vote + 1
-        end
-    end
-    -- print(string.format( "> count_players_can_vote: %s, count_player_has_voted: %s, options -> %s %s %s %s %s", count_players_can_vote, count_player_has_voted, table.unpack( options ) ))
-    return count_players_can_vote, count_player_has_voted, options
-end
-
-events.new( 'vote_cast', function( event )
-    local vote_option<const> = event:GetInt( 'vote_option' )
-    local entityindex<const> = event:GetInt( 'entityid' )
-    vote.players_voted[entityindex] = vote_option
-    local count_players_can_vote, count_player_has_voted, options = vote:query_voting_status()
-
-    local max, index = 0, 0
-    for i = 1, #options do
-        local v = options[i]
-        if max < v then
-            max = v
-            index = i
-        end
-    end
-    max = max / count_players_can_vote * 100
-
-    -- percentage of most picked vote
-    vote.details_str = string.format( '(option%s: %.f%s)', index, max, '%%' )
-    -- Using default values, votes require a minimum of 60% of the team to vote Yes for the vote to succeed. This is controlled with the server command sv_vote_quorum_ratio.
-    -- But idk how valve calculates vote kick on matchmaking so it's your turn to contribute
-    -- Kick votes will end early and automatically pass if the vote target leaves the match during the vote
-end )
-
-events.new( 'vote_options', function( event ) vote:begin( event:GetInt( 'count' ) ) end )
-
--- 1 byte = 8 bits
-um.new( VoteStart, 'tally_vote_start', function( msg )
-    local team<const> = msg:ReadByte()
-    msg:SetCurBit( 192 )
-    vote.team_can_vote = team
-end )
-
--- endregion: predict vote outcome
 
 callbacks.Register( 'FireGameEvent', 'event_observer', function( event )
     if (event:GetName() == 'vote_options') then -- called when there's a new voteissue
@@ -361,16 +243,16 @@ callbacks.Register( 'FireGameEvent', 'event_observer', function( event )
         local entity = entities.GetByIndex( entityindex )
         if entity and entity:IsValid() then
             local player_name = entity:GetName() or '<player left>'
-            local str = vote.details_str
+            local str = ''
 
-            local final = string.format( '%s%s %s%s %s %s%s %s%s', --
+            local final = string.format( '%s%s %s%s voted %s%s', --
             colors[team], team_can_vote[team], -- %1s%2s
             white_c, player_name, -- %3s%4s
-            'voted', -- %5s
-            colors[vote_option + 4], vote_t[vote_option], -- %6s%7s
-            white_c, str -- %8s%9s
+            colors[vote_option + 4], vote_t[vote_option] -- %5s%6s
              )
             client.ChatPrintf( final )
+            local r, g, b, a = table.unpack( cc_color[team] )
+            printc( r, g, b, a, table.concat( { team_can_vote[team], player_name, vote_t[vote_option] }, ' ' ) )
         end
 
     end
@@ -386,6 +268,7 @@ um.new( VoteStart, 'MsgFunc_VoteStart', function( msg )
     local s = localize_and_format( disp_str, details_str )
     local text = table.concat( { colors[team], team_can_vote[team], ' ', white_c, s } )
     client.ChatPrintf( text )
+    client.ChatSay( text )
 end )
 
 um.new( VotePass, 'MsgFunc_VotePass', function( msg )
@@ -396,6 +279,7 @@ um.new( VotePass, 'MsgFunc_VotePass', function( msg )
     local s = localize_and_format( disp_str, details_str )
     local text = table.concat( { colors[team], team_can_vote[team], ' ', white_c, s } )
     client.ChatPrintf( text )
+    client.ChatSay( text )
 end )
 
 um.new( VoteFailed, 'MsgFunc_VoteFailed', function( msg )
@@ -405,6 +289,7 @@ um.new( VoteFailed, 'MsgFunc_VoteFailed', function( msg )
     local s = localize_and_format( vote_failed_localize[reason] )
     local text = table.concat( { colors[team], team_can_vote[team], ' ', achievement_c, s } )
     client.ChatPrintf( text )
+    client.ChatSay( text )
 end )
 
 um.new( CallVoteFailed, 'MsgFunc_CallVoteFailed', function( msg )
@@ -419,5 +304,8 @@ um.new( CallVoteFailed, 'MsgFunc_CallVoteFailed', function( msg )
     achievement_c, vote_failed_reason_t[reason] -- %7s%8s
      )
     client.ChatPrintf( text )
+
 end )
 -- endregion:
+
+-- vote decrease when player leave

@@ -31,7 +31,10 @@ local color_slider_to_rgba = function( path )
 end
 
 callbacks.Unregister( 'Draw', "guiThing" )
-callbacks.Register( 'Draw', "guiThing", function()
+--[[callbacks.Register( 'Draw', "guiThing", function()
     local ref, r, g, b, a = color_slider_to_rgba( 'Red Team Color' )
     print( string.format( "ref: %s, rgba: %s, %s, %s, %s", ref, r, g, b, a ) )
-end )
+end )]]
+
+local cvar = require 'cvar'
+cvar.self_unload_module()
