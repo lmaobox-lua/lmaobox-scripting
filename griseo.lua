@@ -73,6 +73,8 @@ cvar.register( 'hi u', function(cvar)
  )
 
 cvar.register( 'fuck', function() end )
+cvar.register( 'fuck', function() end )
+
 
 --[[
 cvar.add_cvar( script_no_ext, function( cvar )
