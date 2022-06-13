@@ -65,15 +65,6 @@ end
 
 ---
 
-cvar.unregister( 'fuck' )
-
-cvar.register( 'hi u', function(cvar) 
-    cvar:Set("") 
-    end
- )
-
-cvar.register( 'fuck', function() end )
-cvar.register( 'fuck', function() end )
 
 
 --[[
