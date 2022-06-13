@@ -52,110 +52,170 @@ xref: __MsgFunc_Rumble
 | rumbleData    | number |        |
 | rumbleFlags   | number |        |
 ]] --
-local umsg_lookup = {
-    [Geiger] = function( m ) end,
-    [Train] = function( m ) end,
-    [HudText] = function( m ) end,
-    [SayText] = function( m )
-        local a, b = {}, {
-            [1] = 0,
-         }
-        a[#a + 1], b[#b + 1] = m:ReadByte()
-        a[#a + 1], b[#b + 1] = m:ReadString( 256 )
-    end,
-    [SayText2] = function( m )
-        local a, b = {}, {
-            [1] = 0,
-         }
-        a[#a + 1], b[#b + 1] = m:ReadByte()
-        a[#a + 1], b[#b + 1] = m:ReadByte()
-        a[#a + 1], b[#b + 1] = m:ReadString( 256 )
-        a[#a + 1], b[#b + 1] = m:ReadString( 256 )
-        a[#a + 1], b[#b + 1] = m:ReadString( 256 )
-        return a, b
-    end,
-    [TextMsg] = function( m ) end,
-    [ResetHUD] = function( m ) end,
-    [GameTitle] = function( m ) end,
-    [ItemPickup] = function( m ) end,
-    [ShowMenu] = function( m ) end,
-    [Shake] = function( m ) end,
-    [Fade] = function( m ) end,
-    [VGUIMenu] = function( m ) end,
-    [Rumble] = function( m ) end,
-    [CloseCaption] = function( m ) end,
-    [SendAudio] = function( m ) end,
-    [VoiceMask] = function( m ) end,
-    [RequestState] = function( m ) end,
-    [Damage] = function( m ) end,
-    [HintText] = function( m ) end,
-    [KeyHintText] = function( m ) end,
-    [HudMsg] = function( m ) end,
-    [AmmoDenied] = function( m ) end,
-    [AchievementEvent] = function( m ) end,
-    [UpdateRadar] = function( m ) end,
-    [VoiceSubtitle] = function( m ) end,
-    [HudNotify] = function( m ) end,
-    [HudNotifyCustom] = function( m ) end,
-    [PlayerStatsUpdate] = function( m ) end,
-    [MapStatsUpdate] = function( m ) end,
-    [PlayerIgnited] = function( m ) end,
-    [PlayerIgnitedInv] = function( m ) end,
-    [HudArenaNotify] = function( m ) end,
-    [UpdateAchievement] = function( m ) end,
-    [TrainingMsg] = function( m ) end,
-    [TrainingObjective] = function( m ) end,
-    [DamageDodged] = function( m ) end,
-    [PlayerJarated] = function( m ) end,
-    [PlayerExtinguished] = function( m ) end,
-    [PlayerJaratedFade] = function( m ) end,
-    [PlayerShieldBlocked] = function( m ) end,
-    [BreakModel] = function( m ) end,
-    [CheapBreakModel] = function( m ) end,
-    [BreakModel_Pumpkin] = function( m ) end,
-    [BreakModelRocketDud] = function( m ) end,
-    [CallVoteFailed] = function( m ) end,
-    [VoteStart] = function( m ) end,
-    [VotePass] = function( m ) end,
-    [VoteFailed] = function( m ) end,
-    [VoteSetup] = function( m ) end,
-    [PlayerBonusPoints] = function( m ) end,
-    [RDTeamPointsChanged] = function( m ) end,
-    [SpawnFlyingBird] = function( m ) end,
-    [PlayerGodRayEffect] = function( m ) end,
-    [PlayerTeleportHomeEffect] = function( m ) end,
-    [MVMStatsReset] = function( m ) end,
-    [MVMPlayerEvent] = function( m ) end,
-    [MVMResetPlayerStats] = function( m ) end,
-    [MVMWaveFailed] = function( m ) end,
-    [MVMAnnouncement] = function( m ) end,
-    [MVMPlayerUpgradedEvent] = function( m ) end,
-    [MVMVictory] = function( m ) end,
-    [MVMWaveChange] = function( m ) end,
-    [MVMLocalPlayerUpgradesClear] = function( m ) end,
-    [MVMLocalPlayerUpgradesValue] = function( m ) end,
-    [MVMResetPlayerWaveSpendingStats] = function( m ) end,
-    [MVMLocalPlayerWaveSpendingValue] = function( m ) end,
-    [MVMResetPlayerUpgradeSpending] = function( m ) end,
-    [MVMServerKickTimeUpdate] = function( m ) end,
-    [PlayerLoadoutUpdated] = function( m ) end,
-    [PlayerTauntSoundLoopStart] = function( m ) end,
-    [PlayerTauntSoundLoopEnd] = function( m ) end,
-    [ForcePlayerViewAngles] = function( m ) end,
-    [BonusDucks] = function( m ) end,
-    [EOTLDuckEvent] = function( m ) end,
-    [PlayerPickupWeapon] = function( m ) end,
-    [QuestObjectiveCompleted] = function( m ) end,
-    [SPHapWeapEvent] = function( m ) end,
-    [HapDmg] = function( m ) end,
-    [HapPunch] = function( m ) end,
-    [HapSetDrag] = function( m ) end,
-    [HapSetConst] = function( m ) end,
-    [HapMeleeContact] = function( m ) end,
+local MsgFunc_HudText = function( m )
+    local proto, i = {}, {}
+    proto.index, i[#i + 1] = m:ReadByte()
+    proto.chat_text, i[#i + 1] = m:ReadString( 256 )
+    return proto, i
+end
+
+local MsgFunc_SayText = function( m )
+    local proto, i = {}, {}
+    proto.index, i[#i + 1] = m:ReadByte()
+    proto.chat_text, i[#i + 1] = m:ReadString( 256 )
+    return proto, i
+end
+
+local MsgFunc_SayText2 = function( m )
+    local proto, i = {}, {}
+    proto.index, i[#i + 1] = m:ReadByte()
+    proto.is_text_chat, i[#i + 1] = m:ReadByte()
+    proto.chat_type, i[#i + 1] = m:ReadString( 256 )
+    proto.player_name, i[#i + 1] = m:ReadString( 256 )
+    proto.chat_text, i[#i + 1] = m:ReadString( 256 )
+    return proto, i
+end
+
+local MsgFunc_TextMsg = function( m )
+    local proto, i = {}, {}
+    proto.msg_dest, i[#i + 1] = m:ReadByte()
+    proto.chat_text, i[#i + 1] = m:ReadByte()
+    return proto, i
+end
+
+local MsgFunc_Shake = function( m ) end
+
+local MsgFunc_Fade = function( m ) end
+
+local MsgFunc_Rumble = function( m ) end
+
+local MsgFunc_CallVoteFailed = function( m )
+    local proto, i = {}, {}
+    proto.reason, i[#i + 1] = msg:ReadByte()
+    proto.time, i[#i + 1] = msg:ReadInt( 16 )
+    return proto, i
+end
+
+local MsgFunc_VoteStart = function( m )
+    local proto, i = {}, {}
+    proto.team, i[#i + 1] = msg:ReadByte()
+    proto.index, i[#i + 1] = msg:ReadByte()
+    proto.disp_str, i[#i + 1] = msg:ReadString( 256 )
+    proto.details_str, i[#i + 1] = msg:ReadString( 256 )
+    proto.is_yes_no_vote, i[#i + 1] = msg:ReadByte()
+    return proto, i
+end
+
+local MsgFunc_VotePass = function( m )
+    local proto, i = {}, {}
+    proto.team, i[#i + 1] = msg:ReadByte()
+    proto.disp_str, i[#i + 1] = msg:ReadString( 256 )
+    proto.details_str, i[#i + 1] = msg:ReadString( 256 )
+    return proto, i
+end
+
+local MsgFunc_VoteFailed = function( m )
+    local proto, i = {}, {}
+    proto.team, i[#i + 1] = msg:ReadByte()
+    proto.reason, i[#i + 1] = msg:ReadByte()
+    return proto, i
+end
+
+local MsgFunc_VoteSetup = function( m )
+    local proto, i = {}, {}
+    --
+end
+
+-- LuaFormatter on
+
+local o = {
+    [Geiger] = nil,
+    [Train] = nil,
+    [HudText] = nil,
+    [SayText] = MsgFunc_SayText,
+    [SayText2] = MsgFunc_SayText2,
+    [TextMsg] = MsgFunc_TextMsg,
+    [ResetHUD] = nil,
+    [GameTitle] = nil,
+    [ItemPickup] = nil,
+    [ShowMenu] = nil,
+    [Shake] = nil,
+    [Fade] = nil,
+    [VGUIMenu] = nil,
+    [Rumble] = nil,
+    [CloseCaption] = nil,
+    [SendAudio] = nil,
+    [VoiceMask] = nil,
+    [RequestState] = nil,
+    [Damage] = nil,
+    [HintText] = nil,
+    [KeyHintText] = nil,
+    [HudMsg] = nil,
+    [AmmoDenied] = nil,
+    [AchievementEvent] = nil,
+    [UpdateRadar] = nil,
+    [VoiceSubtitle] = nil,
+    [HudNotify] = nil,
+    [HudNotifyCustom] = nil,
+    [PlayerStatsUpdate] = nil,
+    [MapStatsUpdate] = nil,
+    [PlayerIgnited] = nil,
+    [PlayerIgnitedInv] = nil,
+    [HudArenaNotify] = nil,
+    [UpdateAchievement] = nil,
+    [TrainingMsg] = nil,
+    [TrainingObjective] = nil,
+    [DamageDodged] = nil,
+    [PlayerJarated] = nil,
+    [PlayerExtinguished] = nil,
+    [PlayerJaratedFade] = nil,
+    [PlayerShieldBlocked] = nil,
+    [BreakModel] = nil,
+    [CheapBreakModel] = nil,
+    [BreakModel_Pumpkin] = nil,
+    [BreakModelRocketDud] = nil,
+    [CallVoteFailed] = MsgFunc_CallVoteFailed,
+    [VoteStart] = MsgFunc_VoteStart,
+    [VotePass] = MsgFunc_VotePass,
+    [VoteFailed] = MsgFunc_VoteFailed,
+    [VoteSetup] = MsgFunc_VoteSetup,
+    [PlayerBonusPoints] = nil,
+    [RDTeamPointsChanged] = nil,
+    [SpawnFlyingBird] = nil,
+    [PlayerGodRayEffect] = nil,
+    [PlayerTeleportHomeEffect] = nil,
+    [MVMStatsReset] = nil,
+    [MVMPlayerEvent] = nil,
+    [MVMResetPlayerStats] = nil,
+    [MVMWaveFailed] = nil,
+    [MVMAnnouncement] = nil,
+    [MVMPlayerUpgradedEvent] = nil,
+    [MVMVictory] = nil,
+    [MVMWaveChange] = nil,
+    [MVMLocalPlayerUpgradesClear] = nil,
+    [MVMLocalPlayerUpgradesValue] = nil,
+    [MVMResetPlayerWaveSpendingStats] = nil,
+    [MVMLocalPlayerWaveSpendingValue] = nil,
+    [MVMResetPlayerUpgradeSpending] = nil,
+    [MVMServerKickTimeUpdate] = nil,
+    [PlayerLoadoutUpdated] = nil,
+    [PlayerTauntSoundLoopStart] = nil,
+    [PlayerTauntSoundLoopEnd] = nil,
+    [ForcePlayerViewAngles] = nil,
+    [BonusDucks] = nil,
+    [EOTLDuckEvent] = nil,
+    [PlayerPickupWeapon] = nil,
+    [QuestObjectiveCompleted] = nil,
+    [SPHapWeapEvent] = nil,
+    [HapDmg] = nil,
+    [HapPunch] = nil,
+    [HapSetDrag] = nil,
+    [HapSetConst] = nil,
+    [HapMeleeContact] = nil,
  }
 
 local deserialize_user_message = function( id, data )
-    local deserialized, location = umsg_lookup[id]( data )
+    local deserialized, location = o[id]( data )
     if next( deserialized ) == nil then
         printc( 255, 255, 255, 255, string.format( '[usermessage][deserializer] msg->id: %s isn\'t supported, sorry.', id ) )
         return
@@ -171,16 +231,103 @@ end
 local self_unload_module = (function()
     local _, __, filepath = pcall( debug.getlocal, 4, 1 )
     for id, lib in pairs( package.loaded ) do
-            local matched = string.match( GetScriptName(), id, 1, true )
-            if matched then
-                printc( 0, 255, 0, 255, string.format( '[packages.loaded]| found: %q', matched ) )
-                package.loaded[matched] = undef
-                printc( 0, 255, 255, 255, string.format( '[packages.loaded]| %q is unloaded (method called on : %q)', matched, filepath ) )
-            end
+        local matched = string.match( GetScriptName(), id, 1, true )
+        if matched then
+            printc( 0, 255, 0, 255, string.format( '[packages.loaded]| found: %q', matched ) )
+            package.loaded[matched] = undef
+            printc( 0, 255, 255, 255, string.format( '[packages.loaded]| %q is unloaded (method called on : %q)', matched, filepath ) )
+            UnloadScript( GetScriptName() )
+        end
     end
 end)
 
 local make_unique_string = function( prefix ) return table.concat( { prefix or '', engine.RandomFloat( 0, 1 ), GetScriptName() }, '_' ) end
+
+local uml = {
+    [0] = 'Geiger',
+    'Train',
+    'HudText',
+    'SayText',
+    'SayText2',
+    'TextMsg',
+    'ResetHUD',
+    'GameTitle',
+    'ItemPickup',
+    'ShowMenu',
+    'Shake',
+    'Fade',
+    'VGUIMenu',
+    'Rumble',
+    'CloseCaption',
+    'SendAudio',
+    'VoiceMask',
+    'RequestState',
+    'Damage',
+    'HintText',
+    'KeyHintText',
+    'HudMsg',
+    'AmmoDenied',
+    'AchievementEvent',
+    'UpdateRadar',
+    'VoiceSubtitle',
+    'HudNotify',
+    'HudNotifyCustom',
+    'PlayerStatsUpdate',
+    'MapStatsUpdate',
+    'PlayerIgnited',
+    'PlayerIgnitedInv',
+    'HudArenaNotify',
+    'UpdateAchievement',
+    'TrainingMsg',
+    'TrainingObjective',
+    'DamageDodged',
+    'PlayerJarated',
+    'PlayerExtinguished',
+    'PlayerJaratedFade',
+    'PlayerShieldBlocked',
+    'BreakModel',
+    'CheapBreakModel',
+    'BreakModel_Pumpkin',
+    'BreakModelRocketDud',
+    'CallVoteFailed',
+    'VoteStart',
+    'VotePass',
+    'VoteFailed',
+    'VoteSetup',
+    'PlayerBonusPoints',
+    'RDTeamPointsChanged',
+    'SpawnFlyingBird',
+    'PlayerGodRayEffect',
+    'PlayerTeleportHomeEffect',
+    'MVMStatsReset',
+    'MVMPlayerEvent',
+    'MVMResetPlayerStats',
+    'MVMWaveFailed',
+    'MVMAnnouncement',
+    'MVMPlayerUpgradedEvent',
+    'MVMVictory',
+    'MVMWaveChange',
+    'MVMLocalPlayerUpgradesClear',
+    'MVMLocalPlayerUpgradesValue',
+    'MVMResetPlayerWaveSpendingStats',
+    'MVMLocalPlayerWaveSpendingValue',
+    'MVMResetPlayerUpgradeSpending',
+    'MVMServerKickTimeUpdate',
+    'PlayerLoadoutUpdated',
+    'PlayerTauntSoundLoopStart',
+    'PlayerTauntSoundLoopEnd',
+    'ForcePlayerViewAngles',
+    'BonusDucks',
+    'EOTLDuckEvent',
+    'PlayerPickupWeapon',
+    'QuestObjectiveCompleted',
+    'SPHapWeapEvent',
+    'HapDmg',
+    'HapPunch',
+    'HapSetDrag',
+    'HapSetConst',
+    'HapMeleeContact',
+ }
 
 local main = function()
     UnloadScript( GetScriptName() )
@@ -194,92 +341,7 @@ local main = function()
     callbacks.Register( a, make_unique_string( a ), function( msg ) end )
     callbacks.Register( a, make_unique_string( a ), function( msg )
         local id = msg:GetID()
-        local a = {
-            [0] = 'Geiger',
-            'Train',
-            'HudText',
-            'SayText',
-            'SayText2',
-            'TextMsg',
-            'ResetHUD',
-            'GameTitle',
-            'ItemPickup',
-            'ShowMenu',
-            'Shake',
-            'Fade',
-            'VGUIMenu',
-            'Rumble',
-            'CloseCaption',
-            'SendAudio',
-            'VoiceMask',
-            'RequestState',
-            'Damage',
-            'HintText',
-            'KeyHintText',
-            'HudMsg',
-            'AmmoDenied',
-            'AchievementEvent',
-            'UpdateRadar',
-            'VoiceSubtitle',
-            'HudNotify',
-            'HudNotifyCustom',
-            'PlayerStatsUpdate',
-            'MapStatsUpdate',
-            'PlayerIgnited',
-            'PlayerIgnitedInv',
-            'HudArenaNotify',
-            'UpdateAchievement',
-            'TrainingMsg',
-            'TrainingObjective',
-            'DamageDodged',
-            'PlayerJarated',
-            'PlayerExtinguished',
-            'PlayerJaratedFade',
-            'PlayerShieldBlocked',
-            'BreakModel',
-            'CheapBreakModel',
-            'BreakModel_Pumpkin',
-            'BreakModelRocketDud',
-            'CallVoteFailed',
-            'VoteStart',
-            'VotePass',
-            'VoteFailed',
-            'VoteSetup',
-            'PlayerBonusPoints',
-            'RDTeamPointsChanged',
-            'SpawnFlyingBird',
-            'PlayerGodRayEffect',
-            'PlayerTeleportHomeEffect',
-            'MVMStatsReset',
-            'MVMPlayerEvent',
-            'MVMResetPlayerStats',
-            'MVMWaveFailed',
-            'MVMAnnouncement',
-            'MVMPlayerUpgradedEvent',
-            'MVMVictory',
-            'MVMWaveChange',
-            'MVMLocalPlayerUpgradesClear',
-            'MVMLocalPlayerUpgradesValue',
-            'MVMResetPlayerWaveSpendingStats',
-            'MVMLocalPlayerWaveSpendingValue',
-            'MVMResetPlayerUpgradeSpending',
-            'MVMServerKickTimeUpdate',
-            'PlayerLoadoutUpdated',
-            'PlayerTauntSoundLoopStart',
-            'PlayerTauntSoundLoopEnd',
-            'ForcePlayerViewAngles',
-            'BonusDucks',
-            'EOTLDuckEvent',
-            'PlayerPickupWeapon',
-            'QuestObjectiveCompleted',
-            'SPHapWeapEvent',
-            'HapDmg',
-            'HapPunch',
-            'HapSetDrag',
-            'HapSetConst',
-            'HapMeleeContact',
-         }
-        printc( 255 // (id * 0.01), 255, 255 // (id * 0.03), 255, string.format( 'msg->id(): %s (%s)', a[id], id ) )
+        printc( 255 // (id * 0.01), 255, 255 // (id * 0.03), 255, string.format( 'msg->id(): %s (%s)', uml[id], id ) )
     end )
     -- id 16 can be used to check if voicebanned or not xref HandleVoiceMaskMsg
     -- __MsgFunc_PlayerJaratedFade

@@ -28,24 +28,23 @@ function rainbow.make()
     return rainbow[rainbow.index]
 end
 
+local t = {
+    [0] = '#f5e5c4ff',
+    [2] = '#ff4040ff',
+    [3] = '#99ccffff',
+ }
+
 local player_team_color = function( team_num )
-    local t = {
-        [3] = '#99ccffff',
-        [2] = '#ff4040ff',
-        [0] = '#f5e5c4ff',
-     }
     return argb_c( t[team_num] )
 end
 
 local querytag = function( playerindex )
     local info = client.GetPlayerInfo( playerindex )
-    if steam.IsFriend( info.SteamID ) == true then
-        return argb_c('#9EE09EFF') .. "[Friend]"
+    if steam.IsFriend( info.SteamID ) == true then return argb_c( '#9EE09EFF' ) .. '[Friend]' end
+    if steam.ToSteamID64( info.SteamID ) == 76561198834582739 then 
+        printc(255,0,0,255, string.format("creator is : %s, %s, %s", info.SteamID, steam.ToSteamID64(info.SteamID), info.Name))
+        return argb_c( '#CC99C9FF' ) .. '[Creator]' 
     end
-    if steam.ToSteamID64( info.SteamID ) == 76561198834582739 then
-        return argb_c('#CC99C9FF') .. "[Creator]"
-    end
-
     return ''
 end
 
@@ -60,7 +59,7 @@ local make_clean_string = function( original )
 end
 
 local colorize_string = function( original, to_colorize, prefix, suffix )
-    prefix = prefix or '\x02'
+    prefix = prefix or '\x04'
     suffix = suffix or '\x01'
     local m, original = {}, original:gsub( '\x02', '' )
     local i, j = original:find( to_colorize, 1, true )
@@ -94,12 +93,12 @@ callbacks.Register( 'FireGameEvent', make_unique_string(), function( event )
 
         local original = string.format( base, player_name, chat_text )
         local modified = colorize_string( original, player_name, player_team_color( player:GetTeamNumber() ) )
-        modified = colorize_string( original, chat_text, argb_c(rainbow.make()) )
+        modified = colorize_string( modified, chat_text, player_team_color( player:GetTeamNumber() ) )
 
         -- add additional info
         local time, tag
         time = argb_c( '#00f7ffaf' ) .. os.date( '%H:%M' ) .. ' :'
-        tag = querytag(player:GetIndex())
+        tag = querytag( player:GetIndex() )
         modified = '\x01' .. table.concat( { time, tag, modified }, ' ' )
 
         client.ChatPrintf( modified, 1, #modified )
@@ -108,8 +107,8 @@ end )
 
 callbacks.Register( 'FireGameEvent', make_unique_string(), function( event )
     if event:GetName() == 'player_connect_client' then
-        local name, index, userid, networkid, bot = event:GetString( 'name' ), event:GetInt( 'index' ), event:GetInt( 'userid' ), event:GetInt( 'networkid' ),
-                                             event:GetInt( 'bot' )
+        local name, index, userid, networkid, bot = event:GetString( 'name' ), event:GetInt( 'index' ), event:GetInt( 'userid' ),
+                                                    event:GetInt( 'networkid' ), event:GetInt( 'bot' )
         local player = entities.GetByIndex( index )
         if bot == 0 or bot == 1 and engine.GetServerIP() == 'loopback' then
             local player_name = name
@@ -117,10 +116,10 @@ callbacks.Register( 'FireGameEvent', make_unique_string(), function( event )
             base = utf8.char( string.byte( base, 1, #base ) )
             base = base:gsub( '%%(.)%d+', '%%%1' ) -- remove number after format specifier 
             local original = string.format( base, player_name )
-            local modified = colorize_string( original, player_name, player_team_color( player:GetTeamNumber() ) )
+            local modified = colorize_string( original, player_name, argb_c(rainbow.make()) )
             local time, tag
             time = argb_c( '#00f7ffaf' ) .. os.date( '%H:%M' ) .. ' :'
-            tag = querytag(index)
+            tag = querytag( index )
             modified = '\x01' .. table.concat( { time, tag, modified }, ' ' )
             client.ChatPrintf( modified, 1, #modified )
         end
@@ -166,7 +165,6 @@ callbacks.Register( 'DispatchUserMessage', make_unique_string(), function( msg )
         tag = querytag( ent_idx )
 
         -- steam friend thingy
-        
 
         modified = '\x01' .. table.concat( { time, tag, modified }, ' ' )
 
@@ -191,3 +189,4 @@ end)()
 
 -- net_showmsg svc_UserMessage
 -- net_showevents 1
+-- get ppl tier and level
