@@ -5,7 +5,7 @@ callbacks.Unregister( 'FireGameEvent', 'event_observer' )
 
 -- region: constant and helper function
 -- LuaFormatter off
-local white_c<const>, old_c<const>, team_c<const>, location_c<const>, achievement_c<const>, black_c<const> = '\x01', '\x02', '\x03', '\x04', '\x05', '\x06'
+local white_c, old_c, team_c, location_c, achievement_c, black_c = '\x01', '\x02', '\x03', '\x04', '\x05', '\x06'
 local  rgb_c = function( hexcodes ) return '\x07' .. string.sub(hexcodes, 2, #hexcodes)  end
 local argb_c = function( hexcodes_a ) return '\x08' .. string.sub(hexcodes_a, 2, #hexcodes_a) end
 -- LuaFormatter on
@@ -129,7 +129,7 @@ end )
 -- http://lua-users.org/wiki/SwitchStatement
 -- https://github.dev/lua9520/source-engine-2018-hl2_src/ (note: reference only)
 
-local vote_failed_reason_t<const> = {
+local vote_failed_reason_t = {
     [0] = 'VOTE_FAILED_GENERIC',
     [1] = 'VOTE_FAILED_TRANSITIONING_PLAYERS',
     [2] = 'VOTE_FAILED_RATE_EXCEEDED',
@@ -154,13 +154,13 @@ local vote_failed_reason_t<const> = {
     [21] = 'VOTE_FAILED_KICK_DENIED_BY_GC',
  }
 
-local vote_failed_localize<const> = {
+local vote_failed_localize = {
     [0] = '#GameUI_vote_failed',
     [3] = '#GameUI_vote_failed_yesno',
     [4] = '#GameUI_vote_failed_quorum',
  }
 
-local vote_call_vote_failed_localize<const> = {
+local vote_call_vote_failed_localize = {
     [1] = '#GameUI_vote_failed_transition_vote',
     [2] = function( time )
         local response = (time > 60) and '#GameUI_vote_failed_vote_spam_min' or '#GameUI_vote_failed_vote_spam_mins'
@@ -189,13 +189,13 @@ local vote_call_vote_failed_localize<const> = {
     [19] = '#GameUI_vote_failed_event_already_active',
  }
 
-local vote_setup_localize<const> = { '#TF_Kick', '#TF_RestartGame', '#TF_ChangeLevel', '#TF_NextLevel', '#TF_ScrambleTeams',
+local vote_setup_localize = { '#TF_Kick', '#TF_RestartGame', '#TF_ChangeLevel', '#TF_NextLevel', '#TF_ScrambleTeams',
                                      '#TF_ChangeMission', '#TF_TeamAutoBalance_Enable', '#TF_TeamAutoBalance_Disable',
                                      '#TF_ClassLimit_Enable', '#TF_ClassLimit_Disable' }
 -- endregion: UserMessage resources
 
 -- region:
-local TFUnassigned<const>, TFSpectator<const>, TFRed<const>, TFBlu<const> = 0, 1, 2, 3
+local TFUnassigned, TFSpectator, TFRed, TFBlu = 0, 1, 2, 3
 local team_can_vote = {
     [0] = '[All]',
     [1] = '[Spectator]',
@@ -236,9 +236,9 @@ callbacks.Register( 'FireGameEvent', 'event_observer', function( event )
     end
 
     if (event:GetName() == 'vote_cast') then
-        local vote_option<const> = event:GetInt( 'vote_option' )
-        local team<const> = event:GetInt( 'team' )
-        local entityindex<const> = event:GetInt( 'entityid' )
+        local vote_option = event:GetInt( 'vote_option' )
+        local team = event:GetInt( 'team' )
+        local entityindex = event:GetInt( 'entityid' )
         ---
         local entity = entities.GetByIndex( entityindex )
         if entity and entity:IsValid() then
@@ -259,11 +259,11 @@ callbacks.Register( 'FireGameEvent', 'event_observer', function( event )
 end )
 
 um.new( VoteStart, 'MsgFunc_VoteStart', function( msg )
-    local team<const> = msg:ReadByte() -- Team index or 0 for all
-    local ent_idx<const> = msg:ReadByte() -- Client index of person who started the vote, or 99 for the server.
-    local disp_str<const> = msg:ReadString( 256 ) -- Vote issue translation string
-    local details_str<const> = msg:ReadString( 256 ) -- Vote issue text
-    local is_yes_no_vote<const> = msg:ReadByte() -- true for Yes/No, false for Multiple choice
+    local team = msg:ReadByte() -- Team index or 0 for all
+    local ent_idx = msg:ReadByte() -- Client index of person who started the vote, or 99 for the server.
+    local disp_str = msg:ReadString( 256 ) -- Vote issue translation string
+    local details_str = msg:ReadString( 256 ) -- Vote issue text
+    local is_yes_no_vote = msg:ReadByte() -- true for Yes/No, false for Multiple choice
     ---
     local s = localize_and_format( disp_str, details_str )
     local text = table.concat( { colors[team], team_can_vote[team], ' ', white_c, s } )
@@ -272,9 +272,9 @@ um.new( VoteStart, 'MsgFunc_VoteStart', function( msg )
 end )
 
 um.new( VotePass, 'MsgFunc_VotePass', function( msg )
-    local team<const> = msg:ReadByte() -- Team index or 0 for all
-    local disp_str<const> = msg:ReadString( 256 ) -- Vote success translation string
-    local details_str<const> = msg:ReadString( 256 ) -- Vote winner
+    local team = msg:ReadByte() -- Team index or 0 for all
+    local disp_str = msg:ReadString( 256 ) -- Vote success translation string
+    local details_str = msg:ReadString( 256 ) -- Vote winner
     ---
     local s = localize_and_format( disp_str, details_str )
     local text = table.concat( { colors[team], team_can_vote[team], ' ', white_c, s } )
@@ -283,8 +283,8 @@ um.new( VotePass, 'MsgFunc_VotePass', function( msg )
 end )
 
 um.new( VoteFailed, 'MsgFunc_VoteFailed', function( msg )
-    local team<const> = msg:ReadByte() -- Team index or 0 for all
-    local reason<const> = msg:ReadByte() -- Failure reason code (0, 3-4)
+    local team = msg:ReadByte() -- Team index or 0 for all
+    local reason = msg:ReadByte() -- Failure reason code (0, 3-4)
     ---
     local s = localize_and_format( vote_failed_localize[reason] )
     local text = table.concat( { colors[team], team_can_vote[team], ' ', achievement_c, s } )
@@ -293,8 +293,8 @@ um.new( VoteFailed, 'MsgFunc_VoteFailed', function( msg )
 end )
 
 um.new( CallVoteFailed, 'MsgFunc_CallVoteFailed', function( msg )
-    local reason<const> = msg:ReadByte() -- Failure reason (1-2, 5-10, 12-19)
-    local time<const> = msg:ReadInt( 16 ) -- For failure reasons 2 and 8, time in seconds until client can start another vote. 2 is per user, 8 is per vote type.
+    local reason = msg:ReadByte() -- Failure reason (1-2, 5-10, 12-19)
+    local time = msg:ReadInt( 16 ) -- For failure reasons 2 and 8, time in seconds until client can start another vote. 2 is per user, 8 is per vote type.
     ---
     local me = entities.GetLocalPlayer()
     local text = string.format( '%s%s %s%s %s%s left to wait before casting another vote. \r\n%s%s', --

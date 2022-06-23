@@ -1,31 +1,18 @@
--------------------------------------------------^------------------------------------------------- 
-local author<const>, version<const> = 'Moonverse#9320', 1
--------------------------------------------------^------------------------------------------------- 
-local cvar, usermessage_proto, msgpack = require 'cvar', require 'usermessage_proto', require 'msgpack'
-local ChatPrintf = client.ChatPrintf
+local __WHO, __VERSION, __NAME = 'Moonverse#9320', 1, 'griseo'
 
-local GetScriptFileName = function()
-    local s = GetScriptName()
-    local _, p = s:find( '.*[/\\]' )
-    local _, q = s:find( '.*[.]' )
-    return s:sub( p + 1, q - 1 ), s:sub( p + 1, #s )
-end
+-- LuaFormatter off
+local util, cvar, usermessage, msgpack, color, arxgui
+util        = require 'util'
+color       = require 'color' 
+cvar        = require 'convar' -- command line interface
+arxgui      = require 'arxgui' -- graphical interface
+msgpack     = require 'msgpack' -- serializer
+usermessage = require 'usermessagestruct'
+-- LuaFormatter on
 
-local localize_string = function( v )
-    v = type( v ) == 'string' and v or tostring( v )
-    v = client.Localize( v )
-    return utf8.char( string.byte( v, 1, #v ) )
-end
+local _, filename, filename_ext = util.get_script_name()
+local fmt = string.format("%s - %s", __NAME, filename_ext)
 
-local to_plain_string = function( v ) return v:sub( '%c', '' ):sub( '%%', '%%%%' ) end
-
-local text_range = function( v, substr, prefix, suffix )
-    prefix = prefix or ''
-    suffix = suffix or ''
-    return tostring( v ):gsub( substr, prefix .. '%1' ):gsub( substr, '%1' .. suffix )
-end
-
-local filename, filename_ext = GetScriptFileName()
 
 local vote_start = function( msg )
     if msg:GetID() == VoteStart then
@@ -65,7 +52,30 @@ end
 
 ---
 
+local config = {
+    printChat = true,
+    printConsole = true,
+    sayTextMode = 0,
+ }
 
+local savefolder, filepath, datafile, databin
+savefolder = engine.GetGameDir() .. [[\..\lua-config]]
+filepath = savefolder .. '\\' .. _NAME .. '.msgpack'
+if os.rename( savefolder, 'lua-config' ) ~= true then
+    os.execute( string.format( 'start /b mkdir "%s" 1>nul: 2>&1', savefolder ) )
+    print( 'If a command prompt window flashed, it\'s most likely you didn\'t have this directory:\n' .. savefolder )
+    print( '[+] the directory has' .. (os.rename( savefolder, 'lua-config' ) and '' or ' not') .. ' been created' )
+end
+datafile = io.open( filepath, 'rb' )
+if datafile then
+    databin = datafile:read( '*a' )
+    datafile:close()
+end
+
+datafile = io.open( filepath, 'w+b' )
+datafile:write( msgpack.encode_one( config ) )
+datafile:flush()
+datafile:close()
 
 --[[
 cvar.add_cvar( script_no_ext, function( cvar )
