@@ -81,6 +81,8 @@ tempTeamColor[1] = 'rgba(250, 250, 240, 255)'
 tempTeamColor[2] = 'rgba(255, 102, 99, 255)'
 tempTeamColor[3] = 'rgba(158, 193, 207, 255)'
 
+local g_voteidx = nil
+
 local function vote_start( msg )
     if msg:GetID() == VoteStart then
         local team, voteidx, ent_idx, disp_str, details_str, target
@@ -110,6 +112,7 @@ local function vote_start( msg )
             return color .. s .. '\x01'
         end )
 
+ 
         client.ChatPrintf( highlighted )
 
         tempTeamColor[team]:gsub( '%((.-)%)', function( s )
@@ -193,7 +196,7 @@ local function call_vote_failed( msg )
         time = msg:ReadInt( 16 )
 
         local disp_str = vote_failed_reason_t[reason]
-        local message = '[\x03' .. client.Localize( '#GameUI_vote_failed' ) .. ']\x01 ' .. disp_str .. '\n' .. time ..
+        local message = '[\x03' .. client.Localize( '#GameUI_vote_failed' ) .. '\x01]' .. disp_str .. '\n' .. time ..
                             ' seconds left to wait before casting another vote'
         local highlighted = '\x01' .. message:gsub( disp_str, function( s ) return '\x05' .. s .. '\x01' end )
 
@@ -204,7 +207,23 @@ end
 
 local options = { 'Yes', 'No' }
 
-local function vote( event )
+local CAT_IDENTIFY = 0xCA7
+local CAT_REPLY = 0xCA8
+
+local function on_vote( event )
+
+    if event:GetName() == 'achievement_earned' then
+        local ent_idx, achievement
+        ent_idx = event:GetInt( 'player' )
+        achievement = event:GetInt( 'achievement' )
+        local ent = entities.GetByIndex( ent_idx )
+        client.ChatPrintf( string.format( '%s got an achievement.', ent:GetName() ) )
+        if achievement == CAT_IDENTIFY or achievement == CAT_REPLY then
+
+            client.ChatPrintf( string.format( '\x01[ALERT] \x05%s sent a CAT ID.', ent:GetName() ) )
+        end
+    end
+
     if event:GetName() == 'vote_options' then
         for i = 1, event:GetInt( 'count' ) do
             options[i] = event:GetString( 'option' .. i )
@@ -216,9 +235,12 @@ local function vote( event )
         vote_option = event:GetInt( 'vote_option' ) + 1 -- ??? consistency
         team = event:GetInt( 'team' )
         ent_idx = event:GetInt( 'entityid' )
+        vote_idx = event:GetInt( 'voteidx' )
+
+        g_voteidx = vote_idx
 
         local ent = entities.GetByIndex( ent_idx )
-        local playername = ent:GetName() or 'NULLNAME'
+        local playername = ent ~= nil and ent.GetName( ent )  or 'NULLNAME'
 
         local message = '[' .. options[vote_option] .. ']' .. ' ' .. playername
         local highlighted = '\x01' .. message:gsub( playername, function( s )
@@ -243,10 +265,20 @@ local function vote( event )
 
     end
 end
+
+local function on_send_string_cmd( cmd )
+    local input = cmd:Get()
+    if input:find( 'vote option' ) then
+        cmd:Set( '' )
+        client.Command( input:gsub( 'vote', '%1 ' .. g_voteidx ), true )
+    end
+end
+
 -- region:
 -- LuaFormatter off 
 local lua_callbacks = { 
-    { 'FireGameEvent',  vote},
+    { 'FireGameEvent',  on_vote},
+    { 'SendStringCmd',  on_send_string_cmd},
     { 'DispatchUserMessage', vote_start }, 
     { 'DispatchUserMessage', vote_pass }, 
     { 'DispatchUserMessage', vote_failed },

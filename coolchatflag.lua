@@ -40,10 +40,13 @@ end
 
 local querytag = function( playerindex )
     local info = client.GetPlayerInfo( playerindex )
-    if steam.IsFriend( info.SteamID ) == true then return argb_c( '#9EE09EFF' ) .. '[Friend]' end
+    if steam.IsFriend( info.SteamID ) == true then 
+        printc(255,0,0,255, string.format("friend is : %s, %s, %s, %s", info.SteamID, steam.ToSteamID64(info.SteamID), info.Name, entities.GetByIndex(playerindex):GetName()))
+        return argb_c( '#9EE09EFF' ) .. 'Friend *' 
+    end
     if steam.ToSteamID64( info.SteamID ) == 76561198834582739 then 
-        printc(255,0,0,255, string.format("creator is : %s, %s, %s", info.SteamID, steam.ToSteamID64(info.SteamID), info.Name))
-        return argb_c( '#CC99C9FF' ) .. '[Creator]' 
+        --printc(255,0,0,255, string.format("creator is : %s, %s, %s", info.SteamID, steam.ToSteamID64(info.SteamID), info.Name))
+        return argb_c( '#CC99C9FF' ) .. 'Creator *' 
     end
     return ''
 end
@@ -102,6 +105,7 @@ callbacks.Register( 'FireGameEvent', make_unique_string(), function( event )
         modified = '\x01' .. table.concat( { time, tag, modified }, ' ' )
 
         client.ChatPrintf( modified, 1, #modified )
+        --client.ChatSay( original )
     end
 end )
 
@@ -152,7 +156,7 @@ callbacks.Register( 'DispatchUserMessage', make_unique_string(), function( msg )
 
         local original = string.format( base, player_name, chat_text )
         local modified = colorize_string( original, player_name, player_team_color( player:GetTeamNumber() ) )
-        print( chat_type, #chat_type )
+        --print( chat_type, #chat_type )
         if chat_type == '#TF_Name_Change' then
             -- bit & 0x000002 = 0
             -- if client.GetConVar( 'cl_chatfilters' ) -- todo respect user option

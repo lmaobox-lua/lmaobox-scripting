@@ -110,3 +110,4 @@ local dumpBytes = function( msg )
     end
     local dumpstr = table.concat(buf, ' ')
 end
+

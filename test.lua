@@ -1,42 +1,28 @@
-callbacks.Unregister( 'CreateMove', 'think' )
-callbacks.Register( 'CreateMove', 'think', function( cmd )
-    local me = entities.GetLocalPlayer()
-    local wpn = me:GetPropEntity( 'm_hActiveWeapon' )
-    local iReloadMode = wpn:GetPropInt("m_iReloadMode")
+--[[local function interp( s, tab )
+    return (s:gsub( s, function( w )
+        print("hi")
+        for i, s1 in pairs( tab ) do
+            local idx0, idx1 = 0, 0
+            if type( s1 ) == 'string' then
+                local substr_find, replace_with
+                substr_find = s1:match( '[^:]+' )
+                replace_with = s1:sub( #substr_find + 2, #s1 )
+                s = s:gsub( substr_find, function( match )
+                    if s:find( match ) > idx1 then
+                        idx0, idx1 = s:find( match )
+                        return replace_with
+                    end
+                    return match
+                end )
+            end
+        end
+        return s
+    end ))
+end
+getmetatable( '' ).__mod = interp
 
-    local pitch, yaw, roll = cmd:GetViewAngles()
-    cmd:SetViewAngles( pitch, yaw + 90, roll )
-    -- print(cmd:GetSendPacket())
-    -- cmd:SetSendPacket( true )
-    local buttons = cmd:GetButtons()
-    local is_in_reload = (buttons & IN_RELOAD) ~= 0 or iReloadMode == 1
-    if is_in_reload then
-        print( string.format( 'button: %d, tick: %d', buttons, cmd.tick_count ) )
-        cmd:SetButtons( buttons & ~IN_RELOAD )
-        engine.SendKeyValues( [[
-            "+inspect_server" {
+local name = 'blue hello world world?'
+print( name % { 'hello:xd', 'world:\x01->%1<-\x02', 'world:big shit' } )
+local expect = 'hello ->world<- big shit'
+-- broken]]
 
-            }
-        ]] )
-
-        --wpn:SetPropInt( 0, 'm_iReloadMode' )
-    end
-
-
-end )
-
---[[
-    bool CTFWeaponBase::IsReloading()
-{
-    // m_bInReload in CBaseCombatWeapon, 12 bytes from flNextPrimaryAttack offset)
-    bool& bInReload = GetMember<bool>(gd.BaseCombatWeapon__flNextPrimaryAttack+12);
-    // m_iReloadMode deals with reloading rocket launchers etc
-    return bInReload || iReloadMode()!=0;
-}
-
-if ( pOwner->m_nButtons & (IN_ATTACK | IN_ATTACK2) && m_iClip1 > 0 )
-			{
-				m_bInReload = false;
-				return;
-			}
-]]
