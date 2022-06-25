@@ -5,7 +5,11 @@ local t = {
     ['off'] = nil
  }
 
-_G.vote = t[gui.GetValue( 'Auto Voting' )]
+_G.vote = t[gui.GetValue( 'Auto Voting' )] -- ONCE
+
+if not _G.vote then
+    printc(255,0,0,255, "autovote.lua _G.vote is nil, consider reading src or enable Auto Voting and reload script")
+end
 
 local g_voteidx = nil
 
