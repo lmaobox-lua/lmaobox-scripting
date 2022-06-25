@@ -1,3 +1,4 @@
 reference
 script_ignored
 *.txt
+*.code-workspace
