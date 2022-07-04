@@ -81,8 +81,6 @@ tempTeamColor[1] = 'rgba(250, 250, 240, 255)'
 tempTeamColor[2] = 'rgba(255, 102, 99, 255)'
 tempTeamColor[3] = 'rgba(158, 193, 207, 255)'
 
-local g_voteidx = nil
-
 -- what if we do full string color, unless :flushed:
 local team_name = {
     [0] = '~',
@@ -131,7 +129,7 @@ local function removeColorCode( message )
             table.remove( tbl, i )
         end
         if val == 7 or val == 8 then
-            for i1 = 2, val, 1 do
+            for i1 = 1, val, 1 do
                 table.remove( tbl, i )
             end
         end
@@ -147,7 +145,9 @@ end
 
 -- What if i start doing overengineer.
 
-local function PartySay( message ) client.Command( string.format( 'tf_party_chat %q', message ), true ) end
+local function PartySay( message )
+    --     client.Command( string.format( 'tf_party_chat %q', message:gsub('"', "'") ), true )
+end
 
 local buflogger = {}
 
@@ -175,20 +175,19 @@ local function vote_start( msg )
             end
             return '%' .. capture
         end ):gsub( '\n', ' ' )
-        fmt = string.format( '%d • [{TEAM}%s\x01] {ENT}%s\x01\n{H1}*\x01 \x05%s', voteidx, GetTeamName( team ),
+        fmt = string.format( '%d • [{TEAM}%s\x01] {ENT}%s\x01\n* \x05%s', voteidx, GetTeamName( team ),
                              client.GetPlayerNameByIndex( entidx ) or 'NULLNAME', tfconsole )
         tfchat = '\x01' .. interp( fmt, {
             ENT = GetTeamColor( ent:GetTeamNumber() ):colorCode(),
-            TEAM = GetTeamColor( team ):colorCode(),
-            H1 = '\x01' -- voteidx
+            TEAM = GetTeamColor( team ):colorCode()
          } )
 
         client.ChatPrintf( tfchat )
         tfconsole = removeColorCode( tfconsole )
         -- GetTeamColor( ent:GetTeamNumber() ):printc( tfconsole )
-        PartySay( string.format( 'Vote started by %s - %s', client.GetPlayerInfo( entidx ).SteamID, client.GetPlayerNameByIndex( entidx ) or 'NULLNAME' ) )
-        PartySay( tfconsole )
-        buflogger[#buflogger+1] = tfconsole
+        PartySay( string.format( 'Vote started by %s - %s', client.GetPlayerNameByIndex( entidx ), client.GetPlayerInfo( entidx ).SteamID ) )
+        PartySay( tfconsole .. ' ' .. client.GetPlayerInfo( target ).SteamID or '' )
+        buflogger[#buflogger + 1] = tfconsole
     end
 end
 
@@ -200,19 +199,26 @@ local function vote_pass( msg )
         disp_str = msg:ReadString( 256 )
         details_str = msg:ReadString( 256 )
 
-        local message = client.Localize( disp_str ):gsub( '%%s1', details_str )
-        message = string.format( '[%s] %s', teamName[team], message )
-        local highlighted = '\x01' .. message:gsub( details_str, function( s )
-            local color = '\x08' .. teamColor[team]
-            return color .. s .. '\x01'
-        end ):gsub( teamName[team], function( s )
-            local color = '\x08' .. teamColor[team]
-            return color .. s .. '\x01'
-        end )
+        local loc, fmt, tfchat, tfparty, tfconsole
+        loc = client.Localize( disp_str )
+        loc = (loc ~= nil and #loc > 0) and utf8.char( loc:byte( 1, #loc ) ) or disp_str
+        tfconsole = loc:gsub( '%%s%d+', function( capture )
+            if capture == '%s1' then
+                return details_str
+            end
+            return '%' .. capture
+        end ):gsub( '\n', ' ' )
+        fmt = string.format( '%d • [{TEAM}%s\x01] \x05%s', voteidx, GetTeamName( team ), tfconsole )
 
-        client.ChatPrintf( highlighted )
+        tfchat = '\x01' .. interp( fmt, {
+            ENT = GetTeamColor( ent:GetTeamNumber() ):colorCode(),
+            TEAM = GetTeamColor( team ):colorCode()
+         } )
 
-        -- hi
+        client.ChatPrintf( tfchat )
+        tfconsole = removeColorCode( tfconsole )
+        PartySay( tfconsole )
+
     end
 end
 
@@ -225,27 +231,36 @@ local function vote_failed( msg )
 
         local disp_str = vote_failed_t[reason]
 
-        local message = client.Localize( disp_str )
-        message = string.format( '[%s] %s', teamName[team], message )
-        local highlighted = '\x01' .. message:gsub( teamName[team], function( s )
-            local color = '\x08' .. teamColor[team]
-            return color .. s .. '\x01'
-        end )
+        local loc, fmt, tfchat, tfparty, tfconsole
+        loc = client.Localize( disp_str )
+        loc = (loc ~= nil and #loc > 0) and utf8.char( loc:byte( 1, #loc ) ) or disp_str
+        tfconsole = loc:gsub( '%%s%d+', function( capture )
+            if capture == '%s1' then
+                return details_str
+            end
+            return '%' .. capture
+        end ):gsub( '\n', ' ' )
+        fmt = string.format( '%d • [{TEAM}%s\x01] \x05%s', voteidx, GetTeamName( team ), tfconsole )
 
-        client.ChatPrintf( highlighted )
+        tfchat = '\x01' .. interp( fmt, {
+            TEAM = GetTeamColor( team ):colorCode()
+         } )
 
-        -- hi
+        client.ChatPrintf( tfchat )
+        tfconsole = removeColorCode( tfconsole )
+        PartySay( tfconsole )
     end
 end
 
+-- todo
 local function call_vote_failed( msg )
     if msg:GetID() == CallVoteFailed then
         local reason, time
         reason = msg:ReadByte()
         time = msg:ReadInt( 16 )
 
-        local disp_str = vote_failed_reason_t[reason]
-        local message = '[\x03' .. client.Localize( '#GameUI_vote_failed' ) .. '\x01]' .. disp_str .. '\n' .. time ..
+        local disp_str = vote_failed_e[reason]
+        local message = '[\x03' .. client.Localize( '#GameUI_vote_failed' ) .. '\x01] ' .. disp_str .. '\n' .. time ..
                             ' seconds left to wait before casting another vote'
         local highlighted = '\x01' .. message:gsub( disp_str, function( s ) return '\x05' .. s .. '\x01' end )
 
@@ -256,22 +271,10 @@ end
 
 local options = { 'Yes', 'No' }
 
-local CAT_IDENTIFY = 0xCA7
-local CAT_REPLY = 0xCA8
+local votesArr = {}
+local meVotedOption
 
 local function on_vote( event )
-
-    if event:GetName() == 'achievement_earned' then
-        local ent_idx, achievement
-        ent_idx = event:GetInt( 'player' )
-        achievement = event:GetInt( 'achievement' )
-        local ent = entities.GetByIndex( ent_idx )
-        client.ChatPrintf( string.format( '%s got an achievement.', ent:GetName() ) )
-        if achievement == CAT_IDENTIFY or achievement == CAT_REPLY then
-
-            client.ChatPrintf( string.format( '\x01[ALERT] \x05%s sent a CAT ID.', ent:GetName() ) )
-        end
-    end
 
     if event:GetName() == 'vote_options' then
         for i = 1, event:GetInt( 'count' ) do
@@ -279,47 +282,51 @@ local function on_vote( event )
         end
     end
 
-    if event:GetName() == 'vote_cast' then
-        local vote_option, team, ent_idx, vote_idx
-        vote_option = event:GetInt( 'vote_option' ) + 1 -- ??? consistency
-        team = event:GetInt( 'team' )
-        ent_idx = event:GetInt( 'entityid' )
-        vote_idx = event:GetInt( 'voteidx' )
-
-        g_voteidx = vote_idx
-
-        local ent = entities.GetByIndex( ent_idx )
-        local playername = ent ~= nil and ent.GetName( ent ) or 'NULLNAME'
-
-        local message = '[' .. options[vote_option] .. ']' .. ' ' .. playername
-        local highlighted = '\x01' .. message:gsub( playername, function( s )
-            local color = '\x08' .. teamColor[team]
-            return color .. s .. '\x01'
-        end ):gsub( options[vote_option], function( s )
-            local color = '\x05' -- todo TOO LAZY
-            return color .. s .. '\x01'
-        end )
-
-        client.ChatPrintf( highlighted )
-
-        tempTeamColor[team]:gsub( '%((.-)%)', function( s )
-            local t = {}
-            s:gsub( '(%d+)', function( m )
-                t[#t + 1] = m
-                if #t == 4 then
-                    printc( t[1], t[2], t[3], t[4], message )
-                end
-            end )
-        end )
-
+    if event:GetName() == 'vote_changed' then
+        local vote_option1, vote_option2, vote_option3, vote_option4, vote_option5, potentialVotes, voteidx
+        local vote = {}
+        local buf = {}
+        for i = 1, 5 do
+            vote[i] = event:GetInt( 'vote_option' .. i )
+            if vote[i] > 0 then
+                buf[i] = vote[i]
+            end
+        end
+        potentialVotes = event:GetInt( 'potentialVotes' )
+        voteidx = event:GetInt( 'voteidx' )
+        votesArr[voteidx] = string.format( '\x01[%s\x01]', table.concat( buf, '/' ) )
+        print( votesArr[voteidx] )
     end
-end
 
-local function on_send_string_cmd( cmd )
-    local input = cmd:Get()
-    if input:find( 'vote option' ) then
-        cmd:Set( '' )
-        client.Command( input:gsub( 'vote', '%1 ' .. g_voteidx ), true )
+    if event:GetName() == 'vote_cast' then
+        local vote_option, team, entidx, voteidx
+        vote_option = event:GetInt( 'vote_option' ) + 1 -- ??? volvo why.
+        team = event:GetInt( 'team' )
+        entidx = event:GetInt( 'entityid' )
+        voteidx = event:GetInt( 'voteidx' )
+
+        local ent = entities.GetByIndex( entidx )
+        if client.GetLocalPlayerIndex() == entidx then
+            meVotedOption = vote_option
+        end
+
+        local fmt, tfchat, tfparty, tfconsole
+        fmt = string.format( '%d {DOT}•\x01 |\x05%s\x01 %s {ENT}%s\x01', voteidx, options[vote_option], votesArr[voteidx] or '',
+                             client.GetPlayerNameByIndex( entidx ) )
+
+        tfchat = '\x01' .. interp( fmt, {
+            ENT = GetTeamColor( ent:GetTeamNumber() ):colorCode(),
+            DOT = (function()
+                if team ~= 0 and team ~= entities.GetLocalPlayer():GetTeamNumber() then
+                    return '\x01'
+                end
+                return meVotedOption == vote_option and '\x089EE09EFF' or '\x08FF6663FF'
+            end)()
+         } )
+
+        client.ChatPrintf( tfchat )
+        PartySay( tfconsole )
+
     end
 end
 
@@ -327,7 +334,6 @@ end
 -- LuaFormatter off 
 local lua_callbacks = { 
     { 'FireGameEvent',  on_vote},
-    { 'SendStringCmd',  on_send_string_cmd},
     { 'DispatchUserMessage', vote_start }, 
     { 'DispatchUserMessage', vote_pass }, 
     { 'DispatchUserMessage', vote_failed },
@@ -346,7 +352,3 @@ end )
 lua_callbacks:Register()
 -- LuaFormatter on
 -- endregion:
-
--- message % { { name = 'huge', ser = 'bi' }, { name = 'hugo' } }
--- message % { name = 'huge', ser = 'bi' }
-

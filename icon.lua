@@ -1,7 +1,7 @@
 UnloadScript( GetScriptName() )
 
 local def = {
-    SIGNONSTATE_NONE0 = 0, -- no state yet, about to connect
+    SIGNONSTATE_NONE = 0, -- no state yet, about to connect
     SIGNONSTATE_CHALLENGE = 1, -- client challenging server, all OOB packets
     SIGNONSTATE_CONNECTED = 2, -- client is connected to server, netchans ready
     SIGNONSTATE_NEW = 3, -- just got serverinfo and string tables
