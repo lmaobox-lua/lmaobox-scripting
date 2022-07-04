@@ -1,4 +1,4 @@
-local vote_failed_reason_t = {
+local vote_failed_e = {
     [0] = 'VOTE_FAILED_GENERIC',
     [1] = 'VOTE_FAILED_TRANSITIONING_PLAYERS',
     [2] = 'VOTE_FAILED_RATE_EXCEEDED',
@@ -23,13 +23,13 @@ local vote_failed_reason_t = {
     [21] = 'VOTE_FAILED_KICK_DENIED_BY_GC'
  }
 
-local vote_failed_localize = {
+local vote_failed_t = {
     [0] = '#GameUI_vote_failed',
     [3] = '#GameUI_vote_failed_yesno',
     [4] = '#GameUI_vote_failed_quorum'
  }
 
-local vote_call_vote_failed_localize = {
+local call_vote_failed_t = {
     [1] = '#GameUI_vote_failed_transition_vote',
     [2] = function( time )
         local response = (time > 60) and '#GameUI_vote_failed_vote_spam_min' or '#GameUI_vote_failed_vote_spam_mins'
@@ -83,47 +83,112 @@ tempTeamColor[3] = 'rgba(158, 193, 207, 255)'
 
 local g_voteidx = nil
 
+-- what if we do full string color, unless :flushed:
+local team_name = {
+    [0] = '~',
+    client.Localize( 'TF_Spectators' ) or 'Spectators',
+    client.Localize( 'TF_RedTeam_Name' ) or 'Red',
+    client.Localize( 'TF_BlueTeam_Name' ) or 'Blu'
+ }
+local function GetTeamName( teamidx ) return team_name[teamidx] end
+
+local team_color = {
+    [0] = '#F6D7A7ff',
+    '#cfcfc4ff',
+    '#ff6663ff',
+    '#9EC1CFff'
+ }
+local function GetTeamColor( teamidx )
+    local objColor = {}
+    objColor.hex = team_color[teamidx]
+    function objColor:colorCode()
+        local hex = team_color[teamidx]:gsub( '#', '' )
+        local markup = #hex < 8 and '\x07' .. hex or '\x08' .. hex
+        return markup
+    end
+    function objColor:rgbArray()
+        local i = tonumber( '0x' .. team_color[teamidx]:gsub( '#', '' ) )
+        local rgba = { i >> 24, i >> 16 & 0xFF, i >> 8 & 0xFF, i & 0xFF }
+        if rgba[1] == 0 then
+            table.remove( rgba, 1 )
+            rgba[#rgba + 1] = 255
+        else
+            rgba[1] = rgba[1] & 0xFF
+        end
+        return rgba
+    end
+    function objColor:printc( message )
+        local r, g, b, a = table.unpack( objColor:rgbArray() )
+        return printc( r, g, b, a, message )
+    end
+    return objColor, objColor.hex
+end
+
+local function removeColorCode( message )
+    local tbl = { message:byte( 1, #message ) }
+    for i, val in ipairs( tbl ) do
+        if val > 0 and val <= 8 then
+            table.remove( tbl, i )
+        end
+        if val == 7 or val == 8 then
+            for i1 = 2, val, 1 do
+                table.remove( tbl, i )
+            end
+        end
+    end
+    return string.char( table.unpack( tbl ) )
+end
+
+local function interp( message, tbl )
+    local s = message:gsub( '(%b{})', function( w ) return tbl[w:sub( 2, -2 )] or w end )
+    return s
+end
+-- getmetatable( '' ).__mod = interp
+
+-- What if i start doing overengineer.
+
+local function PartySay( message ) client.Command( string.format( 'tf_party_chat %q', message ), true ) end
+
+local buflogger = {}
+
 local function vote_start( msg )
     if msg:GetID() == VoteStart then
-        local team, voteidx, ent_idx, disp_str, details_str, target
+        local team, voteidx, entidx, disp_str, details_str, target
         team = msg:ReadByte()
         voteidx = msg:ReadInt( 32 )
-        ent_idx = msg:ReadByte()
+        entidx = msg:ReadByte()
         disp_str = msg:ReadString( 64 )
         details_str = msg:ReadString( 64 )
         target = msg:ReadByte() >> 1
 
-        local ent = entities.GetByIndex( ent_idx )
-        local playername = ent:GetName() or 'NULLNAME'
+        local ent = entities.GetByIndex( entidx )
+        if #details_str > 0 then
+            details_str = GetTeamColor( ent:GetTeamNumber() ):colorCode() .. details_str .. '\x01'
+        end
 
-        local message = client.Localize( disp_str ):gsub( '%%s1', details_str )
-        message = string.format( '[%s] %s: %s', teamName[team], playername, message )
+        local loc, fmt, tfchat, tfparty, tfconsole
+        loc = client.Localize( disp_str )
+        loc = (loc ~= nil and #loc > 0) and utf8.char( loc:byte( 1, #loc ) ) or disp_str
+        tfconsole = loc:gsub( '%%s%d+', function( capture )
+            if capture == '%s1' then
+                return details_str
+            end
+            return '%' .. capture
+        end ):gsub( '\n', ' ' )
+        fmt = string.format( '%d • [{TEAM}%s\x01] {ENT}%s\x01\n{H1}*\x01 \x05%s', voteidx, GetTeamName( team ),
+                             client.GetPlayerNameByIndex( entidx ) or 'NULLNAME', tfconsole )
+        tfchat = '\x01' .. interp( fmt, {
+            ENT = GetTeamColor( ent:GetTeamNumber() ):colorCode(),
+            TEAM = GetTeamColor( team ):colorCode(),
+            H1 = '\x01' -- voteidx
+         } )
 
-        details_str = #details_str > 1 and details_str or 'no-value'
-
-        local highlighted = '\x01' .. message:gsub( details_str, function( s )
-            local color = '\x08' .. teamColor[team]
-            return color .. s .. '\x01'
-        end ):gsub( teamName[team], function( s )
-            local color = '\x08' .. teamColor[team]
-            return color .. s .. '\x01'
-        end ):gsub( playername, function( s )
-            local color = '\x08' .. teamColor[ent:GetTeamNumber()]
-            return color .. s .. '\x01'
-        end )
-
- 
-        client.ChatPrintf( highlighted )
-
-        tempTeamColor[team]:gsub( '%((.-)%)', function( s )
-            local t = {}
-            s:gsub( '(%d+)', function( m )
-                t[#t + 1] = m
-                if #t == 4 then
-                    printc( t[1], t[2], t[3], t[4], message )
-                end
-            end )
-        end )
+        client.ChatPrintf( tfchat )
+        tfconsole = removeColorCode( tfconsole )
+        -- GetTeamColor( ent:GetTeamNumber() ):printc( tfconsole )
+        PartySay( string.format( 'Vote started by %s - %s', client.GetPlayerInfo( entidx ).SteamID, client.GetPlayerNameByIndex( entidx ) or 'NULLNAME' ) )
+        PartySay( tfconsole )
+        buflogger[#buflogger+1] = tfconsole
     end
 end
 
@@ -147,15 +212,7 @@ local function vote_pass( msg )
 
         client.ChatPrintf( highlighted )
 
-        tempTeamColor[team]:gsub( '%((.-)%)', function( s )
-            local t = {}
-            s:gsub( '(%d+)', function( m )
-                t[#t + 1] = m
-                if #t == 4 then
-                    printc( t[1], t[2], t[3], t[4], message )
-                end
-            end )
-        end )
+        -- hi
     end
 end
 
@@ -166,7 +223,7 @@ local function vote_failed( msg )
         voteidx = msg:ReadInt( 32 )
         reason = msg:ReadByte()
 
-        local disp_str = vote_failed_localize[reason]
+        local disp_str = vote_failed_t[reason]
 
         local message = client.Localize( disp_str )
         message = string.format( '[%s] %s', teamName[team], message )
@@ -177,15 +234,7 @@ local function vote_failed( msg )
 
         client.ChatPrintf( highlighted )
 
-        tempTeamColor[team]:gsub( '%((.-)%)', function( s )
-            local t = {}
-            s:gsub( '(%d+)', function( m )
-                t[#t + 1] = m
-                if #t == 4 then
-                    printc( t[1], t[2], t[3], t[4], message )
-                end
-            end )
-        end )
+        -- hi
     end
 end
 
@@ -240,7 +289,7 @@ local function on_vote( event )
         g_voteidx = vote_idx
 
         local ent = entities.GetByIndex( ent_idx )
-        local playername = ent ~= nil and ent.GetName( ent )  or 'NULLNAME'
+        local playername = ent ~= nil and ent.GetName( ent ) or 'NULLNAME'
 
         local message = '[' .. options[vote_option] .. ']' .. ' ' .. playername
         local highlighted = '\x01' .. message:gsub( playername, function( s )
@@ -297,3 +346,7 @@ end )
 lua_callbacks:Register()
 -- LuaFormatter on
 -- endregion:
+
+-- message % { { name = 'huge', ser = 'bi' }, { name = 'hugo' } }
+-- message % { name = 'huge', ser = 'bi' }
+
