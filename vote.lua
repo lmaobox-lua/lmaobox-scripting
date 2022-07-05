@@ -149,6 +149,8 @@ local function PartySay( message )
     --     client.Command( string.format( 'tf_party_chat %q', message:gsub('"', "'") ), true )
 end
 
+local votesArr = {}
+local meVotedOption -- todo EXP
 local buflogger = {}
 
 local function vote_start( msg )
@@ -188,6 +190,13 @@ local function vote_start( msg )
         PartySay( string.format( 'Vote started by %s - %s', client.GetPlayerNameByIndex( entidx ), client.GetPlayerInfo( entidx ).SteamID ) )
         PartySay( tfconsole .. ' ' .. client.GetPlayerInfo( target ).SteamID or '' )
         buflogger[#buflogger + 1] = tfconsole
+
+        for idx, arr in pairs( votesArr ) do
+            if idx ~= voteidx then
+                votesArr[idx] = undef
+            end
+        end
+
     end
 end
 
@@ -208,10 +217,8 @@ local function vote_pass( msg )
             end
             return '%' .. capture
         end ):gsub( '\n', ' ' )
-        fmt = string.format( '%d • [{TEAM}%s\x01] \x05%s', voteidx, GetTeamName( team ), tfconsole )
-
+        fmt = string.format( '%d • [{TEAM}%s\x01] \x05%s\x01 %s', voteidx, GetTeamName( team ), tfconsole, votesArr[voteidx] or '' )
         tfchat = '\x01' .. interp( fmt, {
-            ENT = GetTeamColor( ent:GetTeamNumber() ):colorCode(),
             TEAM = GetTeamColor( team ):colorCode()
          } )
 
@@ -240,15 +247,15 @@ local function vote_failed( msg )
             end
             return '%' .. capture
         end ):gsub( '\n', ' ' )
-        fmt = string.format( '%d • [{TEAM}%s\x01] \x05%s', voteidx, GetTeamName( team ), tfconsole )
+        fmt = string.format( '%d • [{TEAM}%s\x01] \x05%s\x01 %s', voteidx, GetTeamName( team ), tfconsole, votesArr[voteidx] or '' )
 
         tfchat = '\x01' .. interp( fmt, {
             TEAM = GetTeamColor( team ):colorCode()
          } )
 
+        PartySay( tfconsole )
         client.ChatPrintf( tfchat )
         tfconsole = removeColorCode( tfconsole )
-        PartySay( tfconsole )
     end
 end
 
@@ -271,9 +278,6 @@ end
 
 local options = { 'Yes', 'No' }
 
-local votesArr = {}
-local meVotedOption
-
 local function on_vote( event )
 
     if event:GetName() == 'vote_options' then
@@ -295,7 +299,7 @@ local function on_vote( event )
         potentialVotes = event:GetInt( 'potentialVotes' )
         voteidx = event:GetInt( 'voteidx' )
         votesArr[voteidx] = string.format( '\x01[%s\x01]', table.concat( buf, '/' ) )
-        print( votesArr[voteidx] )
+        -- print( votesArr[voteidx] )
     end
 
     if event:GetName() == 'vote_cast' then
@@ -307,20 +311,20 @@ local function on_vote( event )
 
         local ent = entities.GetByIndex( entidx )
         if client.GetLocalPlayerIndex() == entidx then
-            meVotedOption = vote_option
+            meVotedOption = voteidx << vote_option
         end
 
         local fmt, tfchat, tfparty, tfconsole
-        fmt = string.format( '%d {DOT}•\x01 |\x05%s\x01 %s {ENT}%s\x01', voteidx, options[vote_option], votesArr[voteidx] or '',
-                             client.GetPlayerNameByIndex( entidx ) )
+        fmt =
+            string.format( '%d {DOT}•\x01 |\x05%s\x01 {ENT}%s\x01', voteidx, options[vote_option], client.GetPlayerNameByIndex( entidx ) )
 
         tfchat = '\x01' .. interp( fmt, {
             ENT = GetTeamColor( ent:GetTeamNumber() ):colorCode(),
             DOT = (function()
-                if team ~= 0 and team ~= entities.GetLocalPlayer():GetTeamNumber() then
+                if not meVotedOption or team ~= 0 and team ~= entities.GetLocalPlayer():GetTeamNumber() and (meVotedOption >> vote_option) ~= voteidx then
                     return '\x01'
                 end
-                return meVotedOption == vote_option and '\x089EE09EFF' or '\x08FF6663FF'
+                return meVotedOption & ~(voteidx << vote_option) == 0 and '\x089EE09EFF' or '\x08FF6663FF'
             end)()
          } )
 
