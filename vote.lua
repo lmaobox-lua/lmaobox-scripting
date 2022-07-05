@@ -1,3 +1,5 @@
+_G.announce_party_chat = true
+
 local vote_failed_e = {
     [0] = 'VOTE_FAILED_GENERIC',
     [1] = 'VOTE_FAILED_TRANSITIONING_PLAYERS',
@@ -146,7 +148,9 @@ end
 -- What if i start doing overengineer.
 
 local function PartySay( message )
-    --     client.Command( string.format( 'tf_party_chat %q', message:gsub('"', "'") ), true )
+    if announce_party_chat then
+        client.Command( string.format( 'tf_party_chat %q', message:gsub('"', "'") ), true )
+    end
 end
 
 local votesArr = {}
