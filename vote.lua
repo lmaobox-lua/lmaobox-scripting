@@ -229,7 +229,7 @@ local function vote_pass( msg )
         client.ChatPrintf( tfchat )
         tfconsole = removeColorCode( tfconsole )
         PartySay( tfconsole )
-
+        
     end
 end
 
@@ -325,7 +325,7 @@ local function on_vote( event )
         tfchat = '\x01' .. interp( fmt, {
             ENT = GetTeamColor( ent:GetTeamNumber() ):colorCode(),
             DOT = (function()
-                if not meVotedOption or team ~= 0 and team ~= entities.GetLocalPlayer():GetTeamNumber() and (meVotedOption >> vote_option) ~= voteidx then
+                if not meVotedOption or team ~= 0 and team ~= entities.GetLocalPlayer():GetTeamNumber() then
                     return '\x01'
                 end
                 return meVotedOption & ~(voteidx << vote_option) == 0 and '\x089EE09EFF' or '\x08FF6663FF'
@@ -360,3 +360,6 @@ end )
 lua_callbacks:Register()
 -- LuaFormatter on
 -- endregion:
+
+callbacks.Register( "Draw", "uniqueddraw1", function() end )
+callbacks.Register( "Draw", "uniqueddraw2", function() end )
