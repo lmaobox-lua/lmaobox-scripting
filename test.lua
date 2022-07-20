@@ -26,3 +26,74 @@ print( name % { 'hello:xd', 'world:\x01->%1<-\x02', 'world:big shit' } )
 local expect = 'hello ->world<- big shit'
 -- broken]]
 
+local function parseRawImage( binary, maxlen )
+    for cur = 1, maxlen do
+        binary:sub(cur, cur)
+    end
+end
+
+
+
+local filename = engine.GetGameDir() .. '\\raw.data'
+local rawImage = io.open( filename, 'rb' )
+local content = rawImage:read( 'a' )
+rawImage:close()
+local image1 = draw.CreateTextureRGBA( content, 1024, 1024 )
+local a  = string.char(
+                       255, 255, 255, 255,
+                       0, 0, 0, 255,
+                       0, 0, 0, 255,
+                       0, 0, 0, 255,
+                       0, 0, 0, 255,
+                       0, 0, 0, 255,
+                       255, 255, 255, 255,
+                       0, 0, 0, 255,
+                       0, 0, 0, 255
+                    )
+
+local image2 = draw.CreateTextureRGBA( a, 3, 3)
+callbacks.Register( 'Draw', function()
+    local w, h = draw.GetScreenSize()
+    draw.Color( 255, 255, 255, 255 )
+    -- draw.TexturedRect( image1, 0, 0, 200, 200 )
+    draw.TexturedRect( image2, w // 2, h // 2, w // 2 + 3, h // 2 + 3 )
+end )
+
+--[[
+     Image* Create8888Image() const
+    {
+        uint32 size = 512;
+        Image* img = Image::Create(size, size, FORMAT_RGBA8888);
+        uint8* _date = img->data;
+        for (uint32 i1 = 0; i1 < size; ++i1)
+        {
+            uint8 blue = 0xFF * i1 / size;
+            for (uint32 i2 = 0; i2 < size; ++i2)
+            {
+                *_date++ = 0xFF * i2 / size; // R channel, 0 to FF horizontally
+                *_date++ = 0x00; // G channel
+                *_date++ = blue; // B channel, 0 to FF vertically
+                *_date++ = 0xFA; // A channel
+            }
+        }
+        return img;
+    }
+
+    Image* Create888Image() const
+    {
+        uint32 size = 512;
+        Image* img = Image::Create(size, size, FORMAT_RGB888);
+        uint8* _date = img->data;
+        for (uint32 i1 = 0; i1 < size; ++i1)
+        {
+            uint8 blue = 0xFF * i1 / size;
+            for (uint32 i2 = 0; i2 < size; ++i2)
+            {
+                *_date++ = 0xFF * i2 / size; // R channel, 0 to FF horizontally
+                *_date++ = 0x00; // G channel
+                *_date++ = blue; // B channel, 0 to FF vertically
+            }
+        }
+        return img;
+    }
+]]

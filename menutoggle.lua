@@ -150,8 +150,12 @@ callbacks.Register( "Draw", "do_input", function()
 
         local button_pressed_tick, active = input.IsButtonPressed( tbl.hotkey )
 
+        if not active then
+            active = input.IsButtonDown( tbl.hotkey )
+        end
+
         if tbl.mode == MODE_TOGGLE then
-            if (tbl.button_pressed_tick >> 1) ~= button_pressed_tick then
+            if active and (tbl.button_pressed_tick >> 1) ~= button_pressed_tick then
                 tbl.button_pressed_tick = (button_pressed_tick << 1) | (tbl.button_pressed_tick & 1 == 1 and 0 or 1)
                 gui.SetValue( tbl.path, tbl.button_pressed_tick & 1 )
                 goto continue
