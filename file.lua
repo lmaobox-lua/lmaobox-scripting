@@ -1,3 +1,8 @@
+--- 
+--- SHIT LIB, DO NOT USE!!!
+--- YOU HAVE BEEN WARNED.
+---
+
 ---@param File Attribute Constants
 ---@link https://docs.microsoft.com/en-us/windows/win32/fileio/file-attribute-constants
 FILE_ATTRIBUTE_ARCHIVE = 0x20
@@ -55,226 +60,115 @@ local function get_script_host()
     return select( 3, pcall( debug.getlocal, 4, 1 ) ) or GetScriptName()
 end
 
---- 
+---
+--- hi!
+---
 
+---@param string: filename
+---@return table
+local function path( filename )
+    filename = filename or get_script_host()
+    return {
+        filename = filename,
+        -- composes an absolute path
+        absolute = function( self )
+            return self.filename
+        end,
+        -- returns the current working directory
+        current_path = function( self )
+            self._current_path = self._current_path or (self.filename:gsub( '[^\\/]+$', '' ))
+            return self._current_path
+        end,
+        -- returns the parent directory
+        parent_path = function( self )
+            self._parent_path = self._parent_path or (self.filename:gsub( '[^\\/]+$', '' ):gsub( '[^\\/]+$', '' ))
+            return self._parent_path
+        end,
+        -- returns the root drive
+        root_name = function( self )
+            self._root_name = self._root_name or self.filename:gmatch( '.[^\\/]' )
+            return self._root_name
+        end,
+        -- returns the root directory
+        root_path = function()
+            self._root_path = self._root_path or self.filename:gmatch( '[^\\/]+' )
+            return self._root_path
+        end,
+        -- returns the array of the part
+        part = function( self )
+            if self._arr_path then
+                return self._arr_path
+            end
+            self._arr_path = {}
+            for w in self.filename:gmatch( '[^\\/]+' ) do
+                self._arr_path[#self._arr_path + 1] = w
+            end
+            return self._arr_path
+        end
+     }
+end
+
+---@param string: filename
+---@return string
 local function status( filename )
-    local attrib, buf = filesystem.GetFileAttributes( filename ), {}
-
+    local attrib, is_file = filesystem.GetFileAttributes( filename ), io.open( filename, 'r' )
+    local status = {}
     if attrib == INVALID_FILE_ATTRIBUTES then
         return 'file does not exist'
     end
-
-    -- order is maintained since they aren't keys.
+    if is_file then
+        status[#status + 1] = 'file'
+        io.close( filename )
+    end
     for enum, text in pairs( attribute_text ) do
         if (attrib & enum) ~= 0 then
-            buf[#buf + 1] = text
+            status[#status + 1] = text
         end
     end
-    return table.concat( buf, ', ' )
+    return table.concat( status, ', ' )
 end
 
+---@param string: filename
 local function is_directory( filename )
     local attributes = filesystem.GetFileAttributes( filename )
     return attributes ~= INVALID_FILE_ATTRIBUTES and (attributes & FILE_ATTRIBUTE_DIRECTORY) ~= 0
 end
 
+---@param string: filename
 local function is_file( filename )
-    local file = io.open( filename, 'rb' )
-    if file then
-        io.close( file )
+    local f = io.open( filename, 'r' )
+    if f then
+        io.close( f )
         return true
     end
 end
 
+---@param string: filename
+---@return boolean: file exist?
+local function exist( filename )
+    return is_file( filename ) or is_directory( filename )
+end
+
+---@param string: filename
+---@return function: directory iterator
 local function directory_recursive_iterator( filename )
+
 end
 
-local function copy_wrapper( from, to, format )
-    local file, attributes = io.open( from, 'rb' ), filesystem.GetFileAttributes( from )
-
-    if io.type( file ) == 'file' then
-        local new = io.open( to, 'wb' )
-        if io.type( new ) == 'file' then
-            new:write( file:read( format or 'a' ) )
-            new:close()
-            file:close()
-            -- filesystem.SetFileAttributes( to, attributes )
-            return true
+---@param string: filename
+---@return string: folder path | err on fail
+local function new_folder( filename )
+    if not is_file( filename ) and not is_directory( filename ) then
+        local ok, succ = pcall( filesystem.CreateDirectory, filename )
+        if not ok then
+            return succ
         end
     end
-
-    if attributes ~= INVALID_FILE_ATTRIBUTES and (attributes & FILE_ATTRIBUTE_DIRECTORY) ~= 0 then
-        filesystem.CreateDirectory( to )
-        -- filesystem.SetFileAttributes( to, attributes )
-        return true
-    end
+    return filename
 end
-
-local function copy( from, to, format )
-    local ok = pcall( copy_wrapper, from, to, format )
-    if not ok then
-        local debug = debug.getinfo( 2 )
-        return nil, string_format( '%s:%d: %s\n%s', debug.short_src, debug.currentline,
-            select( 2, os.rename( from, copy ), format ) )
-    end
-    return ok
-end
-
-local function move( from, to )
-    if copy( from, to ) then
-        local ok, errmsg = os.remove( from )
-        return ok, errmsg
-    end
-end
-
-local function rename( old, new )
-    local ok, errmsg = os.rename( old, new )
-    return ok, errmsg
-end
-
-local function path( filename )
-    return {
-        filename = filename,
-        -- returns the current working directory
-        current_path = function( self )
-            return (self.filename:gsub( '[^\\/]+$', '' ))
-        end,
-        -- composes an absolute path
-        absolute_path = function( self )
-            return self.filename
-        end,
-        -- 
-        slice = function( self )
-            local buf = {}
-            for w in self.filename:gmatch( '[^\\/]+' ) do
-                buf[#buf + 1] = w
-            end
-            return buf
-        end
-     }
-end
-
-local function open( filename )
-    local mt = {
-        __eq = function( la, ra )
-            local match = la.filename == ra.filename
-            return match
-        end,
-        __close = function( self )
-            printc( 6, 211, 63, 255, string_format( '%s: %s closed', self.filename, self.type ) )
-        end,
-        __index = {
-            -- query file attributes
-            status = function( self )
-                return status( self.filename )
-            end,
-            -- close file handle
-            close = function( self )
-                if io.type( self.file ) == 'file' then
-                    return io.close(self.file)
-                end
-            end,
-            set_cur_path = function( self, to )
-                if to and self.filename ~= to then
-                    local file = io.open( to, 'w' )
-                    if file then
-                        self:close()
-                        self.type = 'file'
-                        self.filename = to
-                        self.file = io.open( to, 'r+b' )
-                        return self
-                    end
-                    if is_directory( to ) then
-                        self:close()
-                        self.type = 'directory'
-                        self.filename = to
-                        return self
-                    end
-                end
-            end,
-            -- rename files or directories
-            rename = function( self, to )
-                self:close()
-                local ok, errmsg = rename( self.filename, to )
-                if ok then
-                    self:set_cur_path( to )
-                    return self
-                end
-                local debug = debug.getinfo( 2 )
-                printc( 238, 210, 2, 255,
-                    string_format( '%s:%d: %s: %s ', debug.short_src, debug.currentline, errmsg, to ) )
-            end,
-            -- move files or directories
-            move = function( self, to )
-                self:close()
-                local ok, errmsg = move( self.filename, to )
-                if ok then
-                    self:set_cur_path( to )
-                    return self
-                end
-                local debug = debug.getinfo( 2 )
-                printc( 238, 210, 2, 255,
-                    string_format( '%s:%d: %s: %s', debug.short_src, debug.currentline, errmsg, to ) )
-            end,
-            -- copies files or directories
-            copy = function( self, to, format )
-                self:close()
-                local ok, errmsg = copy( self.filename, to, format )
-                if ok then
-                    self:set_cur_path( to )
-                    return self
-                end
-                printc( 238, 210, 2, 255, string_format( '%s:%d: %s ', debug.short_src, debug.currentline, errmsg ) )
-            end,
-            -- an iterator to the contents of the directory
-            iterator = function( self, callback )
-                return filesystem.EnumerateDirectory( self.filename, callback )
-            end,
-            -- an iterator to the contents of a directory and its subdirectories
-            recursive_iterator = function( self )
-
-            end
-         }
-     }
-
-    local file = io.open( filename, 'r+b' )
-    if io.type( file ) == 'file' then
-        return setmetatable( {
-            type = 'file',
-            filename = filename,
-            file = file
-         }, mt )
-    end
-
-    if is_directory( filename ) then
-        return setmetatable( {
-            type = 'directory',
-            filename = filename
-         }, mt )
-    end
-
-    -- access denied, file does not exist
-    local debug = debug.getinfo( 2 )
-    printc( 238, 210, 2, 255, string_format( '%s:%d: %s', debug.short_src, debug.currentline,
-        select( 2, pcall( filesystem.GetFileAttributes, filename ) ) ) )
-end
-
-return {
-    version = '0.0.1',
-    date = '2022-07-28 01:42:11',
-    open = open,
-    path = path,
-    is_directory = is_directory,
-    is_file = is_file,
-    copy = copy,
-    move = move,
-    rename = rename,
-    status = status,
-    directory_recursive_iterator = directory_recursive_iterator
- }
 
 --[[
- ------ ---------- ----------- ------------------------- ----------------------- ------------ ------------------------------- --------------------- 
+  ------ ---------- ----------- ------------------------- ----------------------- ------------ ------------------------------- --------------------- 
   type   readable   writeable   default position: start   default position: end   must exist   truncate (clear file) on load   Always write to EOF  
  ------ ---------- ----------- ------------------------- ----------------------- ------------ ------------------------------- --------------------- 
   r      x                      x                                                 x                                                                 
@@ -283,6 +177,106 @@ return {
   w+     x          x           x                                                              x                                                    
   a                 x                                     x                                                                    x                    
   a+     x          x                                     x                                                                    x                    
-  
-  binary mode: "rb", "r+b", "w", "w+", "a", "a+" 
+    
+  The mode string can also have a 'b' at the end, which is needed in some systems to open the file in binary mode.
 ]]
+
+local function read( filename, format )
+    local f<close> = assert( io.open( filename, 'r' ) )
+    return f:read( format or 'all' )
+end
+
+local function overwrite( filename, content )
+    local f<close> = assert( io.open( filename, 'w' ) )
+    return f:write( content )
+end
+
+---@param string: from "file name"
+---@param string: to "new file name"
+---@param boolean: transfer_attributes
+local function copy( from, to, transfer_attributes )
+    local ok, attributes = pcall( filesystem.GetFileAttributes( from ) )
+    if not ok then
+        return attributes
+    end
+    if attributes == INVALID_FILE_ATTRIBUTES then
+        return 'file does not exist'
+    end
+    local ffrom = io.open( from, 'rb' )
+    if ffrom then
+        local content = ffrom:read( 'all' )
+        ffrom:close()
+        local fto = io.open( to, 'wb' )
+        if fto then
+            if #fto:seek( 'end' ) > 0 then
+                fto:close()
+                return 'file already exist'
+            end
+            fto:write( content ):flush()
+            fto:close()
+            if transfer_attributes == nil or transfer_attributes == true then
+                filesystem.SetFileAttributes( to, attributes )
+            end
+            return true
+        end
+        return select( 2, pcall( filesystem.GetFileAttributes, to ) )
+    end
+
+    if (attributes & FILE_ATTRIBUTE_DIRECTORY) ~= 0 then
+        local ok, succ = pcall( filesystem.CreateDirectory, to )
+        if not ok then
+            return succ
+        end
+        if transfer_attributes == nil or transfer_attributes == true then
+            filesystem.SetFileAttributes( to, attributes )
+        end
+        return true
+    end
+end
+
+---@param string: from "file name"
+---@param string: to "new file name"
+local function move( from, to )
+    if copy( from, to ) then
+        local ok, errmsg = os.remove( from )
+        if not ok then
+            return errmsg
+        end
+        return ok
+    end
+end
+
+---@param string: from "file name"
+---@param string: to "new file name"
+local function rename( from, to )
+    local ok, errmsg = os.rename( from, to )
+    if not ok then
+        return errmsg
+    end
+    return ok
+end
+
+---@param string: path "file name"
+local function remove( path )
+    local ok, errmsg = os.remove( path )
+    if not ok then
+        return errmsg
+    end
+    return ok
+end
+
+return {
+    __status = 'abandon',
+    __version = '0.0.2',
+    __date = '2022-07-29 03:02:40',
+    path = path,
+    is_directory = is_directory,
+    is_file = is_file,
+    copy = copy,
+    move = move,
+    read = read,
+    overwrite = overwrite,
+    rename = rename,
+    status = status,
+    directory_recursive_iterator = directory_recursive_iterator
+ }
