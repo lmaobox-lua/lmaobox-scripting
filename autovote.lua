@@ -56,9 +56,24 @@ callbacks.Register( 'DispatchUserMessage', 'lboxfixwhen_3', function( msg )
         if ent0 ~= me and ent1 ~= me and type( voteint ) == 'number' then
 
             -- vote no if target is friend
-            voteint = steam.IsFriend( client.GetPlayerInfo( target ).SteamID ) == true and 2 or voteint
+            voteint = (function()
+                local playerinfo = client.GetPlayerInfo( target )
+                if steam.IsFriend( playerinfo.SteamID ) == true then
+                    return 2
+                end
 
-            client.ChatPrintf( string.format( '\x01Voted %s "vote option%d" (\x05%s\x01)', options[voteint], voteint, disp_str ) )
+                local members = party.GetMembers()
+                for i, steamid in ipairs( members ) do
+                    if steamid == playerinfo.SteamID then
+                        return 2
+                    end
+                end
+
+                return voteint
+            end)()
+
+            client.ChatPrintf( string.format( '\x01Voted %s "vote option%d" (\x05%s\x01)', options[voteint], voteint,
+                disp_str ) )
             client.Command( string.format( 'vote %d option%d', voteidx, voteint ), true )
         end
     end

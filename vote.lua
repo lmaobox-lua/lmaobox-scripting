@@ -81,7 +81,7 @@ local tempTeamColor = {}
 tempTeamColor[0] = 'rgba(246, 215, 167, 255)'
 tempTeamColor[1] = 'rgba(250, 250, 240, 255)'
 tempTeamColor[2] = 'rgba(255, 102, 99, 255)'
-tempTeamColor[3] = 'rgba(158, 193, 207, 255)'
+tempTeamColor[3] = 'rgba(158, 193, 207, 255)' -- #9eb5cfff
 
 -- what if we do full string color, unless :flushed:
 local team_name = {

@@ -90,6 +90,8 @@ local DispatchUserMessageStruct = function( msg, name )
         struct[i] = undef
     end
 
+    msg:Reset()
+
     return struct
 end
 
@@ -98,16 +100,8 @@ callbacks.Register( 'DispatchUserMessage', 'IOI', function( msg )
     id = msg:GetID()
     databits = msg:GetDataBits()
     databytes = msg:GetDataBytes()
-    local data = DispatchUserMessageStruct( msg, UserMessage[id] )
-    printLuaTable( data )
-end )
-
-local dumpBytes = function( msg )
-    msg:Reset()
-    local buf = {}
-    for i = 1, msg:GetDataBytes() do
-        buf[i] = msg:ReadByte()
-    end
-    local dumpstr = table.concat(buf, ' ')
-end
-
+    --local data = DispatchUserMessageStruct( msg, UserMessage[id] )
+    print( UserMessage[id] )
+    local playerindex = msg:ReadByte()
+    print(playerindex)
+end)

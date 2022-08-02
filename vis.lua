@@ -11,6 +11,7 @@ local is_visible = function( source, destination )
 end
 
 callbacks.Register( "Draw", function()
+    draw.SeT(myfont)
     local me = entities.GetLocalPlayer();
     local source = me:GetAbsOrigin()
     for i, p in ipairs( entities.FindByClass( 'CTFPlayer' ) ) do
