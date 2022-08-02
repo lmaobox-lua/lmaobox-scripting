@@ -1,3 +1,9 @@
+Print = 1 << 1
+ChatPrintf = 1 << 2
+ChatSay = 1 << 3
+ChatTeamSay = 1 << 4
+ChatParty = 1 << 5
+
 local config = {}
 
 config.Voting = {
@@ -35,47 +41,34 @@ end
 
 -- i wrote this, i don't know why would i wrote this, but here we are
 --- textmsg, all, team, party, console, notification
-local function Announcer( msg, maxlen )
-    if maxlen then
-        msg = msg:sub( 1, maxlen )
-    end
-    local msgFiltered = (function()
-        local binary, filter, offset = { string.byte( msg, 1, msg:len() ) }, {}, 1
-        repeat
-            local val = binary[offset]
-            if val >= 1 and val <= 6 then
-                offset = offset + 1
-            elseif val == 7 then
-                offset = offset + 6
-            elseif val == 8 then
-                offset = offset + 8
-            else
-                filter[#filter+1] = string.char(val)
-                offset = offset + 1
-            end
-        until (offset == #binary)
-        return table.concat(filter)
-    end)()
-    local announce = { '\x01' .. msg, msgFiltered, msgFiltered:gsub( '"', "'" ) }
+local function Announcer( msg )
+    local announce = { '\x01' .. msg, msg:gsub("[\x01-\x06].", ""):gsub("\x07......", ""):gsub("\x08........", "") }
+    announce[3] = announce[2]:gsub( '"', "'" )
     function announce:ChatPrintf()
         client.ChatPrintf( self[1] )
         return self
     end
-    function announce:all()
+    function announce:ChatSay()
         client.ChatSay( self[2] )
         return self
     end
-    function announce:team()
+    function announce:ChatTeamSay()
         client.ChatTeamSay( self[2] )
         return self
     end
-    function announce:party()
+    function announce:ChatParty()
         client.Command( string.format( 'tf_party_chat %q', self[3] ), true )
         return self
     end
-    function announce:console( red, green, blue, alpha )
+    function announce:Print( red, green, blue, alpha )
         printc( red or 255, green or 255, blue or 255, alpha or 255, self[2] )
         return self
+    end
+    function announce:band( x1 )
+        if x1 & ChatPrintf == 1 then self:ChatPrintf() end
+        if x1 & ChatSay == 1 then self:ChatSay() end
+        if x1 & ChatTeamSay == 1 then self:ChatTeamSay() end
+        if x1 & Print == 1 then self:Print() end
     end
     return announce
 end
@@ -97,12 +90,8 @@ callbacks.Register( 'DispatchUserMessage', function( msg )
         local ent
         ent = entities.GetByIndex( entidx )
 
-        local plain_str = Localize( disp_str, '\x02' .. details_str )
-
-        if config.Voting.annouce_vote_issue then
-            
-        end
-
+        local plain_str = Localize( disp_str, '\x05' .. details_str )
+        Announcer(plain_str):ChatPrintf()
         return
     end
 
