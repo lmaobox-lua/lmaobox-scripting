@@ -88,7 +88,7 @@ local function find_suspect( name, steamid3 )
 
         if not bot_detector_data_name[i] then
             bot_detector_data_name[i] = source.file_info.update_url:match( '[^\\/]+$' )
-                :match( 'playerlist%.(.*)%.json' )
+                :match( 'playerlist%.([^.]+)%.json' ) -- was playerlist%.(.*)%.json
         end
 
         for j, db in ipairs( source.players ) do
