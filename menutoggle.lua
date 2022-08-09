@@ -1,6 +1,6 @@
 local hasMenuLib, MenuLib = pcall( require, 'Menu' ) -- not a big fan of this library but it works nicely.
 -- local hasMsgPack, MsgPack = pcall( require, 'msgpack' )
-local hasJson, Json = pcall( require, 'json' )
+local hasJson, json = pcall( require, 'dkjson' )
 local template = "\n* [%s] is missing, download and put the file in lmaobox lua folder:\n%s"
 assert( hasMenuLib, template:format( template, 'Menu.lua', 'https://github.com/lnx00/Lmaobox-LUA/blob/main/Menu.lua' ) )
 -- assert( hasMsgPack, string.format(template, 'msgpack.lua', 'https://github.com/kieselsteini/msgpack/blob/master/msgpack.lua') )
@@ -10,51 +10,6 @@ assert( hasJson, template:format( template, 'json.lua', 'https://github.com/rxi/
 local function guiUpdate()
 end
 
-local function pretty_json( json_text, line_feed, indent, ac )
-    json_text = tostring( json_text )
-    line_feed, indent, ac = tostring( line_feed or "\n" ), tostring( indent or "\t" ), tostring( ac or " " )
-
-    local i, j, k, n, r, p, q = 1, 0, 0, #json_text, {}, nil, nil
-    local al = string.sub( ac, -1 ) == "\n"
-
-    for x = 1, n do
-        local c = string.sub( json_text, x, x )
-
-        if not q and (c == "{" or c == "[") then
-            r[i] = p == ":" and (c .. line_feed) or (string.rep( indent, j ) .. c .. line_feed)
-            j = j + 1
-        elseif not q and (c == "}" or c == "]") then
-            j = j - 1
-            if p == "{" or p == "[" then
-                i = i - 1
-                r[i] = string.rep( indent, j ) .. p .. c
-            else
-                r[i] = line_feed .. string.rep( indent, j ) .. c
-            end
-        elseif not q and c == "," then
-            r[i] = c .. line_feed
-            k = -1
-        elseif not q and c == ":" then
-            r[i] = c .. ac
-            if al then
-                i = i + 1
-                r[i] = string.rep( indent, j )
-            end
-        else
-            if c == '"' and p ~= "\\" then
-                q = not q and true or nil
-            end
-            if j ~= k then
-                r[i] = string.rep( indent, j )
-                i, k = i + 1, j
-            end
-            r[i] = c
-        end
-        p, i = c, i + 1
-    end
-
-    return table.concat( r )
-end
 
 -- region: serialization 
 local function read( filename )
@@ -134,7 +89,9 @@ local datafilename = scriptfolder .. "menutoggle.json"
 local content = read( datafilename )
 
 if not content then
-    overwrite( datafilename, pretty_json( json.encode( extendGui ) ) )
+    overwrite( datafilename, (json.encode( extendGui, {
+        indent = true
+     } )) )
 else
     extendGui = json.decode( content ) or extendGui
 end
@@ -215,7 +172,7 @@ end
 guiUpdate()
 
 local subwindow = MenuLib.Create( 'Keybind Manager', MenuFlags.AutoSize | MenuFlags.Popup )
-subwindow.X, subwindow.Y = 30, select(1, draw.GetScreenSize() // 2.5)
+subwindow.X, subwindow.Y = 30, select( 1, draw.GetScreenSize() // 2.5 )
 subwindow.Style.Space = 3
 local showKeyBind = subwindow:AddComponent( MenuLib.MultiCombo( "Show", keyMap, ItemFlags.FullWidth ) )
 

@@ -1,0 +1,7912 @@
+{
+	// Callbacks
+	"Registers callback function": {
+		"prefix": "callbacks.Register",
+		"body": [
+			"callbacks.Register( id, function )",
+		],
+		"description": "Registers a callback function to be called when the event with the given id occurs."
+	},
+
+	"Registers callback function with unique id": {
+		"prefix": "callbacks.Register",
+		"body": [
+			"callbacks.Register( id, unique, function )",
+		],
+		"description": "Registers a callback function to be called when the event with the given id occurs. If the callback function is already registered, it will not be registered again."
+	},
+	
+	"Unregisters callback function with unique id": {
+		"prefix": "callbacks.Unregister",
+		"body": [
+			"callbacks.Unregister( id, unique )",
+		],
+		"description": "Unregisters a callback function from the event with the given id."
+	},
+	
+	// Predefined constants
+
+	// UserCmd buttons
+	"IN_ATTACK": {
+		"prefix": "IN_ATTACK",
+		"body": [
+		  "IN_ATTACK"
+		],
+		"description": "IN_ATTACK"
+	},
+
+	"IN_JUMP": {
+		"prefix": "IN_JUMP",
+		"body": [
+		  "IN_JUMP"
+		],
+		"description": "IN_JUMP"
+	},
+
+	"IN_DUCK": {
+		"prefix": "IN_DUCK",
+		"body": [
+		  "IN_DUCK"
+		],
+		"description": "IN_DUCK"
+	},
+
+	"IN_FORWARD": {
+		"prefix": "IN_FORWARD",
+		"body": [
+		  "IN_FORWARD"
+		],
+		"description": "IN_FORWARD"
+	},
+
+	"IN_BACK": {
+		"prefix": "IN_BACK",
+		"body": [
+		  "IN_BACK"
+		],
+		"description": "IN_BACK"
+	},
+
+	"IN_USE": {
+		"prefix": "IN_USE",
+		"body": [
+		  "IN_USE"
+		],
+		"description": "IN_USE"
+	},
+
+	"IN_CANCEL": {
+		"prefix": "IN_CANCEL",
+		"body": [
+		  "IN_CANCEL"
+		],
+		"description": "IN_CANCEL"
+	},
+	
+	"IN_LEFT": {
+		"prefix": "IN_LEFT",
+		"body": [
+		  "IN_LEFT"
+		],
+		"description": "IN_LEFT"
+	},
+
+	"IN_RIGHT": {
+		"prefix": "IN_RIGHT",
+		"body": [
+		  "IN_RIGHT"
+		],
+		"description": "IN_RIGHT"
+	},
+
+	"IN_MOVELEFT": {
+		"prefix": "IN_MOVELEFT",
+		"body": [
+		  "IN_MOVELEFT"
+		],
+		"description": "IN_MOVELEFT"
+	},
+
+	"IN_MOVERIGHT": {
+		"prefix": "IN_MOVERIGHT",
+		"body": [
+		  "IN_MOVERIGHT"
+		],
+		"description": "IN_MOVERIGHT"
+	},
+
+	"IN_ATTACK2": {
+		"prefix": "IN_ATTACK2",
+		"body": [
+		  "IN_ATTACK2"
+		],
+		"description": "IN_ATTACK2"
+	},
+
+	"IN_RUN": {
+		"prefix": "IN_RUN",
+		"body": [
+		  "IN_RUN"
+		],
+		"description": "IN_RUN"
+	},
+
+	"IN_RELOAD": {
+		"prefix": "IN_RELOAD",
+		"body": [
+		  "IN_RELOAD"
+		],
+		"description": "IN_RELOAD"
+	},
+
+	"IN_ALT1": {
+		"prefix": "IN_ALT1",
+		"body": [
+		  "IN_ALT1"
+		],
+		"description": "IN_ALT1"
+	},
+
+	"IN_ALT2": {
+		"prefix": "IN_ALT2",
+		"body": [
+		  "IN_ALT2"
+		],
+		"description": "IN_ALT2"
+	},
+
+	"IN_SCORE": {
+		"prefix": "IN_SCORE",
+		"body": [
+		  "IN_SCORE"
+		],
+		"description": "IN_SCORE"
+	},
+
+	"IN_SPEED": {
+		"prefix": "IN_SPEED",
+		"body": [
+		  "IN_SPEED"
+		],
+		"description": "IN_SPEED"
+	},
+
+	"IN_WALK": {
+		"prefix": "IN_WALK",
+		"body": [
+		  "IN_WALK"
+		],
+		"description": "IN_WALK"
+	},
+
+	"IN_ZOOM": {
+		"prefix": "IN_ZOOM",
+		"body": [
+		  "IN_ZOOM"
+		],
+		"description": "IN_ZOOM"
+	},
+
+	"IN_WEAPON1": {
+		"prefix": "IN_WEAPON1",
+		"body": [
+		  "IN_WEAPON1"
+		],
+		"description": "IN_WEAPON1"
+	},
+
+	"IN_WEAPON2": {
+		"prefix": "IN_WEAPON2",
+		"body": [
+		  "IN_WEAPON2"
+		],
+		"description": "IN_WEAPON2"
+	},
+
+	"IN_BULLRUSH": {
+		"prefix": "IN_BULLRUSH",
+		"body": [
+		  "IN_BULLRUSH"
+		],
+		"description": "IN_BULLRUSH"
+	},
+
+	"IN_GRENADE2": {
+		"prefix": "IN_GRENADE2",
+		"body": [
+		  "IN_GRENADE2"
+		],
+		"description": "IN_GRENADE2"
+	},
+
+	"IN_ATTACK3": {
+		"prefix": "IN_ATTACK3",
+		"body": [
+		  "IN_ATTACK3"
+		],
+		"description": "IN_ATTACK3"
+	},
+
+	// Buttons
+	"BUTTON_CODE_INVALID": {
+		"prefix": "BUTTON_CODE_INVALID",
+		"body": [
+		  "BUTTON_CODE_INVALID"
+		],
+		"description": "BUTTON_CODE_INVALID"
+	},
+
+	"BUTTON_CODE_NONE": {
+		"prefix": "BUTTON_CODE_NONE",
+		"body": [
+		  "BUTTON_CODE_NONE"
+		],
+		"description": "BUTTON_CODE_NONE"
+	},
+
+	"KEY_FIRST": {
+		"prefix": "KEY_FIRST",
+		"body": [
+		  "KEY_FIRST"
+		],
+		"description": "KEY_FIRST"
+	},
+
+	"KEY_NONE": {
+		"prefix": "KEY_NONE",
+		"body": [
+		  "KEY_NONE"
+		],
+		"description": "KEY_NONE"
+	},
+
+	"KEY_0": {
+		"prefix": "KEY_0",
+		"body": [
+		  "KEY_0"
+		],
+		"description": "KEY_0"
+	},
+
+	"KEY_1": {
+		"prefix": "KEY_1",
+		"body": [
+		  "KEY_1"
+		],
+		"description": "KEY_1"
+	},
+
+	"KEY_2": {
+		"prefix": "KEY_2",
+		"body": [
+		  "KEY_2"
+		],
+		"description": "KEY_2"
+	},
+
+	"KEY_3": {
+		"prefix": "KEY_3",
+		"body": [
+		  "KEY_3"
+		],
+		"description": "KEY_3"
+	},
+
+	"KEY_4": {
+		"prefix": "KEY_4",
+		"body": [
+		  "KEY_4"
+		],
+		"description": "KEY_4"
+	},
+
+	"KEY_5": {
+		"prefix": "KEY_5",
+		"body": [
+		  "KEY_5"
+		],
+		"description": "KEY_5"
+	},
+
+	"KEY_6": {
+		"prefix": "KEY_6",
+		"body": [
+		  "KEY_6"
+		],
+		"description": "KEY_6"
+	},
+
+	"KEY_7": {
+		"prefix": "KEY_7",
+		"body": [
+		  "KEY_7"
+		],
+		"description": "KEY_7"
+	},
+
+	"KEY_8": {
+		"prefix": "KEY_8",
+		"body": [
+		  "KEY_8"
+		],
+		"description": "KEY_8"
+	},
+
+	"KEY_9": {
+		"prefix": "KEY_9",
+		"body": [
+		  "KEY_9"
+		],
+		"description": "KEY_9"
+	},
+
+	"KEY_A": {
+		"prefix": "KEY_A",
+		"body": [
+		  "KEY_A"
+		],
+		"description": "KEY_A"
+	},
+
+	"KEY_B": {
+		"prefix": "KEY_B",
+		"body": [
+		  "KEY_B"
+		],
+		"description": "KEY_B"
+	},
+
+	"KEY_C": {
+		"prefix": "KEY_C",
+		"body": [
+		  "KEY_C"
+		],
+		"description": "KEY_C"
+	},
+
+	"KEY_D": {
+		"prefix": "KEY_D",
+		"body": [
+		  "KEY_D"
+		],
+		"description": "KEY_D"
+	},
+
+	"KEY_E": {
+		"prefix": "KEY_E",
+		"body": [
+		  "KEY_E"
+		],
+		"description": "KEY_E"
+	},
+
+	"KEY_F": {
+		"prefix": "KEY_F",
+		"body": [
+		  "KEY_F"
+		],
+		"description": "KEY_F"
+	},
+
+	"KEY_G": {
+		"prefix": "KEY_G",
+		"body": [
+		  "KEY_G"
+		],
+		"description": "KEY_G"
+	},
+
+	"KEY_H": {
+		"prefix": "KEY_H",
+		"body": [
+		  "KEY_H"
+		],
+		"description": "KEY_H"
+	},
+
+	"KEY_I": {
+		"prefix": "KEY_I",
+		"body": [
+		  "KEY_I"
+		],
+		"description": "KEY_I"
+	},
+
+	"KEY_J": {
+		"prefix": "KEY_J",
+		"body": [
+		  "KEY_J"
+		],
+		"description": "KEY_J"
+	},
+
+	"KEY_K": {
+		"prefix": "KEY_K",
+		"body": [
+		  "KEY_K"
+		],
+		"description": "KEY_K"
+	},
+
+	"KEY_L": {
+		"prefix": "KEY_L",
+		"body": [
+		  "KEY_L"
+		],
+		"description": "KEY_L"
+	},
+
+	"KEY_M": {
+		"prefix": "KEY_M",
+		"body": [
+		  "KEY_M"
+		],
+		"description": "KEY_M"
+	},
+
+	"KEY_N": {
+		"prefix": "KEY_N",
+		"body": [
+		  "KEY_N"
+		],
+		"description": "KEY_N"
+	},
+
+	"KEY_O": {
+		"prefix": "KEY_O",
+		"body": [
+		  "KEY_O"
+		],
+		"description": "KEY_O"
+	},
+
+	"KEY_P": {
+		"prefix": "KEY_P",
+		"body": [
+		  "KEY_P"
+		],
+		"description": "KEY_P"
+	},
+
+	"KEY_Q": {
+		"prefix": "KEY_Q",
+		"body": [
+		  "KEY_Q"
+		],
+		"description": "KEY_Q"
+	},
+
+	"KEY_R": {
+		"prefix": "KEY_R",
+		"body": [
+		  "KEY_R"
+		],
+		"description": "KEY_R"
+	},
+
+	"KEY_S": {
+		"prefix": "KEY_S",
+		"body": [
+		  "KEY_S"
+		],
+		"description": "KEY_S"
+	},
+
+	"KEY_T": {
+		"prefix": "KEY_T",
+		"body": [
+		  "KEY_T"
+		],
+		"description": "KEY_T"
+	},
+
+	"KEY_U": {
+		"prefix": "KEY_U",
+		"body": [
+		  "KEY_U"
+		],
+		"description": "KEY_U"
+	},
+
+	"KEY_V": {
+		"prefix": "KEY_V",
+		"body": [
+		  "KEY_V"
+		],
+		"description": "KEY_V"
+	},
+
+	"KEY_W": {
+		"prefix": "KEY_W",
+		"body": [
+		  "KEY_W"
+		],
+		"description": "KEY_W"
+	},
+
+	"KEY_X": {
+		"prefix": "KEY_X",
+		"body": [
+		  "KEY_X"
+		],
+		"description": "KEY_X"
+	},
+
+	"KEY_Y": {
+		"prefix": "KEY_Y",
+		"body": [
+		  "KEY_Y"
+		],
+		"description": "KEY_Y"
+	},
+
+	"KEY_Z": {
+		"prefix": "KEY_Z",
+		"body": [
+		  "KEY_Z"
+		],
+		"description": "KEY_Z"
+	},
+
+	"KEY_PAD_0": {
+		"prefix": "KEY_PAD_0",
+		"body": [
+		  "KEY_PAD_0"
+		],
+		"description": "KEY_PAD_0"
+	},
+	
+	"KEY_PAD_1": {
+		"prefix": "KEY_PAD_1",
+		"body": [
+		  "KEY_PAD_1"
+		],
+		"description": "KEY_PAD_1"
+	},
+	
+	"KEY_PAD_2": {
+		"prefix": "KEY_PAD_2",
+		"body": [
+		  "KEY_PAD_2"
+		],
+		"description": "KEY_PAD_2"
+	},
+	
+	"KEY_PAD_3": {
+		"prefix": "KEY_PAD_3",
+		"body": [
+		  "KEY_PAD_3"
+		],
+		"description": "KEY_PAD_3"
+	},
+	
+	"KEY_PAD_4": {
+		"prefix": "KEY_PAD_4",
+		"body": [
+		  "KEY_PAD_4"
+		],
+		"description": "KEY_PAD_4"
+	},
+	
+	"KEY_PAD_5": {
+		"prefix": "KEY_PAD_5",
+		"body": [
+		  "KEY_PAD_5"
+		],
+		"description": "KEY_PAD_5"
+	},
+	
+	"KEY_PAD_6": {
+		"prefix": "KEY_PAD_6",
+		"body": [
+		  "KEY_PAD_6"
+		],
+		"description": "KEY_PAD_6"
+	},
+	
+	"KEY_PAD_7": {
+		"prefix": "KEY_PAD_7",
+		"body": [
+		  "KEY_PAD_7"
+		],
+		"description": "KEY_PAD_7"
+	},
+	
+	"KEY_PAD_8": {
+		"prefix": "KEY_PAD_8",
+		"body": [
+		  "KEY_PAD_8"
+		],
+		"description": "KEY_PAD_8"
+	},
+	
+	"KEY_PAD_9": {
+		"prefix": "KEY_PAD_9",
+		"body": [
+		  "KEY_PAD_9"
+		],
+		"description": "KEY_PAD_9"
+	},
+	
+	"KEY_PAD_DIVIDE": {
+		"prefix": "KEY_PAD_DIVIDE",
+		"body": [
+		  "KEY_PAD_DIVIDE"
+		],
+		"description": "KEY_PAD_DIVIDE"
+	},
+	
+	"KEY_PAD_MULTIPLY": {
+		"prefix": "KEY_PAD_MULTIPLY",
+		"body": [
+		  "KEY_PAD_MULTIPLY"
+		],
+		"description": "KEY_PAD_MULTIPLY"
+	},
+	
+	"KEY_PAD_MINUS": {
+		"prefix": "KEY_PAD_MINUS",
+		"body": [
+		  "KEY_PAD_MINUS"
+		],
+		"description": "KEY_PAD_MINUS"
+	},
+	
+	"KEY_PAD_PLUS": {
+		"prefix": "KEY_PAD_PLUS",
+		"body": [
+		  "KEY_PAD_PLUS"
+		],
+		"description": "KEY_PAD_PLUS"
+	},
+	
+	"KEY_PAD_ENTER": {
+		"prefix": "KEY_PAD_ENTER",
+		"body": [
+		  "KEY_PAD_ENTER"
+		],
+		"description": "KEY_PAD_ENTER"
+	},
+
+	"KEY_PAD_DECIMAL": {
+		"prefix": "KEY_PAD_DECIMAL",
+		"body": [
+		  "KEY_PAD_DECIMAL"
+		],
+		"description": "KEY_PAD_DECIMAL"
+	},
+
+	"KEY_LBRACKET": {
+		"prefix": "KEY_LBRACKET",
+		"body": [
+		  "KEY_LBRACKET"
+		],
+		"description": "KEY_LBRACKET"
+	},
+
+	"KEY_RBRACKET": {
+		"prefix": "KEY_RBRACKET",
+		"body": [
+		  "KEY_RBRACKET"
+		],
+		"description": "KEY_RBRACKET"
+	},
+
+	"KEY_SEMICOLON": {
+		"prefix": "KEY_SEMICOLON",
+		"body": [
+		  "KEY_SEMICOLON"
+		],
+		"description": "KEY_SEMICOLON"
+	},
+
+	"KEY_APOSTROPHE": {
+		"prefix": "KEY_APOSTROPHE",
+		"body": [
+		  "KEY_APOSTROPHE"
+		],
+		"description": "KEY_APOSTROPHE"
+	},
+
+	"KEY_BACKQUOTE": {
+		"prefix": "KEY_BACKQUOTE",
+		"body": [
+		  "KEY_BACKQUOTE"
+		],
+		"description": "KEY_BACKQUOTE"
+	},
+
+	"KEY_COMMA": {
+		"prefix": "KEY_COMMA",
+		"body": [
+		  "KEY_COMMA"
+		],
+		"description": "KEY_COMMA"
+	},
+
+	"KEY_PERIOD": {
+		"prefix": "KEY_PERIOD",
+		"body": [
+		  "KEY_PERIOD"
+		],
+		"description": "KEY_PERIOD"
+	},
+
+	"KEY_SLASH": {
+		"prefix": "KEY_SLASH",
+		"body": [
+		  "KEY_SLASH"
+		],
+		"description": "KEY_SLASH"
+	},
+
+	"KEY_BACKSLASH": {
+		"prefix": "KEY_BACKSLASH",
+		"body": [
+		  "KEY_BACKSLASH"
+		],
+		"description": "KEY_BACKSLASH"
+	},
+
+	"KEY_MINUS": {
+		"prefix": "KEY_MINUS",
+		"body": [
+		  "KEY_MINUS"
+		],
+		"description": "KEY_MINUS"
+	},
+
+	"KEY_EQUAL": {
+		"prefix": "KEY_EQUAL",
+		"body": [
+		  "KEY_EQUAL"
+		],
+		"description": "KEY_EQUAL"
+	},
+
+	"KEY_ENTER": {
+		"prefix": "KEY_ENTER",
+		"body": [
+		  "KEY_ENTER"
+		],
+		"description": "KEY_ENTER"
+	},
+
+	"KEY_SPACE": {
+		"prefix": "KEY_SPACE",
+		"body": [
+		  "KEY_SPACE"
+		],
+		"description": "KEY_SPACE"
+	},
+
+	"KEY_BACKSPACE": {
+		"prefix": "KEY_BACKSPACE",
+		"body": [
+		  "KEY_BACKSPACE"
+		],
+		"description": "KEY_BACKSPACE"
+	},
+
+	"KEY_TAB": {
+		"prefix": "KEY_TAB",
+		"body": [
+		  "KEY_TAB"
+		],
+		"description": "KEY_TAB"
+	},
+
+	"KEY_CAPSLOCK": {
+		"prefix": "KEY_CAPSLOCK",
+		"body": [
+		  "KEY_CAPSLOCK"
+		],
+		"description": "KEY_CAPSLOCK"
+	},
+
+	"KEY_NUMLOCK": {
+		"prefix": "KEY_NUMLOCK",
+		"body": [
+		  "KEY_NUMLOCK"
+		],
+		"description": "KEY_NUMLOCK"
+	},
+
+	"KEY_ESCAPE": {
+		"prefix": "KEY_ESCAPE",
+		"body": [
+		  "KEY_ESCAPE"
+		],
+		"description": "KEY_ESCAPE"
+	},
+
+	"KEY_SCROLLLOCK": {
+		"prefix": "KEY_SCROLLLOCK",
+		"body": [
+		  "KEY_SCROLLLOCK"
+		],
+		"description": "KEY_SCROLLLOCK"
+	},
+
+	"KEY_INSERT": {
+		"prefix": "KEY_INSERT",
+		"body": [
+		  "KEY_INSERT"
+		],
+		"description": "KEY_INSERT"
+	},
+
+	"KEY_DELETE": {
+		"prefix": "KEY_DELETE",
+		"body": [
+		  "KEY_DELETE"
+		],
+		"description": "KEY_DELETE"
+	},
+
+	"KEY_HOME": {
+		"prefix": "KEY_HOME",
+		"body": [
+		  "KEY_HOME"
+		],
+		"description": "KEY_HOME"
+	},
+
+	"KEY_END": {
+		"prefix": "KEY_END",
+		"body": [
+		  "KEY_END"
+		],
+		"description": "KEY_END"
+	},
+
+	"KEY_PAGEUP": {
+		"prefix": "KEY_PAGEUP",
+		"body": [
+		  "KEY_PAGEUP"
+		],
+		"description": "KEY_PAGEUP"
+	},
+
+	"KEY_PAGEDOWN": {
+		"prefix": "KEY_PAGEDOWN",
+		"body": [
+		  "KEY_PAGEDOWN"
+		],
+		"description": "KEY_PAGEDOWN"
+	},
+
+	"KEY_BREAK": {
+		"prefix": "KEY_BREAK",
+		"body": [
+		  "KEY_BREAK"
+		],
+		"description": "KEY_BREAK"
+	},
+
+	"KEY_LSHIFT": {
+		"prefix": "KEY_LSHIFT",
+		"body": [
+		  "KEY_LSHIFT"
+		],
+		"description": "KEY_LSHIFT"
+	},
+
+	"KEY_RSHIFT": {
+		"prefix": "KEY_RSHIFT",
+		"body": [
+		  "KEY_RSHIFT"
+		],
+		"description": "KEY_RSHIFT"
+	},
+
+	"KEY_LALT": {
+		"prefix": "KEY_LALT",
+		"body": [
+		  "KEY_LALT"
+		],
+		"description": "KEY_LALT"
+	},
+
+	"KEY_RALT": {
+		"prefix": "KEY_RALT",
+		"body": [
+		  "KEY_RALT"
+		],
+		"description": "KEY_RALT"
+	},
+
+	"KEY_LCONTROL": {
+		"prefix": "KEY_LCONTROL",
+		"body": [
+		  "KEY_LCONTROL"
+		],
+		"description": "KEY_LCONTROL"
+	},
+
+	"KEY_RCONTROL": {
+		"prefix": "KEY_RCONTROL",
+		"body": [
+		  "KEY_RCONTROL"
+		],
+		"description": "KEY_RCONTROL"
+	},
+
+	"KEY_LWIN": {
+		"prefix": "KEY_LWIN",
+		"body": [
+		  "KEY_LWIN"
+		],
+		"description": "KEY_LWIN"
+	},
+
+	"KEY_RWIN": {
+		"prefix": "KEY_RWIN",
+		"body": [
+		  "KEY_RWIN"
+		],
+		"description": "KEY_RWIN"
+	},
+
+	"KEY_APP": {
+		"prefix": "KEY_APP",
+		"body": [
+		  "KEY_APP"
+		],
+		"description": "KEY_APP"
+	},
+
+	"KEY_UP": {
+		"prefix": "KEY_UP",
+		"body": [
+		  "KEY_UP"
+		],
+		"description": "KEY_UP"
+	},
+
+	"KEY_LEFT": {
+		"prefix": "KEY_LEFT",
+		"body": [
+		  "KEY_LEFT"
+		],
+		"description": "KEY_LEFT"
+	},
+
+	"KEY_DOWN": {
+		"prefix": "KEY_DOWN",
+		"body": [
+		  "KEY_DOWN"
+		],
+		"description": "KEY_DOWN"
+	},
+
+	"KEY_RIGHT": {
+		"prefix": "KEY_RIGHT",
+		"body": [
+		  "KEY_RIGHT"
+		],
+		"description": "KEY_RIGHT"
+	},
+
+	"KEY_F1": {
+		"prefix": "KEY_F1",
+		"body": [
+		  "KEY_F1"
+		],
+		"description": "KEY_F1"
+	},
+
+	"KEY_F2": {
+		"prefix": "KEY_F2",
+		"body": [
+		  "KEY_F2"
+		],
+		"description": "KEY_F2"
+	},
+
+	"KEY_F3": {
+		"prefix": "KEY_F3",
+		"body": [
+		  "KEY_F3"
+		],
+		"description": "KEY_F3"
+	},
+
+	"KEY_F4": {
+		"prefix": "KEY_F4",
+		"body": [
+		  "KEY_F4"
+		],
+		"description": "KEY_F4"
+	},
+
+	"KEY_F5": {
+		"prefix": "KEY_F5",
+		"body": [
+		  "KEY_F5"
+		],
+		"description": "KEY_F5"
+	},
+
+	"KEY_F6": {
+		"prefix": "KEY_F6",
+		"body": [
+		  "KEY_F6"
+		],
+		"description": "KEY_F6"
+	},
+
+	"KEY_F7": {
+		"prefix": "KEY_F7",
+		"body": [
+		  "KEY_F7"
+		],
+		"description": "KEY_F7"
+	},
+
+	"KEY_F8": {
+		"prefix": "KEY_F8",
+		"body": [
+		  "KEY_F8"
+		],
+		"description": "KEY_F8"
+	},
+
+	"KEY_F9": {
+		"prefix": "KEY_F9",
+		"body": [
+		  "KEY_F9"
+		],
+		"description": "KEY_F9"
+	},
+
+	"KEY_F10": {
+		"prefix": "KEY_F10",
+		"body": [
+		  "KEY_F10"
+		],
+		"description": "KEY_F10"
+	},
+
+	"KEY_F11": {
+		"prefix": "KEY_F11",
+		"body": [
+		  "KEY_F11"
+		],
+		"description": "KEY_F11"
+	},
+
+	"KEY_F12": {
+		"prefix": "KEY_F12",
+		"body": [
+		  "KEY_F12"
+		],
+		"description": "KEY_F12"
+	},
+
+	"KEY_CAPSLOCKTOGGLE": {
+		"prefix": "KEY_CAPSLOCKTOGGLE",
+		"body": [
+		  "KEY_CAPSLOCKTOGGLE"
+		],
+		"description": "KEY_CAPSLOCKTOGGLE"
+	},
+
+	"KEY_NUMLOCKTOGGLE": {
+		"prefix": "KEY_NUMLOCKTOGGLE",
+		"body": [
+		  "KEY_NUMLOCKTOGGLE"
+		],
+		"description": "KEY_NUMLOCKTOGGLE"
+	},
+
+	"KEY_SCROLLLOCKTOGGLE": {
+		"prefix": "KEY_SCROLLLOCKTOGGLE",
+		"body": [
+		  "KEY_SCROLLLOCKTOGGLE"
+		],
+		"description": "KEY_SCROLLLOCKTOGGLE"
+	},
+
+	"KEY_LAST": {
+		"prefix": "KEY_LAST",
+		"body": [
+		  "KEY_LAST"
+		],
+		"description": "KEY_LAST"
+	},
+
+	"KEY_COUNT": {
+		"prefix": "KEY_COUNT",
+		"body": [
+		  "KEY_COUNT"
+		],
+		"description": "KEY_COUNT"
+	},
+
+	"MOUSE_FIRST": {
+		"prefix": "MOUSE_FIRST",
+		"body": [
+		  "MOUSE_FIRST"
+		],
+		"description": "MOUSE_FIRST"
+	},
+
+	"MOUSE_LEFT": {
+		"prefix": "MOUSE_LEFT",
+		"body": [
+		  "MOUSE_LEFT"
+		],
+		"description": "MOUSE_LEFT"
+	},
+
+	"MOUSE_RIGHT": {
+		"prefix": "MOUSE_RIGHT",
+		"body": [
+		  "MOUSE_RIGHT"
+		],
+		"description": "MOUSE_RIGHT"
+	},
+
+	"MOUSE_MIDDLE": {
+		"prefix": "MOUSE_MIDDLE",
+		"body": [
+		  "MOUSE_MIDDLE"
+		],
+		"description": "MOUSE_MIDDLE"
+	},
+
+	"MOUSE_4": {
+		"prefix": "MOUSE_4",
+		"body": [
+		  "MOUSE_4"
+		],
+		"description": "MOUSE_4"
+	},
+
+	"MOUSE_5": {
+		"prefix": "MOUSE_5",
+		"body": [
+		  "MOUSE_5"
+		],
+		"description": "MOUSE_5"
+	},
+
+	"MOUSE_WHEEL_UP": {
+		"prefix": "MOUSE_WHEEL_UP",
+		"body": [
+		  "MOUSE_WHEEL_UP"
+		],
+		"description": "MOUSE_WHEEL_UP"
+	},
+
+	"MOUSE_WHEEL_DOWN": {
+		"prefix": "MOUSE_WHEEL_DOWN",
+		"body": [
+		  "MOUSE_WHEEL_DOWN"
+		],
+		"description": "MOUSE_WHEEL_DOWN"
+	},
+
+	// Lifestates
+	"LIFE_ALIVE": {
+		"prefix": "LIFE_ALIVE",
+		"body": [
+		  "LIFE_ALIVE"
+		],
+		"description": "LIFE_ALIVE"
+	},
+
+	"LIFE_DYING": {
+		"prefix": "LIFE_DYING",
+		"body": [
+		  "LIFE_DYING"
+		],
+		"description": "LIFE_DYING"
+	},
+
+	"LIFE_DEAD": {
+		"prefix": "LIFE_DEAD",
+		"body": [
+		  "LIFE_DEAD"
+		],
+		"description": "LIFE_DEAD"
+	},
+
+	"LIFE_RESPAWNABLE": {
+		"prefix": "LIFE_RESPAWNABLE",
+		"body": [
+		  "LIFE_RESPAWNABLE"
+		],
+		"description": "LIFE_RESPAWNABLE"
+	},
+
+	"LIFE_DISCARDAIM_BODY": {
+		"prefix": "LIFE_DISCARDAIM_BODY",
+		"body": [
+		  "LIFE_DISCARDAIM_BODY"
+		],
+		"description": "LIFE_DISCARDAIM_BODY"
+	},
+
+	// TF2 Weapon base IDs
+	"TF_WEAPON_NONE": {
+		"prefix": "TF_WEAPON_NONE",
+		"body": [
+		  "TF_WEAPON_NONE"
+		],
+		"description": "TF_WEAPON_NONE"
+	},
+
+	"TF_WEAPON_BAT": {
+		"prefix": "TF_WEAPON_BAT",
+		"body": [
+		  "TF_WEAPON_BAT"
+		],
+		"description": "TF_WEAPON_BAT"
+	},
+
+	"TF_WEAPON_BAT_WOOD": {
+		"prefix": "TF_WEAPON_BAT_WOOD",
+		"body": [
+		  "TF_WEAPON_BAT_WOOD"
+		],
+		"description": "TF_WEAPON_BAT_WOOD"
+	},
+
+	"TF_WEAPON_BOTTLE": {
+		"prefix": "TF_WEAPON_BOTTLE",
+		"body": [
+		  "TF_WEAPON_BOTTLE"
+		],
+		"description": "TF_WEAPON_BOTTLE"
+	},
+
+	"TF_WEAPON_FIREAXE": {
+		"prefix": "TF_WEAPON_FIREAXE",
+		"body": [
+		  "TF_WEAPON_FIREAXE"
+		],
+		"description": "TF_WEAPON_FIREAXE"
+	},
+
+	"TF_WEAPON_CLUB": {
+		"prefix": "TF_WEAPON_CLUB",
+		"body": [
+		  "TF_WEAPON_CLUB"
+		],
+		"description": "TF_WEAPON_CLUB"
+	},
+
+	"TF_WEAPON_CROWBAR": {
+		"prefix": "TF_WEAPON_CROWBAR",
+		"body": [
+		  "TF_WEAPON_CROWBAR"
+		],
+		"description": "TF_WEAPON_CROWBAR"
+	},
+
+	"TF_WEAPON_KNIFE": {
+		"prefix": "TF_WEAPON_KNIFE",
+		"body": [
+		  "TF_WEAPON_KNIFE"
+		],
+		"description": "TF_WEAPON_KNIFE"
+	},
+
+	"TF_WEAPON_FISTS": {
+		"prefix": "TF_WEAPON_FISTS",
+		"body": [
+		  "TF_WEAPON_FISTS"
+		],
+		"description": "TF_WEAPON_FISTS"
+	},
+
+	"TF_WEAPON_SHOVEL": {
+		"prefix": "TF_WEAPON_SHOVEL",
+		"body": [
+		  "TF_WEAPON_SHOVEL"
+		],
+		"description": "TF_WEAPON_SHOVEL"
+	},
+
+	"TF_WEAPON_WRENCH": {
+		"prefix": "TF_WEAPON_WRENCH",
+		"body": [
+		  "TF_WEAPON_WRENCH"
+		],
+		"description": "TF_WEAPON_WRENCH"
+	},
+
+	"TF_WEAPON_BONESAW": {
+		"prefix": "TF_WEAPON_BONESAW",
+		"body": [
+		  "TF_WEAPON_BONESAW"
+		],
+		"description": "TF_WEAPON_BONESAW"
+	},
+
+	"TF_WEAPON_SHOTGUN_PRIMARY": {
+		"prefix": "TF_WEAPON_SHOTGUN_PRIMARY",
+		"body": [
+		  "TF_WEAPON_SHOTGUN_PRIMARY"
+		],
+		"description": "TF_WEAPON_SHOTGUN_PRIMARY"
+	},
+
+	"TF_WEAPON_SHOTGUN_SOLDIER": {
+		"prefix": "TF_WEAPON_SHOTGUN_SOLDIER",
+		"body": [
+		  "TF_WEAPON_SHOTGUN_SOLDIER"
+		],
+		"description": "TF_WEAPON_SHOTGUN_SOLDIER"
+	},
+
+	"TF_WEAPON_SHOTGUN_HWG": {
+		"prefix": "TF_WEAPON_SHOTGUN_HWG",
+		"body": [
+		  "TF_WEAPON_SHOTGUN_HWG"
+		],
+		"description": "TF_WEAPON_SHOTGUN_HWG"
+	},
+
+	"TF_WEAPON_SHOTGUN_PYRO": {
+		"prefix": "TF_WEAPON_SHOTGUN_PYRO",
+		"body": [
+		  "TF_WEAPON_SHOTGUN_PYRO"
+		],
+		"description": "TF_WEAPON_SHOTGUN_PYRO"
+	},
+
+	"TF_WEAPON_SCATTERGUN": {
+		"prefix": "TF_WEAPON_SCATTERGUN",
+		"body": [
+		  "TF_WEAPON_SCATTERGUN"
+		],
+		"description": "TF_WEAPON_SCATTERGUN"
+	},
+
+	"TF_WEAPON_SNIPERRIFLE": {
+		"prefix": "TF_WEAPON_SNIPERRIFLE",
+		"body": [
+		  "TF_WEAPON_SNIPERRIFLE"
+		],
+		"description": "TF_WEAPON_SNIPERRIFLE"
+	},
+
+	"TF_WEAPON_MINIGUN": {
+		"prefix": "TF_WEAPON_MINIGUN",
+		"body": [
+		  "TF_WEAPON_MINIGUN"
+		],
+		"description": "TF_WEAPON_MINIGUN"
+	},
+
+	"TF_WEAPON_SMG": {
+		"prefix": "TF_WEAPON_SMG",
+		"body": [
+		  "TF_WEAPON_SMG"
+		],
+		"description": "TF_WEAPON_SMG"
+	},
+
+	"TF_WEAPON_SYRINGEGUN_MEDIC": {
+		"prefix": "TF_WEAPON_SYRINGEGUN_MEDIC",
+		"body": [
+		  "TF_WEAPON_SYRINGEGUN_MEDIC"
+		],
+		"description": "TF_WEAPON_SYRINGEGUN_MEDIC"
+	},
+
+	"TF_WEAPON_TRANQ": {
+		"prefix": "TF_WEAPON_TRANQ",
+		"body": [
+		  "TF_WEAPON_TRANQ"
+		],
+		"description": "TF_WEAPON_TRANQ"
+	},
+
+	"TF_WEAPON_ROCKETLAUNCHER": {
+		"prefix": "TF_WEAPON_ROCKETLAUNCHER",
+		"body": [
+		  "TF_WEAPON_ROCKETLAUNCHER"
+		],
+		"description": "TF_WEAPON_ROCKETLAUNCHER"
+	},
+
+	"TF_WEAPON_GRENADELAUNCHER": {
+		"prefix": "TF_WEAPON_GRENADELAUNCHER",
+		"body": [
+		  "TF_WEAPON_GRENADELAUNCHER"
+		],
+		"description": "TF_WEAPON_GRENADELAUNCHER"
+	},
+
+	"TF_WEAPON_PIPEBOMBLAUNCHER": {
+		"prefix": "TF_WEAPON_PIPEBOMBLAUNCHER",
+		"body": [
+		  "TF_WEAPON_PIPEBOMBLAUNCHER"
+		],
+		"description": "TF_WEAPON_PIPEBOMBLAUNCHER"
+	},
+
+	"TF_WEAPON_FLAMETHROWER": {
+		"prefix": "TF_WEAPON_FLAMETHROWER",
+		"body": [
+		  "TF_WEAPON_FLAMETHROWER"
+		],
+		"description": "TF_WEAPON_FLAMETHROWER"
+	},
+
+	"TF_WEAPON_GRENADE_NORMAL": {
+		"prefix": "TF_WEAPON_GRENADE_NORMAL",
+		"body": [
+		  "TF_WEAPON_GRENADE_NORMAL"
+		],
+		"description": "TF_WEAPON_GRENADE_NORMAL"
+	},
+
+	"TF_WEAPON_GRENADE_CONCUSSION": {
+		"prefix": "TF_WEAPON_GRENADE_CONCUSSION",
+		"body": [
+		  "TF_WEAPON_GRENADE_CONCUSSION"
+		],
+		"description": "TF_WEAPON_GRENADE_CONCUSSION"
+	},
+
+	"TF_WEAPON_GRENADE_NAIL": {
+		"prefix": "TF_WEAPON_GRENADE_NAIL",
+		"body": [
+		  "TF_WEAPON_GRENADE_NAIL"
+		],
+		"description": "TF_WEAPON_GRENADE_NAIL"
+	},
+
+	"TF_WEAPON_GRENADE_MIRV": {
+		"prefix": "TF_WEAPON_GRENADE_MIRV",
+		"body": [
+		  "TF_WEAPON_GRENADE_MIRV"
+		],
+		"description": "TF_WEAPON_GRENADE_MIRV"
+	},
+
+	"TF_WEAPON_GRENADE_MIRV_DEMOMAN": {
+		"prefix": "TF_WEAPON_GRENADE_MIRV_DEMOMAN",
+		"body": [
+		  "TF_WEAPON_GRENADE_MIRV_DEMOMAN"
+		],
+		"description": "TF_WEAPON_GRENADE_MIRV_DEMOMAN"
+	},
+
+	"TF_WEAPON_GRENADE_NAPALM": {
+		"prefix": "TF_WEAPON_GRENADE_NAPALM",
+		"body": [
+		  "TF_WEAPON_GRENADE_NAPALM"
+		],
+		"description": "TF_WEAPON_GRENADE_NAPALM"
+	},
+
+	"TF_WEAPON_GRENADE_GAS": {
+		"prefix": "TF_WEAPON_GRENADE_GAS",
+		"body": [
+		  "TF_WEAPON_GRENADE_GAS"
+		],
+		"description": "TF_WEAPON_GRENADE_GAS"
+	},
+
+	"TF_WEAPON_GRENADE_EMP": {
+		"prefix": "TF_WEAPON_GRENADE_EMP",
+		"body": [
+		  "TF_WEAPON_GRENADE_EMP"
+		],
+		"description": "TF_WEAPON_GRENADE_EMP"
+	},
+
+	"TF_WEAPON_GRENADE_CALTROP": {
+		"prefix": "TF_WEAPON_GRENADE_CALTROP",
+		"body": [
+		  "TF_WEAPON_GRENADE_CALTROP"
+		],
+		"description": "TF_WEAPON_GRENADE_CALTROP"
+	},
+
+	"TF_WEAPON_GRENADE_PIPEBOMB": {
+		"prefix": "TF_WEAPON_GRENADE_PIPEBOMB",
+		"body": [
+		  "TF_WEAPON_GRENADE_PIPEBOMB"
+		],
+		"description": "TF_WEAPON_GRENADE_PIPEBOMB"
+	},
+
+	"TF_WEAPON_GRENADE_SMOKE_BOMB": {
+		"prefix": "TF_WEAPON_GRENADE_SMOKE_BOMB",
+		"body": [
+		  "TF_WEAPON_GRENADE_SMOKE_BOMB"
+		],
+		"description": "TF_WEAPON_GRENADE_SMOKE_BOMB"
+	},
+
+	"TF_WEAPON_GRENADE_HEAL": {
+		"prefix": "TF_WEAPON_GRENADE_HEAL",
+		"body": [
+		  "TF_WEAPON_GRENADE_HEAL"
+		],
+		"description": "TF_WEAPON_GRENADE_HEAL"
+	},
+
+	"TF_WEAPON_GRENADE_STUNBALL": {
+		"prefix": "TF_WEAPON_GRENADE_STUNBALL",
+		"body": [
+		  "TF_WEAPON_GRENADE_STUNBALL"
+		],
+		"description": "TF_WEAPON_GRENADE_STUNBALL"
+	},
+
+	"TF_WEAPON_GRENADE_JAR": {
+		"prefix": "TF_WEAPON_GRENADE_JAR",
+		"body": [
+		  "TF_WEAPON_GRENADE_JAR"
+		],
+		"description": "TF_WEAPON_GRENADE_JAR"
+	},
+
+	"TF_WEAPON_GRENADE_JAR_MILK": {
+		"prefix": "TF_WEAPON_GRENADE_JAR_MILK",
+		"body": [
+		  "TF_WEAPON_GRENADE_JAR_MILK"
+		],
+		"description": "TF_WEAPON_GRENADE_JAR_MILK"
+	},
+
+	"TF_WEAPON_PISTOL": {
+		"prefix": "TF_WEAPON_PISTOL",
+		"body": [
+		  "TF_WEAPON_PISTOL"
+		],
+		"description": "TF_WEAPON_PISTOL"
+	},
+
+	"TF_WEAPON_PISTOL_SCOUT": {
+		"prefix": "TF_WEAPON_PISTOL_SCOUT",
+		"body": [
+		  "TF_WEAPON_PISTOL_SCOUT"
+		],
+		"description": "TF_WEAPON_PISTOL_SCOUT"
+	},
+
+	"TF_WEAPON_REVOLVER": {
+		"prefix": "TF_WEAPON_REVOLVER",
+		"body": [
+		  "TF_WEAPON_REVOLVER"
+		],
+		"description": "TF_WEAPON_REVOLVER"
+	},
+
+	"TF_WEAPON_NAILGUN": {
+		"prefix": "TF_WEAPON_NAILGUN",
+		"body": [
+		  "TF_WEAPON_NAILGUN"
+		],
+		"description": "TF_WEAPON_NAILGUN"
+	},
+
+	"TF_WEAPON_PDA": {
+		"prefix": "TF_WEAPON_PDA",
+		"body": [
+		  "TF_WEAPON_PDA"
+		],
+		"description": "TF_WEAPON_PDA"
+	},
+
+	"TF_WEAPON_PDA_ENGINEER_BUILD": {
+		"prefix": "TF_WEAPON_PDA_ENGINEER_BUILD",
+		"body": [
+		  "TF_WEAPON_PDA_ENGINEER_BUILD"
+		],
+		"description": "TF_WEAPON_PDA_ENGINEER_BUILD"
+	},
+
+	"TF_WEAPON_PDA_ENGINEER_DESTROY": {
+		"prefix": "TF_WEAPON_PDA_ENGINEER_DESTROY",
+		"body": [
+		  "TF_WEAPON_PDA_ENGINEER_DESTROY"
+		],
+		"description": "TF_WEAPON_PDA_ENGINEER_DESTROY"
+	},
+
+	"TF_WEAPON_PDA_SPY": {
+		"prefix": "TF_WEAPON_PDA_SPY",
+		"body": [
+		  "TF_WEAPON_PDA_SPY"
+		],
+		"description": "TF_WEAPON_PDA_SPY"
+	},
+
+	"TF_WEAPON_BUILDER": {
+		"prefix": "TF_WEAPON_BUILDER",
+		"body": [
+		  "TF_WEAPON_BUILDER"
+		],
+		"description": "TF_WEAPON_BUILDER"
+	},
+
+	"TF_WEAPON_MEDIGUN": {
+		"prefix": "TF_WEAPON_MEDIGUN",
+		"body": [
+		  "TF_WEAPON_MEDIGUN"
+		],
+		"description": "TF_WEAPON_MEDIGUN"
+	},
+
+	"TF_WEAPON_GRENADE_MIRVBOMB": {
+		"prefix": "TF_WEAPON_GRENADE_MIRVBOMB",
+		"body": [
+		  "TF_WEAPON_GRENADE_MIRVBOMB"
+		],
+		"description": "TF_WEAPON_GRENADE_MIRVBOMB"
+	},
+
+	"TF_WEAPON_FLAMETHROWER_ROCKET": {
+		"prefix": "TF_WEAPON_FLAMETHROWER_ROCKET",
+		"body": [
+		  "TF_WEAPON_FLAMETHROWER_ROCKET"
+		],
+		"description": "TF_WEAPON_FLAMETHROWER_ROCKET"
+	},
+
+	"TF_WEAPON_GRENADE_DEMOMAN": {
+		"prefix": "TF_WEAPON_GRENADE_DEMOMAN",
+		"body": [
+		  "TF_WEAPON_GRENADE_DEMOMAN"
+		],
+		"description": "TF_WEAPON_GRENADE_DEMOMAN"
+	},
+
+	"TF_WEAPON_SENTRY_BULLET": {
+		"prefix": "TF_WEAPON_SENTRY_BULLET",
+		"body": [
+		  "TF_WEAPON_SENTRY_BULLET"
+		],
+		"description": "TF_WEAPON_SENTRY_BULLET"
+	},
+
+	"TF_WEAPON_SENTRY_ROCKET": {
+		"prefix": "TF_WEAPON_SENTRY_ROCKET",
+		"body": [
+		  "TF_WEAPON_SENTRY_ROCKET"
+		],
+		"description": "TF_WEAPON_SENTRY_ROCKET"
+	},
+
+	"TF_WEAPON_DISPENSER": {
+		"prefix": "TF_WEAPON_DISPENSER",
+		"body": [
+		  "TF_WEAPON_DISPENSER"
+		],
+		"description": "TF_WEAPON_DISPENSER"
+	},
+
+	"TF_WEAPON_INVIS": {
+		"prefix": "TF_WEAPON_INVIS",
+		"body": [
+		  "TF_WEAPON_INVIS"
+		],
+		"description": "TF_WEAPON_INVIS"
+	},
+
+	"TF_WEAPON_FLAREGUN": {
+		"prefix": "TF_WEAPON_FLAREGUN",
+		"body": [
+		  "TF_WEAPON_FLAREGUN"
+		],
+		"description": "TF_WEAPON_FLAREGUN"
+	},
+
+	"TF_WEAPON_LUNCHBOX": {
+		"prefix": "TF_WEAPON_LUNCHBOX",
+		"body": [
+		  "TF_WEAPON_LUNCHBOX"
+		],
+		"description": "TF_WEAPON_LUNCHBOX"
+	},
+
+	"TF_WEAPON_JAR": {
+		"prefix": "TF_WEAPON_JAR",
+		"body": [
+		  "TF_WEAPON_JAR"
+		],
+		"description": "TF_WEAPON_JAR"
+	},
+
+	"TF_WEAPON_COMPOUND_BOW": {
+		"prefix": "TF_WEAPON_COMPOUND_BOW",
+		"body": [
+		  "TF_WEAPON_COMPOUND_BOW"
+		],
+		"description": "TF_WEAPON_COMPOUND_BOW"
+	},
+
+	"TF_WEAPON_BUFF_ITEM": {
+		"prefix": "TF_WEAPON_BUFF_ITEM",
+		"body": [
+		  "TF_WEAPON_BUFF_ITEM"
+		],
+		"description": "TF_WEAPON_BUFF_ITEM"
+	},
+
+	"TF_WEAPON_PUMPKIN_BOMB": {
+		"prefix": "TF_WEAPON_PUMPKIN_BOMB",
+		"body": [
+		  "TF_WEAPON_PUMPKIN_BOMB"
+		],
+		"description": "TF_WEAPON_PUMPKIN_BOMB"
+	},
+
+	"TF_WEAPON_SWORD": {
+		"prefix": "TF_WEAPON_SWORD",
+		"body": [
+		  "TF_WEAPON_SWORD"
+		],
+		"description": "TF_WEAPON_SWORD"
+	},
+
+	"TF_WEAPON_DIRECTHIT": {
+		"prefix": "TF_WEAPON_DIRECTHIT",
+		"body": [
+		  "TF_WEAPON_DIRECTHIT"
+		],
+		"description": "TF_WEAPON_DIRECTHIT"
+	},
+
+	"TF_WEAPON_LIFELINE": {
+		"prefix": "TF_WEAPON_LIFELINE",
+		"body": [
+		  "TF_WEAPON_LIFELINE"
+		],
+		"description": "TF_WEAPON_LIFELINE"
+	},
+
+	"TF_WEAPON_LASER_POINTER": {
+		"prefix": "TF_WEAPON_LASER_POINTER",
+		"body": [
+		  "TF_WEAPON_LASER_POINTER"
+		],
+		"description": "TF_WEAPON_LASER_POINTER"
+	},
+
+	"TF_WEAPON_DISPENSER_GUN": {
+		"prefix": "TF_WEAPON_DISPENSER_GUN",
+		"body": [
+		  "TF_WEAPON_DISPENSER_GUN"
+		],
+		"description": "TF_WEAPON_DISPENSER_GUN"
+	},
+
+	"TF_WEAPON_SENTRY_REVENGE": {
+		"prefix": "TF_WEAPON_SENTRY_REVENGE",
+		"body": [
+		  "TF_WEAPON_SENTRY_REVENGE"
+		],
+		"description": "TF_WEAPON_SENTRY_REVENGE"
+	},
+
+	"TF_WEAPON_JAR_MILK": {
+		"prefix": "TF_WEAPON_JAR_MILK",
+		"body": [
+		  "TF_WEAPON_JAR_MILK"
+		],
+		"description": "TF_WEAPON_JAR_MILK"
+	},
+
+	"TF_WEAPON_HANDGUN_SCOUT_PRIMARY": {
+		"prefix": "TF_WEAPON_HANDGUN_SCOUT_PRIMARY",
+		"body": [
+		  "TF_WEAPON_HANDGUN_SCOUT_PRIMARY"
+		],
+		"description": "TF_WEAPON_HANDGUN_SCOUT_PRIMARY"
+	},
+
+	"TF_WEAPON_BAT_FISH": {
+		"prefix": "TF_WEAPON_BAT_FISH",
+		"body": [
+		  "TF_WEAPON_BAT_FISH"
+		],
+		"description": "TF_WEAPON_BAT_FISH"
+	},
+
+	"TF_WEAPON_CROSSBOW": {
+		"prefix": "TF_WEAPON_CROSSBOW",
+		"body": [
+		  "TF_WEAPON_CROSSBOW"
+		],
+		"description": "TF_WEAPON_CROSSBOW"
+	},
+
+	"TF_WEAPON_STICKBOMB": {
+		"prefix": "TF_WEAPON_STICKBOMB",
+		"body": [
+		  "TF_WEAPON_STICKBOMB"
+		],
+		"description": "TF_WEAPON_STICKBOMB"
+	},
+
+	"TF_WEAPON_HANDGUN_SCOUT_SEC": {
+		"prefix": "TF_WEAPON_HANDGUN_SCOUT_SEC",
+		"body": [
+		  "TF_WEAPON_HANDGUN_SCOUT_SEC"
+		],
+		"description": "TF_WEAPON_HANDGUN_SCOUT_SEC"
+	},
+
+	"TF_WEAPON_SODA_POPPER": {
+		"prefix": "TF_WEAPON_SODA_POPPER",
+		"body": [
+		  "TF_WEAPON_SODA_POPPER"
+		],
+		"description": "TF_WEAPON_SODA_POPPER"
+	},
+
+	"TF_WEAPON_SNIPERRIFLE_DECAP": {
+		"prefix": "TF_WEAPON_SNIPERRIFLE_DECAP",
+		"body": [
+		  "TF_WEAPON_SNIPERRIFLE_DECAP"
+		],
+		"description": "TF_WEAPON_SNIPERRIFLE_DECAP"
+	},
+
+	"TF_WEAPON_RAYGUN": {
+		"prefix": "TF_WEAPON_RAYGUN",
+		"body": [
+		  "TF_WEAPON_RAYGUN"
+		],
+		"description": "TF_WEAPON_RAYGUN"
+	},
+
+	"TF_WEAPON_PARTICLE_CANNON": {
+		"prefix": "TF_WEAPON_PARTICLE_CANNON",
+		"body": [
+		  "TF_WEAPON_PARTICLE_CANNON"
+		],
+		"description": "TF_WEAPON_PARTICLE_CANNON"
+	},
+
+	"TF_WEAPON_MECHANICAL_ARM": {
+		"prefix": "TF_WEAPON_MECHANICAL_ARM",
+		"body": [
+		  "TF_WEAPON_MECHANICAL_ARM"
+		],
+		"description": "TF_WEAPON_MECHANICAL_ARM"
+	},
+
+	"TF_WEAPON_DRG_POMSON": {
+		"prefix": "TF_WEAPON_DRG_POMSON",
+		"body": [
+		  "TF_WEAPON_DRG_POMSON"
+		],
+		"description": "TF_WEAPON_DRG_POMSON"
+	},
+
+	"TF_WEAPON_BAT_GIFTWRAP": {
+		"prefix": "TF_WEAPON_BAT_GIFTWRAP",
+		"body": [
+		  "TF_WEAPON_BAT_GIFTWRAP"
+		],
+		"description": "TF_WEAPON_BAT_GIFTWRAP"
+	},
+
+	"TF_WEAPON_GRENADE_ORNAMENT": {
+		"prefix": "TF_WEAPON_GRENADE_ORNAMENT",
+		"body": [
+		  "TF_WEAPON_GRENADE_ORNAMENT"
+		],
+		"description": "TF_WEAPON_GRENADE_ORNAMENT"
+	},
+
+	"TF_WEAPON_RAYGUN_REVENGE": {
+		"prefix": "TF_WEAPON_RAYGUN_REVENGE",
+		"body": [
+		  "TF_WEAPON_RAYGUN_REVENGE"
+		],
+		"description": "TF_WEAPON_RAYGUN_REVENGE"
+	},
+
+	"TF_WEAPON_PEP_BRAWLER_BLASTER": {
+		"prefix": "TF_WEAPON_PEP_BRAWLER_BLASTER",
+		"body": [
+		  "TF_WEAPON_PEP_BRAWLER_BLASTER"
+		],
+		"description": "TF_WEAPON_PEP_BRAWLER_BLASTER"
+	},
+
+	"TF_WEAPON_CLEAVER": {
+		"prefix": "TF_WEAPON_CLEAVER",
+		"body": [
+		  "TF_WEAPON_CLEAVER"
+		],
+		"description": "TF_WEAPON_CLEAVER"
+	},
+
+	"TF_WEAPON_GRENADE_CLEAVER": {
+		"prefix": "TF_WEAPON_GRENADE_CLEAVER",
+		"body": [
+		  "TF_WEAPON_GRENADE_CLEAVER"
+		],
+		"description": "TF_WEAPON_GRENADE_CLEAVER"
+	},
+
+	"TF_WEAPON_STICKY_BALL_LAUNCHER": {
+		"prefix": "TF_WEAPON_STICKY_BALL_LAUNCHER",
+		"body": [
+		  "TF_WEAPON_STICKY_BALL_LAUNCHER"
+		],
+		"description": "TF_WEAPON_STICKY_BALL_LAUNCHER"
+	},
+
+	"TF_WEAPON_GRENADE_STICKY_BALL": {
+		"prefix": "TF_WEAPON_GRENADE_STICKY_BALL",
+		"body": [
+		  "TF_WEAPON_GRENADE_STICKY_BALL"
+		],
+		"description": "TF_WEAPON_GRENADE_STICKY_BALL"
+	},
+
+	"TF_WEAPON_SHOTGUN_BUILDING_RESCUE": {
+		"prefix": "TF_WEAPON_SHOTGUN_BUILDING_RESCUE",
+		"body": [
+		  "TF_WEAPON_SHOTGUN_BUILDING_RESCUE"
+		],
+		"description": "TF_WEAPON_SHOTGUN_BUILDING_RESCUE"
+	},
+
+	"TF_WEAPON_CANNON": {
+		"prefix": "TF_WEAPON_CANNON",
+		"body": [
+		  "TF_WEAPON_CANNON"
+		],
+		"description": "TF_WEAPON_CANNON"
+	},
+
+	"TF_WEAPON_THROWABLE": {
+		"prefix": "TF_WEAPON_THROWABLE",
+		"body": [
+		  "TF_WEAPON_THROWABLE"
+		],
+		"description": "TF_WEAPON_THROWABLE"
+	},
+
+	"TF_WEAPON_GRENADE_THROWABLE": {
+		"prefix": "TF_WEAPON_GRENADE_THROWABLE",
+		"body": [
+		  "TF_WEAPON_GRENADE_THROWABLE"
+		],
+		"description": "TF_WEAPON_GRENADE_THROWABLE"
+	},
+
+	"TF_WEAPON_PDA_SPY_BUILD": {
+		"prefix": "TF_WEAPON_PDA_SPY_BUILD",
+		"body": [
+		  "TF_WEAPON_PDA_SPY_BUILD"
+		],
+		"description": "TF_WEAPON_PDA_SPY_BUILD"
+	},
+
+	"TF_WEAPON_GRENADE_WATERBALLOON": {
+		"prefix": "TF_WEAPON_GRENADE_WATERBALLOON",
+		"body": [
+		  "TF_WEAPON_GRENADE_WATERBALLOON"
+		],
+		"description": "TF_WEAPON_GRENADE_WATERBALLOON"
+	},
+
+	"TF_WEAPON_HARVESTER_SAW": {
+		"prefix": "TF_WEAPON_HARVESTER_SAW",
+		"body": [
+		  "TF_WEAPON_HARVESTER_SAW"
+		],
+		"description": "TF_WEAPON_HARVESTER_SAW"
+	},
+
+	"TF_WEAPON_SPELLBOOK": {
+		"prefix": "TF_WEAPON_SPELLBOOK",
+		"body": [
+		  "TF_WEAPON_SPELLBOOK"
+		],
+		"description": "TF_WEAPON_SPELLBOOK"
+	},
+
+	"TF_WEAPON_SPELLBOOK_PROJECTILE": {
+		"prefix": "TF_WEAPON_SPELLBOOK_PROJECTILE",
+		"body": [
+		  "TF_WEAPON_SPELLBOOK_PROJECTILE"
+		],
+		"description": "TF_WEAPON_SPELLBOOK_PROJECTILE"
+	},
+
+	"TF_WEAPON_SNIPERRIFLE_CLASSIC": {
+		"prefix": "TF_WEAPON_SNIPERRIFLE_CLASSIC",
+		"body": [
+		  "TF_WEAPON_SNIPERRIFLE_CLASSIC"
+		],
+		"description": "TF_WEAPON_SNIPERRIFLE_CLASSIC"
+	},
+
+	"TF_WEAPON_PARACHUTE": {
+		"prefix": "TF_WEAPON_PARACHUTE",
+		"body": [
+		  "TF_WEAPON_PARACHUTE"
+		],
+		"description": "TF_WEAPON_PARACHUTE"
+	},
+
+	"TF_WEAPON_GRAPPLINGHOOK": {
+		"prefix": "TF_WEAPON_GRAPPLINGHOOK",
+		"body": [
+		  "TF_WEAPON_GRAPPLINGHOOK"
+		],
+		"description": "TF_WEAPON_GRAPPLINGHOOK"
+	},
+
+	"TF_WEAPON_PASSTIME_GUN": {
+		"prefix": "TF_WEAPON_PASSTIME_GUN",
+		"body": [
+		  "TF_WEAPON_PASSTIME_GUN"
+		],
+		"description": "TF_WEAPON_PASSTIME_GUN"
+	},
+
+	"TF_WEAPON_CHARGED_SMG": {
+		"prefix": "TF_WEAPON_CHARGED_SMG",
+		"body": [
+		  "TF_WEAPON_CHARGED_SMG"
+		],
+		"description": "TF_WEAPON_CHARGED_SMG"
+	},
+
+	"TF_WEAPON_BREAKABLE_SIGN": {
+		"prefix": "TF_WEAPON_BREAKABLE_SIGN",
+		"body": [
+		  "TF_WEAPON_BREAKABLE_SIGN"
+		],
+		"description": "TF_WEAPON_BREAKABLE_SIGN"
+	},
+
+	"TF_WEAPON_ROCKETPACK": {
+		"prefix": "TF_WEAPON_ROCKETPACK",
+		"body": [
+		  "TF_WEAPON_ROCKETPACK"
+		],
+		"description": "TF_WEAPON_ROCKETPACK"
+	},
+
+	"TF_WEAPON_SLAP": {
+		"prefix": "TF_WEAPON_SLAP",
+		"body": [
+		  "TF_WEAPON_SLAP"
+		],
+		"description": "TF_WEAPON_SLAP"
+	},
+
+	"TF_WEAPON_JAR_GAS": {
+		"prefix": "TF_WEAPON_JAR_GAS",
+		"body": [
+		  "TF_WEAPON_JAR_GAS"
+		],
+		"description": "TF_WEAPON_JAR_GAS"
+	},
+
+	"TF_WEAPON_GRENADE_JAR_GAS": {
+		"prefix": "TF_WEAPON_GRENADE_JAR_GAS",
+		"body": [
+		  "TF_WEAPON_GRENADE_JAR_GAS"
+		],
+		"description": "TF_WEAPON_GRENADE_JAR_GAS"
+	},
+
+	"TF_WEAPON_FLAME_BALL": {
+		"prefix": "TF_WEAPON_FLAME_BALL",
+		"body": [
+		  "TF_WEAPON_FLAME_BALL"
+		],
+		"description": "TF_WEAPON_FLAME_BALL"
+	},
+
+	// TF2 Conds
+	"TFCond_Slowed": {
+		"prefix": "TFCond_Slowed",
+		"body": [
+		  "TFCond_Slowed"
+		],
+		"description": "TFCond_Slowed"
+	},
+
+	"TFCond_Zoomed": {
+		"prefix": "TFCond_Zoomed",
+		"body": [
+		  "TFCond_Zoomed"
+		],
+		"description": "TFCond_Zoomed"
+	},
+
+	"TFCond_Disguising": {
+		"prefix": "TFCond_Disguising",
+		"body": [
+		  "TFCond_Disguising"
+		],
+		"description": "TFCond_Disguising"
+	},
+
+	"TFCond_Disguised": {
+		"prefix": "TFCond_Disguised",
+		"body": [
+		  "TFCond_Disguised"
+		],
+		"description": "TFCond_Disguised"
+	},
+
+	"TFCond_Cloaked": {
+		"prefix": "TFCond_Cloaked",
+		"body": [
+		  "TFCond_Cloaked"
+		],
+		"description": "TFCond_Cloaked"
+	},
+
+	"TFCond_Ubercharged": {
+		"prefix": "TFCond_Ubercharged",
+		"body": [
+		  "TFCond_Ubercharged"
+		],
+		"description": "TFCond_Ubercharged"
+	},
+
+	"TFCond_TeleportedGlow": {
+		"prefix": "TFCond_TeleportedGlow",
+		"body": [
+		  "TFCond_TeleportedGlow"
+		],
+		"description": "TFCond_TeleportedGlow"
+	},
+
+	"TFCond_Taunting": {
+		"prefix": "TFCond_Taunting",
+		"body": [
+		  "TFCond_Taunting"
+		],
+		"description": "TFCond_Taunting"
+	},
+
+	"TFCond_UberchargeFading": {
+		"prefix": "TFCond_UberchargeFading",
+		"body": [
+		  "TFCond_UberchargeFading"
+		],
+		"description": "TFCond_UberchargeFading"
+	},
+
+	"TFCond_Unknown1": {
+		"prefix": "TFCond_Unknown1",
+		"body": [
+		  "TFCond_Unknown1"
+		],
+		"description": "TFCond_Unknown1"
+	},
+
+	"TFCond_CloakFlicker": {
+		"prefix": "TFCond_CloakFlicker",
+		"body": [
+		  "TFCond_CloakFlicker"
+		],
+		"description": "TFCond_CloakFlicker"
+	},
+
+	"TFCond_Teleporting": {
+		"prefix": "TFCond_Teleporting",
+		"body": [
+		  "TFCond_Teleporting"
+		],
+		"description": "TFCond_Teleporting"
+	},
+
+	"TFCond_Kritzkrieged": {
+		"prefix": "TFCond_Kritzkrieged",
+		"body": [
+		  "TFCond_Kritzkrieged"
+		],
+		"description": "TFCond_Kritzkrieged"
+	},
+
+	"TFCond_Unknown2": {
+		"prefix": "TFCond_Unknown2",
+		"body": [
+		  "TFCond_Unknown2"
+		],
+		"description": "TFCond_Unknown2"
+	},
+
+	"TFCond_TmpDamageBonus": {
+		"prefix": "TFCond_TmpDamageBonus",
+		"body": [
+		  "TFCond_TmpDamageBonus"
+		],
+		"description": "TFCond_TmpDamageBonus"
+	},
+
+	"TFCond_DeadRingered": {
+		"prefix": "TFCond_DeadRingered",
+		"body": [
+		  "TFCond_DeadRingered"
+		],
+		"description": "TFCond_DeadRingered"
+	},
+
+	"TFCond_Bonked": {
+		"prefix": "TFCond_Bonked",
+		"body": [
+		  "TFCond_Bonked"
+		],
+		"description": "TFCond_Bonked"
+	},
+
+	"TFCond_Dazed": {
+		"prefix": "TFCond_Dazed",
+		"body": [
+		  "TFCond_Dazed"
+		],
+		"description": "TFCond_Dazed"
+	},
+
+	"TFCond_Buffed": {
+		"prefix": "TFCond_Buffed",
+		"body": [
+		  "TFCond_Buffed"
+		],
+		"description": "TFCond_Buffed"
+	},
+
+	"TFCond_Charging": {
+		"prefix": "TFCond_Charging",
+		"body": [
+		  "TFCond_Charging"
+		],
+		"description": "TFCond_Charging"
+	},
+
+	"TFCond_DemoBuff": {
+		"prefix": "TFCond_DemoBuff",
+		"body": [
+		  "TFCond_DemoBuff"
+		],
+		"description": "TFCond_DemoBuff"
+	},
+
+	"TFCond_CritCola": {
+		"prefix": "TFCond_CritCola",
+		"body": [
+		  "TFCond_CritCola"
+		],
+		"description": "TFCond_CritCola"
+	},
+
+	"TFCond_InHealRadius": {
+		"prefix": "TFCond_InHealRadius",
+		"body": [
+		  "TFCond_InHealRadius"
+		],
+		"description": "TFCond_InHealRadius"
+	},
+
+	"TFCond_Healing": {
+		"prefix": "TFCond_Healing",
+		"body": [
+		  "TFCond_Healing"
+		],
+		"description": "TFCond_Healing"
+	},
+
+	"TFCond_OnFire": {
+		"prefix": "TFCond_OnFire",
+		"body": [
+		  "TFCond_OnFire"
+		],
+		"description": "TFCond_OnFire"
+	},
+
+	"TFCond_Overhealed": {
+		"prefix": "TFCond_Overhealed",
+		"body": [
+		  "TFCond_Overhealed"
+		],
+		"description": "TFCond_Overhealed"
+	},
+
+	"TFCond_Jarated": {
+		"prefix": "TFCond_Jarated",
+		"body": [
+		  "TFCond_Jarated"
+		],
+		"description": "TFCond_Jarated"
+	},
+
+	"TFCond_Bleeding": {
+		"prefix": "TFCond_Bleeding",
+		"body": [
+		  "TFCond_Bleeding"
+		],
+		"description": "TFCond_Bleeding"
+	},
+
+	"TFCond_DefenseBuffed": {
+		"prefix": "TFCond_DefenseBuffed",
+		"body": [
+		  "TFCond_DefenseBuffed"
+		],
+		"description": "TFCond_DefenseBuffed"
+	},
+
+	"TFCond_Milked": {
+		"prefix": "TFCond_Milked",
+		"body": [
+		  "TFCond_Milked"
+		],
+		"description": "TFCond_Milked"
+	},
+
+	"TFCond_MegaHeal": {
+		"prefix": "TFCond_MegaHeal",
+		"body": [
+		  "TFCond_MegaHeal"
+		],
+		"description": "TFCond_MegaHeal"
+	},
+
+	"TFCond_RegenBuffed": {
+		"prefix": "TFCond_RegenBuffed",
+		"body": [
+		  "TFCond_RegenBuffed"
+		],
+		"description": "TFCond_RegenBuffed"
+	},
+
+	"TFCond_MarkedForDeath": {
+		"prefix": "TFCond_MarkedForDeath",
+		"body": [
+		  "TFCond_MarkedForDeath"
+		],
+		"description": "TFCond_MarkedForDeath"
+	},
+
+	"TFCond_NoHealingDamageBuff": {
+		"prefix": "TFCond_NoHealingDamageBuff",
+		"body": [
+		  "TFCond_NoHealingDamageBuff"
+		],
+		"description": "TFCond_NoHealingDamageBuff"
+	},
+
+	"TFCond_SpeedBuffAlly": {
+		"prefix": "TFCond_SpeedBuffAlly",
+		"body": [
+		  "TFCond_SpeedBuffAlly"
+		],
+		"description": "TFCond_SpeedBuffAlly"
+	},
+
+	"TFCond_HalloweenCritCandy": {
+		"prefix": "TFCond_HalloweenCritCandy",
+		"body": [
+		  "TFCond_HalloweenCritCandy"
+		],
+		"description": "TFCond_HalloweenCritCandy"
+	},
+
+	"TFCond_CritCanteen": {
+		"prefix": "TFCond_CritCanteen",
+		"body": [
+		  "TFCond_CritCanteen"
+		],
+		"description": "TFCond_CritCanteen"
+	},
+
+	"TFCond_CritDemoCharge": {
+		"prefix": "TFCond_CritDemoCharge",
+		"body": [
+		  "TFCond_CritDemoCharge"
+		],
+		"description": "TFCond_CritDemoCharge"
+	},
+
+	"TFCond_CritHype": {
+		"prefix": "TFCond_CritHype",
+		"body": [
+		  "TFCond_CritHype"
+		],
+		"description": "TFCond_CritHype"
+	},
+
+	"TFCond_CritOnFirstBlood": {
+		"prefix": "TFCond_CritOnFirstBlood",
+		"body": [
+		  "TFCond_CritOnFirstBlood"
+		],
+		"description": "TFCond_CritOnFirstBlood"
+	},
+
+	"TFCond_CritOnWin": {
+		"prefix": "TFCond_CritOnWin",
+		"body": [
+		  "TFCond_CritOnWin"
+		],
+		"description": "TFCond_CritOnWin"
+	},
+
+	"TFCond_CritOnFlagCapture": {
+		"prefix": "TFCond_CritOnFlagCapture",
+		"body": [
+		  "TFCond_CritOnFlagCapture"
+		],
+		"description": "TFCond_CritOnFlagCapture"
+	},
+
+	"TFCond_CritOnKill": {
+		"prefix": "TFCond_CritOnKill",
+		"body": [
+		  "TFCond_CritOnKill"
+		],
+		"description": "TFCond_CritOnKill"
+	},
+
+	"TFCond_RestrictToMelee": {
+		"prefix": "TFCond_RestrictToMelee",
+		"body": [
+		  "TFCond_RestrictToMelee"
+		],
+		"description": "TFCond_RestrictToMelee"
+	},
+
+	"TFCond_DefenseBuffNoCritBlock": {
+		"prefix": "TFCond_DefenseBuffNoCritBlock",
+		"body": [
+		  "TFCond_DefenseBuffNoCritBlock"
+		],
+		"description": "TFCond_DefenseBuffNoCritBlock"
+	},
+
+	"TFCond_Reprogrammed": {
+		"prefix": "TFCond_Reprogrammed",
+		"body": [
+		  "TFCond_Reprogrammed"
+		],
+		"description": "TFCond_Reprogrammed"
+	},
+
+	"TFCond_CritMmmph": {
+		"prefix": "TFCond_CritMmmph",
+		"body": [
+		  "TFCond_CritMmmph"
+		],
+		"description": "TFCond_CritMmmph"
+	},
+
+	"TFCond_DefenseBuffMmmph": {
+		"prefix": "TFCond_DefenseBuffMmmph",
+		"body": [
+		  "TFCond_DefenseBuffMmmph"
+		],
+		"description": "TFCond_DefenseBuffMmmph"
+	},
+
+	"TFCond_FocusBuff": {
+		"prefix": "TFCond_FocusBuff",
+		"body": [
+		  "TFCond_FocusBuff"
+		],
+		"description": "TFCond_FocusBuff"
+	},
+
+	"TFCond_DisguiseRemoved": {
+		"prefix": "TFCond_DisguiseRemoved",
+		"body": [
+		  "TFCond_DisguiseRemoved"
+		],
+		"description": "TFCond_DisguiseRemoved"
+	},
+
+	"TFCond_MarkedForDeathSilent": {
+		"prefix": "TFCond_MarkedForDeathSilent",
+		"body": [
+		  "TFCond_MarkedForDeathSilent"
+		],
+		"description": "TFCond_MarkedForDeathSilent"
+	},
+
+	"TFCond_DisguisedAsDispenser": {
+		"prefix": "TFCond_DisguisedAsDispenser",
+		"body": [
+		  "TFCond_DisguisedAsDispenser"
+		],
+		"description": "TFCond_DisguisedAsDispenser"
+	},
+
+	"TFCond_Sapped": {
+		"prefix": "TFCond_Sapped",
+		"body": [
+		  "TFCond_Sapped"
+		],
+		"description": "TFCond_Sapped"
+	},
+
+	"TFCond_UberchargedHidden": {
+		"prefix": "TFCond_UberchargedHidden",
+		"body": [
+		  "TFCond_UberchargedHidden"
+		],
+		"description": "TFCond_UberchargedHidden"
+	},
+
+	"TFCond_UberchargedCanteen": {
+		"prefix": "TFCond_UberchargedCanteen",
+		"body": [
+		  "TFCond_UberchargedCanteen"
+		],
+		"description": "TFCond_UberchargedCanteen"
+	},
+
+	"TFCond_HalloweenBombHead": {
+		"prefix": "TFCond_HalloweenBombHead",
+		"body": [
+		  "TFCond_HalloweenBombHead"
+		],
+		"description": "TFCond_HalloweenBombHead"
+	},
+
+	"TFCond_HalloweenThriller": {
+		"prefix": "TFCond_HalloweenThriller",
+		"body": [
+		  "TFCond_HalloweenThriller"
+		],
+		"description": "TFCond_HalloweenThriller"
+	},
+
+	"TFCond_RadiusHealOnDamage": {
+		"prefix": "TFCond_RadiusHealOnDamage",
+		"body": [
+		  "TFCond_RadiusHealOnDamage"
+		],
+		"description": "TFCond_RadiusHealOnDamage"
+	},
+
+	"TFCond_CritOnDamage": {
+		"prefix": "TFCond_CritOnDamage",
+		"body": [
+		  "TFCond_CritOnDamage"
+		],
+		"description": "TFCond_CritOnDamage"
+	},
+
+	"TFCond_UberchargedOnTakeDamage": {
+		"prefix": "TFCond_UberchargedOnTakeDamage",
+		"body": [
+		  "TFCond_UberchargedOnTakeDamage"
+		],
+		"description": "TFCond_UberchargedOnTakeDamage"
+	},
+
+	"TFCond_UberBulletResist": {
+		"prefix": "TFCond_UberBulletResist",
+		"body": [
+		  "TFCond_UberBulletResist"
+		],
+		"description": "TFCond_UberBulletResist"
+	},
+
+	"TFCond_UberBlastResist": {
+		"prefix": "TFCond_UberBlastResist",
+		"body": [
+		  "TFCond_UberBlastResist"
+		],
+		"description": "TFCond_UberBlastResist"
+	},
+
+	"TFCond_UberFireResist": {
+		"prefix": "TFCond_UberFireResist",
+		"body": [
+		  "TFCond_UberFireResist"
+		],
+		"description": "TFCond_UberFireResist"
+	},
+
+	"TFCond_SmallBulletResist": {
+		"prefix": "TFCond_SmallBulletResist",
+		"body": [
+		  "TFCond_SmallBulletResist"
+		],
+		"description": "TFCond_SmallBulletResist"
+	},
+
+	"TFCond_SmallBlastResist": {
+		"prefix": "TFCond_SmallBlastResist",
+		"body": [
+		  "TFCond_SmallBlastResist"
+		],
+		"description": "TFCond_SmallBlastResist"
+	},
+
+	"TFCond_SmallFireResist": {
+		"prefix": "TFCond_SmallFireResist",
+		"body": [
+		  "TFCond_SmallFireResist"
+		],
+		"description": "TFCond_SmallFireResist"
+	},
+
+	"TFCond_Stealthed": {
+		"prefix": "TFCond_Stealthed",
+		"body": [
+		  "TFCond_Stealthed"
+		],
+		"description": "TFCond_Stealthed"
+	},
+
+	"TFCond_MedigunDebuff": {
+		"prefix": "TFCond_MedigunDebuff",
+		"body": [
+		  "TFCond_MedigunDebuff"
+		],
+		"description": "TFCond_MedigunDebuff"
+	},
+
+	"TFCond_StealthedUserBuffFade": {
+		"prefix": "TFCond_StealthedUserBuffFade",
+		"body": [
+		  "TFCond_StealthedUserBuffFade"
+		],
+		"description": "TFCond_StealthedUserBuffFade"
+	},
+
+	"TFCond_BulletImmune": {
+		"prefix": "TFCond_BulletImmune",
+		"body": [
+		  "TFCond_BulletImmune"
+		],
+		"description": "TFCond_BulletImmune"
+	},
+
+	"TFCond_BlastImmune": {
+		"prefix": "TFCond_BlastImmune",
+		"body": [
+		  "TFCond_BlastImmune"
+		],
+		"description": "TFCond_BlastImmune"
+	},
+
+	"TFCond_FireImmune": {
+		"prefix": "TFCond_FireImmune",
+		"body": [
+		  "TFCond_FireImmune"
+		],
+		"description": "TFCond_FireImmune"
+	},
+
+	"TFCond_PreventDeath": {
+		"prefix": "TFCond_PreventDeath",
+		"body": [
+		  "TFCond_PreventDeath"
+		],
+		"description": "TFCond_PreventDeath"
+	},
+
+	"TFCond_MVMBotRadiowave": {
+		"prefix": "TFCond_MVMBotRadiowave",
+		"body": [
+		  "TFCond_MVMBotRadiowave"
+		],
+		"description": "TFCond_MVMBotRadiowave"
+	},
+
+	"TFCond_HalloweenSpeedBoost": {
+		"prefix": "TFCond_HalloweenSpeedBoost",
+		"body": [
+		  "TFCond_HalloweenSpeedBoost"
+		],
+		"description": "TFCond_HalloweenSpeedBoost"
+	},
+
+	"TFCond_HalloweenQuickHeal": {
+		"prefix": "TFCond_HalloweenQuickHeal",
+		"body": [
+		  "TFCond_HalloweenQuickHeal"
+		],
+		"description": "TFCond_HalloweenQuickHeal"
+	},
+
+	"TFCond_HalloweenGiant": {
+		"prefix": "TFCond_HalloweenGiant",
+		"body": [
+		  "TFCond_HalloweenGiant"
+		],
+		"description": "TFCond_HalloweenGiant"
+	},
+
+	"TFCond_HalloweenTiny": {
+		"prefix": "TFCond_HalloweenTiny",
+		"body": [
+		  "TFCond_HalloweenTiny"
+		],
+		"description": "TFCond_HalloweenTiny"
+	},
+
+	"TFCond_HalloweenInHell": {
+		"prefix": "TFCond_HalloweenInHell",
+		"body": [
+		  "TFCond_HalloweenInHell"
+		],
+		"description": "TFCond_HalloweenInHell"
+	},
+
+	"TFCond_HalloweenGhostMode": {
+		"prefix": "TFCond_HalloweenGhostMode",
+		"body": [
+		  "TFCond_HalloweenGhostMode"
+		],
+		"description": "TFCond_HalloweenGhostMode"
+	},
+
+	"TFCond_MiniCritOnKill": {
+		"prefix": "TFCond_MiniCritOnKill",
+		"body": [
+		  "TFCond_MiniCritOnKill"
+		],
+		"description": "TFCond_MiniCritOnKill"
+	},
+
+	"TFCond_DodgeChance": {
+		"prefix": "TFCond_DodgeChance",
+		"body": [
+		  "TFCond_DodgeChance"
+		],
+		"description": "TFCond_DodgeChance"
+	},
+
+	"TFCond_ObscuredSmoke": {
+		"prefix": "TFCond_ObscuredSmoke",
+		"body": [
+		  "TFCond_ObscuredSmoke"
+		],
+		"description": "TFCond_ObscuredSmoke"
+	},
+
+	"TFCond_Parachute": {
+		"prefix": "TFCond_Parachute",
+		"body": [
+		  "TFCond_Parachute"
+		],
+		"description": "TFCond_Parachute"
+	},
+
+	"TFCond_BlastJumping": {
+		"prefix": "TFCond_BlastJumping",
+		"body": [
+		  "TFCond_BlastJumping"
+		],
+		"description": "TFCond_BlastJumping"
+	},
+
+	"TFCond_HalloweenKart": {
+		"prefix": "TFCond_HalloweenKart",
+		"body": [
+		  "TFCond_HalloweenKart"
+		],
+		"description": "TFCond_HalloweenKart"
+	},
+
+	"TFCond_HalloweenKartDash": {
+		"prefix": "TFCond_HalloweenKartDash",
+		"body": [
+		  "TFCond_HalloweenKartDash"
+		],
+		"description": "TFCond_HalloweenKartDash"
+	},
+
+	"TFCond_BalloonHead": {
+		"prefix": "TFCond_BalloonHead",
+		"body": [
+		  "TFCond_BalloonHead"
+		],
+		"description": "TFCond_BalloonHead"
+	},
+
+	"TFCond_MeleeOnly": {
+		"prefix": "TFCond_MeleeOnly",
+		"body": [
+		  "TFCond_MeleeOnly"
+		],
+		"description": "TFCond_MeleeOnly"
+	},
+
+	"TFCond_SwimmingCurse": {
+		"prefix": "TFCond_SwimmingCurse",
+		"body": [
+		  "TFCond_SwimmingCurse"
+		],
+		"description": "TFCond_SwimmingCurse"
+	},
+
+	"TFCond_HalloweenKartNoTurn": {
+		"prefix": "TFCond_HalloweenKartNoTurn",
+		"body": [
+		  "TFCond_HalloweenKartNoTurn"
+		],
+		"description": "TFCond_HalloweenKartNoTurn"
+	},
+
+	"TFCond_FreezeInput": {
+		"prefix": "TFCond_FreezeInput",
+		"body": [
+		  "TFCond_FreezeInput"
+		],
+		"description": "TFCond_FreezeInput"
+	},
+
+	"TFCond_HalloweenKartCage": {
+		"prefix": "TFCond_HalloweenKartCage",
+		"body": [
+		  "TFCond_HalloweenKartCage"
+		],
+		"description": "TFCond_HalloweenKartCage"
+	},
+
+	"TFCond_HasRune": {
+		"prefix": "TFCond_HasRune",
+		"body": [
+		  "TFCond_HasRune"
+		],
+		"description": "TFCond_HasRune"
+	},
+
+	"TFCond_RuneStrength": {
+		"prefix": "TFCond_RuneStrength",
+		"body": [
+		  "TFCond_RuneStrength"
+		],
+		"description": "TFCond_RuneStrength"
+	},
+
+	"TFCond_RuneHaste": {
+		"prefix": "TFCond_RuneHaste",
+		"body": [
+		  "TFCond_RuneHaste"
+		],
+		"description": "TFCond_RuneHaste"
+	},
+
+	"TFCond_RuneRegen": {
+		"prefix": "TFCond_RuneRegen",
+		"body": [
+		  "TFCond_RuneRegen"
+		],
+		"description": "TFCond_RuneRegen"
+	},
+
+	"TFCond_RuneResist": {
+		"prefix": "TFCond_RuneResist",
+		"body": [
+		  "TFCond_RuneResist"
+		],
+		"description": "TFCond_RuneResist"
+	},
+
+	"TFCond_RuneVampire": {
+		"prefix": "TFCond_RuneVampire",
+		"body": [
+		  "TFCond_RuneVampire"
+		],
+		"description": "TFCond_RuneVampire"
+	},
+
+	"TFCond_RuneWarlock": {
+		"prefix": "TFCond_RuneWarlock",
+		"body": [
+		  "TFCond_RuneWarlock"
+		],
+		"description": "TFCond_RuneWarlock"
+	},
+
+	"TFCond_RunePrecision": {
+		"prefix": "TFCond_RunePrecision",
+		"body": [
+		  "TFCond_RunePrecision"
+		],
+		"description": "TFCond_RunePrecision"
+	},
+
+	"TFCond_RuneAgility": {
+		"prefix": "TFCond_RuneAgility",
+		"body": [
+		  "TFCond_RuneAgility"
+		],
+		"description": "TFCond_RuneAgility"
+	},
+
+	"TFCond_GrapplingHook": {
+		"prefix": "TFCond_GrapplingHook",
+		"body": [
+		  "TFCond_GrapplingHook"
+		],
+		"description": "TFCond_GrapplingHook"
+	},
+
+	"TFCond_GrapplingHookSafeFall": {
+		"prefix": "TFCond_GrapplingHookSafeFall",
+		"body": [
+		  "TFCond_GrapplingHookSafeFall"
+		],
+		"description": "TFCond_GrapplingHookSafeFall"
+	},
+
+	"TFCond_GrapplingHookLatched": {
+		"prefix": "TFCond_GrapplingHookLatched",
+		"body": [
+		  "TFCond_GrapplingHookLatched"
+		],
+		"description": "TFCond_GrapplingHookLatched"
+	},
+
+	"TFCond_GrapplingHookBleeding": {
+		"prefix": "TFCond_GrapplingHookBleeding",
+		"body": [
+		  "TFCond_GrapplingHookBleeding"
+		],
+		"description": "TFCond_GrapplingHookBleeding"
+	},
+
+	"TFCond_AfterburnImmune": {
+		"prefix": "TFCond_AfterburnImmune",
+		"body": [
+		  "TFCond_AfterburnImmune"
+		],
+		"description": "TFCond_AfterburnImmune"
+	},
+
+	"TFCond_RuneKnockout": {
+		"prefix": "TFCond_RuneKnockout",
+		"body": [
+		  "TFCond_RuneKnockout"
+		],
+		"description": "TFCond_RuneKnockout"
+	},
+
+	"TFCond_RuneImbalance": {
+		"prefix": "TFCond_RuneImbalance",
+		"body": [
+		  "TFCond_RuneImbalance"
+		],
+		"description": "TFCond_RuneImbalance"
+	},
+
+	"TFCond_CritRuneTemp": {
+		"prefix": "TFCond_CritRuneTemp",
+		"body": [
+		  "TFCond_CritRuneTemp"
+		],
+		"description": "TFCond_CritRuneTemp"
+	},
+
+	"TFCond_PasstimeInterception": {
+		"prefix": "TFCond_PasstimeInterception",
+		"body": [
+		  "TFCond_PasstimeInterception"
+		],
+		"description": "TFCond_PasstimeInterception"
+	},
+
+	"TFCond_SwimmingNoEffects": {
+		"prefix": "TFCond_SwimmingNoEffects",
+		"body": [
+		  "TFCond_SwimmingNoEffects"
+		],
+		"description": "TFCond_SwimmingNoEffects"
+	},
+
+	"TFCond_EyeaductUnderworld": {
+		"prefix": "TFCond_EyeaductUnderworld",
+		"body": [
+		  "TFCond_EyeaductUnderworld"
+		],
+		"description": "TFCond_EyeaductUnderworld"
+	},
+
+	"TFCond_KingRune": {
+		"prefix": "TFCond_KingRune",
+		"body": [
+		  "TFCond_KingRune"
+		],
+		"description": "TFCond_KingRune"
+	},
+
+	"TFCond_PlagueRune": {
+		"prefix": "TFCond_PlagueRune",
+		"body": [
+		  "TFCond_PlagueRune"
+		],
+		"description": "TFCond_PlagueRune"
+	},
+
+	"TFCond_SupernovaRune": {
+		"prefix": "TFCond_SupernovaRune",
+		"body": [
+		  "TFCond_SupernovaRune"
+		],
+		"description": "TFCond_SupernovaRune"
+	},
+
+	"TFCond_Plague": {
+		"prefix": "TFCond_Plague",
+		"body": [
+		  "TFCond_Plague"
+		],
+		"description": "TFCond_Plague"
+	},
+
+	"TFCond_KingAura": {
+		"prefix": "TFCond_KingAura",
+		"body": [
+		  "TFCond_KingAura"
+		],
+		"description": "TFCond_KingAura"
+	},
+
+	"TFCond_SpawnOutline": {
+		"prefix": "TFCond_SpawnOutline",
+		"body": [
+		  "TFCond_SpawnOutline"
+		],
+		"description": "TFCond_SpawnOutline"
+	},
+
+	"TFCond_KnockedIntoAir": {
+		"prefix": "TFCond_KnockedIntoAir",
+		"body": [
+		  "TFCond_KnockedIntoAir"
+		],
+		"description": "TFCond_KnockedIntoAir"
+	},
+
+	"TFCond_CompetitiveWinner": {
+		"prefix": "TFCond_CompetitiveWinner",
+		"body": [
+		  "TFCond_CompetitiveWinner"
+		],
+		"description": "TFCond_CompetitiveWinner"
+	},
+
+	"TFCond_CompetitiveLoser": {
+		"prefix": "TFCond_CompetitiveLoser",
+		"body": [
+		  "TFCond_CompetitiveLoser"
+		],
+		"description": "TFCond_CompetitiveLoser"
+	},
+
+	"TFCond_NoTaunting_DEPRECATED": {
+		"prefix": "TFCond_NoTaunting_DEPRECATED",
+		"body": [
+		  "TFCond_NoTaunting_DEPRECATED"
+		],
+		"description": "TFCond_NoTaunting_DEPRECATED"
+	},
+
+	"TFCond_HealingDebuff": {
+		"prefix": "TFCond_HealingDebuff",
+		"body": [
+		  "TFCond_HealingDebuff"
+		],
+		"description": "TFCond_HealingDebuff"
+	},
+
+	"TFCond_PasstimePenaltyDebuff": {
+		"prefix": "TFCond_PasstimePenaltyDebuff",
+		"body": [
+		  "TFCond_PasstimePenaltyDebuff"
+		],
+		"description": "TFCond_PasstimePenaltyDebuff"
+	},
+
+	"TFCond_GrappledToPlayer": {
+		"prefix": "TFCond_GrappledToPlayer",
+		"body": [
+		  "TFCond_GrappledToPlayer"
+		],
+		"description": "TFCond_GrappledToPlayer"
+	},
+
+	"TFCond_GrappledByPlayer": {
+		"prefix": "TFCond_GrappledByPlayer",
+		"body": [
+		  "TFCond_GrappledByPlayer"
+		],
+		"description": "TFCond_GrappledByPlayer"
+	},
+
+	"TFCond_ParachuteDeployed": {
+		"prefix": "TFCond_ParachuteDeployed",
+		"body": [
+		  "TFCond_ParachuteDeployed"
+		],
+		"description": "TFCond_ParachuteDeployed"
+	},
+
+	"TFCond_Gas": {
+		"prefix": "TFCond_Gas",
+		"body": [
+		  "TFCond_Gas"
+		],
+		"description": "TFCond_Gas"
+	},
+
+	"TFCond_BurningPyro": {
+		"prefix": "TFCond_BurningPyro",
+		"body": [
+		  "TFCond_BurningPyro"
+		],
+		"description": "TFCond_BurningPyro"
+	},
+
+	"TFCond_RocketPack": {
+		"prefix": "TFCond_RocketPack",
+		"body": [
+		  "TFCond_RocketPack"
+		],
+		"description": "TFCond_RocketPack"
+	},
+
+	"TFCond_LostFooting": {
+		"prefix": "TFCond_LostFooting",
+		"body": [
+		  "TFCond_LostFooting"
+		],
+		"description": "TFCond_LostFooting"
+	},
+
+	"TFCond_AirCurrent": {
+		"prefix": "TFCond_AirCurrent",
+		"body": [
+		  "TFCond_AirCurrent"
+		],
+		"description": "TFCond_AirCurrent"
+	},
+	
+	// TF2 Custom codes
+	"TF_CUSTOM_AIM_HEADSHOT": {
+		"prefix": "TF_CUSTOM_AIM_HEADSHOT",
+		"body": [
+		  "TF_CUSTOM_AIM_HEADSHOT"
+		],
+		"description": "TF_CUSTOM_AIM_HEADSHOT"
+	},
+
+	"TF_CUSTOM_BACKSTAB": {
+		"prefix": "TF_CUSTOM_BACKSTAB",
+		"body": [
+		  "TF_CUSTOM_BACKSTAB"
+		],
+		"description": "TF_CUSTOM_BACKSTAB"
+	},
+
+	"TF_CUSTOM_BURNING": {
+		"prefix": "TF_CUSTOM_BURNING",
+		"body": [
+		  "TF_CUSTOM_BURNING"
+		],
+		"description": "TF_CUSTOM_BURNING"
+	},
+
+	"TF_CUSTOM_WRENCH_FIX": {
+		"prefix": "TF_CUSTOM_WRENCH_FIX",
+		"body": [
+		  "TF_CUSTOM_WRENCH_FIX"
+		],
+		"description": "TF_CUSTOM_WRENCH_FIX"
+	},
+
+	"TF_CUSTOM_MINIGUN": {
+		"prefix": "TF_CUSTOM_MINIGUN",
+		"body": [
+		  "TF_CUSTOM_MINIGUN"
+		],
+		"description": "TF_CUSTOM_MINIGUN"
+	},
+
+	"TF_CUSTOM_SUICIDE": {
+		"prefix": "TF_CUSTOM_SUICIDE",
+		"body": [
+		  "TF_CUSTOM_SUICIDE"
+		],
+		"description": "TF_CUSTOM_SUICIDE"
+	},
+
+	"TF_CUSTOM_TAUNT_HADOUKEN": {
+		"prefix": "TF_CUSTOM_TAUNT_HADOUKEN",
+		"body": [
+		  "TF_CUSTOM_TAUNT_HADOUKEN"
+		],
+		"description": "TF_CUSTOM_TAUNT_HADOUKEN"
+	},
+
+	"TF_CUSTOM_BURNING_FLARE": {
+		"prefix": "TF_CUSTOM_BURNING_FLARE",
+		"body": [
+		  "TF_CUSTOM_BURNING_FLARE"
+		],
+		"description": "TF_CUSTOM_BURNING_FLARE"
+	},
+
+	"TF_CUSTOM_TAUNT_HIGH_NOON": {
+		"prefix": "TF_CUSTOM_TAUNT_HIGH_NOON",
+		"body": [
+		  "TF_CUSTOM_TAUNT_HIGH_NOON"
+		],
+		"description": "TF_CUSTOM_TAUNT_HIGH_NOON"
+	},
+
+	"TF_CUSTOM_TAUNT_GRAND_SLAM": {
+		"prefix": "TF_CUSTOM_TAUNT_GRAND_SLAM",
+		"body": [
+		  "TF_CUSTOM_TAUNT_GRAND_SLAM"
+		],
+		"description": "TF_CUSTOM_TAUNT_GRAND_SLAM"
+	},
+
+	"TF_CUSTOM_PENETRATE_MY_TEAM": {
+		"prefix": "TF_CUSTOM_PENETRATE_MY_TEAM",
+		"body": [
+		  "TF_CUSTOM_PENETRATE_MY_TEAM"
+		],
+		"description": "TF_CUSTOM_PENETRATE_MY_TEAM"
+	},
+
+	"TF_CUSTOM_PENETRATE_ALL_PLAYERS": {
+		"prefix": "TF_CUSTOM_PENETRATE_ALL_PLAYERS",
+		"body": [
+		  "TF_CUSTOM_PENETRATE_ALL_PLAYERS"
+		],
+		"description": "TF_CUSTOM_PENETRATE_ALL_PLAYERS"
+	},
+
+	"TF_CUSTOM_TAUNT_FENCING": {
+		"prefix": "TF_CUSTOM_TAUNT_FENCING",
+		"body": [
+		  "TF_CUSTOM_TAUNT_FENCING"
+		],
+		"description": "TF_CUSTOM_TAUNT_FENCING"
+	},
+
+	"TF_CUSTOM_PENETRATE_AIM_HEADSHOT": {
+		"prefix": "TF_CUSTOM_PENETRATE_AIM_HEADSHOT",
+		"body": [
+		  "TF_CUSTOM_PENETRATE_AIM_HEADSHOT"
+		],
+		"description": "TF_CUSTOM_PENETRATE_AIM_HEADSHOT"
+	},
+
+	"TF_CUSTOM_TAUNT_ARROW_STAB": {
+		"prefix": "TF_CUSTOM_TAUNT_ARROW_STAB",
+		"body": [
+		  "TF_CUSTOM_TAUNT_ARROW_STAB"
+		],
+		"description": "TF_CUSTOM_TAUNT_ARROW_STAB"
+	},
+
+	"TF_CUSTOM_TELEFRAG": {
+		"prefix": "TF_CUSTOM_TELEFRAG",
+		"body": [
+		  "TF_CUSTOM_TELEFRAG"
+		],
+		"description": "TF_CUSTOM_TELEFRAG"
+	},
+
+	"TF_CUSTOM_BURNING_ARROW": {
+		"prefix": "TF_CUSTOM_BURNING_ARROW",
+		"body": [
+		  "TF_CUSTOM_BURNING_ARROW"
+		],
+		"description": "TF_CUSTOM_BURNING_ARROW"
+	},
+
+	"TF_CUSTOM_FLYINGBURN": {
+		"prefix": "TF_CUSTOM_FLYINGBURN",
+		"body": [
+		  "TF_CUSTOM_FLYINGBURN"
+		],
+		"description": "TF_CUSTOM_FLYINGBURN"
+	},
+
+	"TF_CUSTOM_PUMPKIN_BOMB": {
+		"prefix": "TF_CUSTOM_PUMPKIN_BOMB",
+		"body": [
+		  "TF_CUSTOM_PUMPKIN_BOMB"
+		],
+		"description": "TF_CUSTOM_PUMPKIN_BOMB"
+	},
+
+	"TF_CUSTOM_DECAPITATION": {
+		"prefix": "TF_CUSTOM_DECAPITATION",
+		"body": [
+		  "TF_CUSTOM_DECAPITATION"
+		],
+		"description": "TF_CUSTOM_DECAPITATION"
+	},
+
+	"TF_CUSTOM_TAUNT_GRENADE": {
+		"prefix": "TF_CUSTOM_TAUNT_GRENADE",
+		"body": [
+		  "TF_CUSTOM_TAUNT_GRENADE"
+		],
+		"description": "TF_CUSTOM_TAUNT_GRENADE"
+	},
+
+	"TF_CUSTOM_BASEBALL": {
+		"prefix": "TF_CUSTOM_BASEBALL",
+		"body": [
+		  "TF_CUSTOM_BASEBALL"
+		],
+		"description": "TF_CUSTOM_BASEBALL"
+	},
+
+	"TF_CUSTOM_CHARGE_IMPACT": {
+		"prefix": "TF_CUSTOM_CHARGE_IMPACT",
+		"body": [
+		  "TF_CUSTOM_CHARGE_IMPACT"
+		],
+		"description": "TF_CUSTOM_CHARGE_IMPACT"
+	},
+
+	"TF_CUSTOM_TAUNT_BARBARIAN_SWING": {
+		"prefix": "TF_CUSTOM_TAUNT_BARBARIAN_SWING",
+		"body": [
+		  "TF_CUSTOM_TAUNT_BARBARIAN_SWING"
+		],
+		"description": "TF_CUSTOM_TAUNT_BARBARIAN_SWING"
+	},
+
+	"TF_CUSTOM_AIR_STICKY_BURST": {
+		"prefix": "TF_CUSTOM_AIR_STICKY_BURST",
+		"body": [
+		  "TF_CUSTOM_AIR_STICKY_BURST"
+		],
+		"description": "TF_CUSTOM_AIR_STICKY_BURST"
+	},
+
+	"TF_CUSTOM_DEFENSIVE_STICKY": {
+		"prefix": "TF_CUSTOM_DEFENSIVE_STICKY",
+		"body": [
+		  "TF_CUSTOM_DEFENSIVE_STICKY"
+		],
+		"description": "TF_CUSTOM_DEFENSIVE_STICKY"
+	},
+
+	"TF_CUSTOM_PICKAXE": {
+		"prefix": "TF_CUSTOM_PICKAXE",
+		"body": [
+		  "TF_CUSTOM_PICKAXE"
+		],
+		"description": "TF_CUSTOM_PICKAXE"
+	},
+
+	"TF_CUSTOM_ROCKET_DIRECTHIT": {
+		"prefix": "TF_CUSTOM_ROCKET_DIRECTHIT",
+		"body": [
+		  "TF_CUSTOM_ROCKET_DIRECTHIT"
+		],
+		"description": "TF_CUSTOM_ROCKET_DIRECTHIT"
+	},
+
+	"TF_CUSTOM_TAUNT_UBERSLICE": {
+		"prefix": "TF_CUSTOM_TAUNT_UBERSLICE",
+		"body": [
+		  "TF_CUSTOM_TAUNT_UBERSLICE"
+		],
+		"description": "TF_CUSTOM_TAUNT_UBERSLICE"
+	},
+
+	"TF_CUSTOM_PLAYER_SENTRY": {
+		"prefix": "TF_CUSTOM_PLAYER_SENTRY",
+		"body": [
+		  "TF_CUSTOM_PLAYER_SENTRY"
+		],
+		"description": "TF_CUSTOM_PLAYER_SENTRY"
+	},
+
+	"TF_CUSTOM_STANDARD_STICKY": {
+		"prefix": "TF_CUSTOM_STANDARD_STICKY",
+		"body": [
+		  "TF_CUSTOM_STANDARD_STICKY"
+		],
+		"description": "TF_CUSTOM_STANDARD_STICKY"
+	},
+
+	"TF_CUSTOM_SHOTGUN_REVENGE_CRIT": {
+		"prefix": "TF_CUSTOM_SHOTGUN_REVENGE_CRIT",
+		"body": [
+		  "TF_CUSTOM_SHOTGUN_REVENGE_CRIT"
+		],
+		"description": "TF_CUSTOM_SHOTGUN_REVENGE_CRIT"
+	},
+
+	"TF_CUSTOM_TAUNT_ENGINEER_SMASH": {
+		"prefix": "TF_CUSTOM_TAUNT_ENGINEER_SMASH",
+		"body": [
+		  "TF_CUSTOM_TAUNT_ENGINEER_SMASH"
+		],
+		"description": "TF_CUSTOM_TAUNT_ENGINEER_SMASH"
+	},
+
+	"TF_CUSTOM_BLEEDING": {
+		"prefix": "TF_CUSTOM_BLEEDING",
+		"body": [
+		  "TF_CUSTOM_BLEEDING"
+		],
+		"description": "TF_CUSTOM_BLEEDING"
+	},
+
+	"TF_CUSTOM_GOLD_WRENCH": {
+		"prefix": "TF_CUSTOM_GOLD_WRENCH",
+		"body": [
+		  "TF_CUSTOM_GOLD_WRENCH"
+		],
+		"description": "TF_CUSTOM_GOLD_WRENCH"
+	},
+
+	"TF_CUSTOM_CARRIED_BUILDING": {
+		"prefix": "TF_CUSTOM_CARRIED_BUILDING",
+		"body": [
+		  "TF_CUSTOM_CARRIED_BUILDING"
+		],
+		"description": "TF_CUSTOM_CARRIED_BUILDING"
+	},
+
+	"TF_CUSTOM_COMBO_PUNCH": {
+		"prefix": "TF_CUSTOM_COMBO_PUNCH",
+		"body": [
+		  "TF_CUSTOM_COMBO_PUNCH"
+		],
+		"description": "TF_CUSTOM_COMBO_PUNCH"
+	},
+
+	"TF_CUSTOM_TAUNT_ENGINEER_ARM": {
+		"prefix": "TF_CUSTOM_TAUNT_ENGINEER_ARM",
+		"body": [
+		  "TF_CUSTOM_TAUNT_ENGINEER_ARM"
+		],
+		"description": "TF_CUSTOM_TAUNT_ENGINEER_ARM"
+	},
+
+	"TF_CUSTOM_FISH_KILL": {
+		"prefix": "TF_CUSTOM_FISH_KILL",
+		"body": [
+		  "TF_CUSTOM_FISH_KILL"
+		],
+		"description": "TF_CUSTOM_FISH_KILL"
+	},
+
+	"TF_CUSTOM_TRIGGER_HURT": {
+		"prefix": "TF_CUSTOM_TRIGGER_HURT",
+		"body": [
+		  "TF_CUSTOM_TRIGGER_HURT"
+		],
+		"description": "TF_CUSTOM_TRIGGER_HURT"
+	},
+
+	"TF_CUSTOM_DECAPITATION_BOSS": {
+		"prefix": "TF_CUSTOM_DECAPITATION_BOSS",
+		"body": [
+		  "TF_CUSTOM_DECAPITATION_BOSS"
+		],
+		"description": "TF_CUSTOM_DECAPITATION_BOSS"
+	},
+
+	"TF_CUSTOM_STICKBOMB_EXPLOSION": {
+		"prefix": "TF_CUSTOM_STICKBOMB_EXPLOSION",
+		"body": [
+		  "TF_CUSTOM_STICKBOMB_EXPLOSION"
+		],
+		"description": "TF_CUSTOM_STICKBOMB_EXPLOSION"
+	},
+
+	"TF_CUSTOM_AEGIS_ROUND": {
+		"prefix": "TF_CUSTOM_AEGIS_ROUND",
+		"body": [
+		  "TF_CUSTOM_AEGIS_ROUND"
+		],
+		"description": "TF_CUSTOM_AEGIS_ROUND"
+	},
+
+	"TF_CUSTOM_FLARE_EXPLOSION": {
+		"prefix": "TF_CUSTOM_FLARE_EXPLOSION",
+		"body": [
+		  "TF_CUSTOM_FLARE_EXPLOSION"
+		],
+		"description": "TF_CUSTOM_FLARE_EXPLOSION"
+	},
+
+	"TF_CUSTOM_BOOTS_STOMP": {
+		"prefix": "TF_CUSTOM_BOOTS_STOMP",
+		"body": [
+		  "TF_CUSTOM_BOOTS_STOMP"
+		],
+		"description": "TF_CUSTOM_BOOTS_STOMP"
+	},
+
+	"TF_CUSTOM_PLASMA": {
+		"prefix": "TF_CUSTOM_PLASMA",
+		"body": [
+		  "TF_CUSTOM_PLASMA"
+		],
+		"description": "TF_CUSTOM_PLASMA"
+	},
+
+	"TF_CUSTOM_PLASMA_CHARGED": {
+		"prefix": "TF_CUSTOM_PLASMA_CHARGED",
+		"body": [
+		  "TF_CUSTOM_PLASMA_CHARGED"
+		],
+		"description": "TF_CUSTOM_PLASMA_CHARGED"
+	},
+
+	"TF_CUSTOM_PLASMA_GIB": {
+		"prefix": "TF_CUSTOM_PLASMA_GIB",
+		"body": [
+		  "TF_CUSTOM_PLASMA_GIB"
+		],
+		"description": "TF_CUSTOM_PLASMA_GIB"
+	},
+
+	"TF_CUSTOM_PRACTICE_STICKY": {
+		"prefix": "TF_CUSTOM_PRACTICE_STICKY",
+		"body": [
+		  "TF_CUSTOM_PRACTICE_STICKY"
+		],
+		"description": "TF_CUSTOM_PRACTICE_STICKY"
+	},
+	
+	"TF_CUSTOM_EYEBALL_ROCKET": {
+		"prefix": "TF_CUSTOM_EYEBALL_ROCKET",
+		"body": [
+		  "TF_CUSTOM_EYEBALL_ROCKET"
+		],
+		"description": "TF_CUSTOM_EYEBALL_ROCKET"
+	},
+
+	"TF_CUSTOM_TAUNT_ARMAGEDDON": {
+		"prefix": "TF_CUSTOM_TAUNT_ARMAGEDDON",
+		"body": [
+		  "TF_CUSTOM_TAUNT_ARMAGEDDON"
+		],
+		"description": "TF_CUSTOM_TAUNT_ARMAGEDDON"
+	},
+
+	"TF_CUSTOM_FLARE_PELLET": {
+		"prefix": "TF_CUSTOM_FLARE_PELLET",
+		"body": [
+		  "TF_CUSTOM_FLARE_PELLET"
+		],
+		"description": "TF_CUSTOM_FLARE_PELLET"
+	},
+
+	"TF_CUSTOM_CLEAVER": {
+		"prefix": "TF_CUSTOM_CLEAVER",
+		"body": [
+		  "TF_CUSTOM_CLEAVER"
+		],
+		"description": "TF_CUSTOM_CLEAVER"
+	},
+
+	"TF_CUSTOM_CLEAVER_CRIT": {
+		"prefix": "TF_CUSTOM_CLEAVER_CRIT",
+		"body": [
+		  "TF_CUSTOM_CLEAVER_CRIT"
+		],
+		"description": "TF_CUSTOM_CLEAVER_CRIT"
+	},
+
+	"TF_CUSTOM_SAPPER_RECORDER_DEATH": {
+		"prefix": "TF_CUSTOM_SAPPER_RECORDER_DEATH",
+		"body": [
+		  "TF_CUSTOM_SAPPER_RECORDER_DEATH"
+		],
+		"description": "TF_CUSTOM_SAPPER_RECORDER_DEATH"
+	},
+
+	"TF_CUSTOM_MERASMUS_PLAYER_BOMB": {
+		"prefix": "TF_CUSTOM_MERASMUS_PLAYER_BOMB",
+		"body": [
+		  "TF_CUSTOM_MERASMUS_PLAYER_BOMB"
+		],
+		"description": "TF_CUSTOM_MERASMUS_PLAYER_BOMB"
+	},
+
+	"TF_CUSTOM_MERASMUS_GRENADE": {
+		"prefix": "TF_CUSTOM_MERASMUS_GRENADE",
+		"body": [
+		  "TF_CUSTOM_MERASMUS_GRENADE"
+		],
+		"description": "TF_CUSTOM_MERASMUS_GRENADE"
+	},
+
+	"TF_CUSTOM_MERASMUS_ZAP": {
+		"prefix": "TF_CUSTOM_MERASMUS_ZAP",
+		"body": [
+		  "TF_CUSTOM_MERASMUS_ZAP"
+		],
+		"description": "TF_CUSTOM_MERASMUS_ZAP"
+	},
+
+	"TF_CUSTOM_MERASMUS_DECAPITATION": {
+		"prefix": "TF_CUSTOM_MERASMUS_DECAPITATION",
+		"body": [
+		  "TF_CUSTOM_MERASMUS_DECAPITATION"
+		],
+		"description": "TF_CUSTOM_MERASMUS_DECAPITATION"
+	},
+
+	"TF_CUSTOM_CANNONBALL_PUSH": {
+		"prefix": "TF_CUSTOM_CANNONBALL_PUSH",
+		"body": [
+		  "TF_CUSTOM_CANNONBALL_PUSH"
+		],
+		"description": "TF_CUSTOM_CANNONBALL_PUSH"
+	},
+
+	// TF2 classes
+	"TF2_Scout": {
+		"prefix": "TF2_Scout",
+		"body": [
+		  "TF2_Scout"
+		],
+		"description": "TF2_Scout"
+	},
+
+	"TF2_Soldier": {
+		"prefix": "TF2_Soldier",
+		"body": [
+		  "TF2_Soldier"
+		],
+		"description": "TF2_Soldier"
+	},
+
+	"TF2_Pyro": {
+		"prefix": "TF2_Pyro",
+		"body": [
+		  "TF2_Pyro"
+		],
+		"description": "TF2_Pyro"
+	},
+
+	"TF2_Demoman": {
+		"prefix": "TF2_Demoman",
+		"body": [
+		  "TF2_Demoman"
+		],
+		"description": "TF2_Demoman"
+	},
+
+	"TF2_Heavy": {
+		"prefix": "TF2_Heavy",
+		"body": [
+		  "TF2_Heavy"
+		],
+		"description": "TF2_Heavy"
+	},
+
+	"TF2_Engineer": {
+		"prefix": "TF2_Engineer",
+		"body": [
+		  "TF2_Engineer"
+		],
+		"description": "TF2_Engineer"
+	},
+
+	"TF2_Medic": {
+		"prefix": "TF2_Medic",
+		"body": [
+		  "TF2_Medic"
+		],
+		"description": "TF2_Medic"
+	},
+
+	"TF2_Sniper": {
+		"prefix": "TF2_Sniper",
+		"body": [
+		  "TF2_Sniper"
+		],
+		"description": "TF2_Sniper"
+	},
+
+	"TF2_Spy": {
+		"prefix": "TF2_Spy",
+		"body": [
+		  "TF2_Spy"
+		],
+		"description": "TF2_Spy"
+	},
+	
+	// TraceLine masks
+	"CONTENTS_EMPTY": {
+		"prefix": "CONTENTS_EMPTY",
+		"body": [
+		  "CONTENTS_EMPTY"
+		],
+		"description": "CONTENTS_EMPTY"
+	},
+
+	"CONTENTS_SOLID": {
+		"prefix": "CONTENTS_SOLID",
+		"body": [
+		  "CONTENTS_SOLID"
+		],
+		"description": "CONTENTS_SOLID"
+	},
+
+	"CONTENTS_WINDOW": {
+		"prefix": "CONTENTS_WINDOW",
+		"body": [
+		  "CONTENTS_WINDOW"
+		],
+		"description": "CONTENTS_WINDOW"
+	},
+
+	"CONTENTS_AUX": {
+		"prefix": "CONTENTS_AUX",
+		"body": [
+		  "CONTENTS_AUX"
+		],
+		"description": "CONTENTS_AUX"
+	},
+
+	"CONTENTS_GRATE": {
+		"prefix": "CONTENTS_GRATE",
+		"body": [
+		  "CONTENTS_GRATE"
+		],
+		"description": "CONTENTS_GRATE"
+	},
+
+	"CONTENTS_SLIME": {
+		"prefix": "CONTENTS_SLIME",
+		"body": [
+		  "CONTENTS_SLIME"
+		],
+		"description": "CONTENTS_SLIME"
+	},
+
+	"CONTENTS_WATER": {
+		"prefix": "CONTENTS_WATER",
+		"body": [
+		  "CONTENTS_WATER"
+		],
+		"description": "CONTENTS_WATER"
+	},
+
+	"CONTENTS_BLOCKLOS": {
+		"prefix": "CONTENTS_BLOCKLOS",
+		"body": [
+		  "CONTENTS_BLOCKLOS"
+		],
+		"description": "CONTENTS_BLOCKLOS"
+	},
+
+	"CONTENTS_OPAQUE": {
+		"prefix": "CONTENTS_OPAQUE",
+		"body": [
+		  "CONTENTS_OPAQUE"
+		],
+		"description": "CONTENTS_OPAQUE"
+	},
+
+	"CONTENTS_TESTFOGVOLUME": {
+		"prefix": "CONTENTS_TESTFOGVOLUME",
+		"body": [
+		  "CONTENTS_TESTFOGVOLUME"
+		],
+		"description": "CONTENTS_TESTFOGVOLUME"
+	},
+
+	"CONTENTS_UNUSED": {
+		"prefix": "CONTENTS_UNUSED",
+		"body": [
+		  "CONTENTS_UNUSED"
+		],
+		"description": "CONTENTS_UNUSED"
+	},
+
+	"CONTENTS_BLOCKLIGHT": {
+		"prefix": "CONTENTS_BLOCKLIGHT",
+		"body": [
+		  "CONTENTS_BLOCKLIGHT"
+		],
+		"description": "CONTENTS_BLOCKLIGHT"
+	},
+
+	"CONTENTS_TEAM1": {
+		"prefix": "CONTENTS_TEAM1",
+		"body": [
+		  "CONTENTS_TEAM1"
+		],
+		"description": "CONTENTS_TEAM1"
+	},
+
+	"CONTENTS_TEAM2": {
+		"prefix": "CONTENTS_TEAM2",
+		"body": [
+		  "CONTENTS_TEAM2"
+		],
+		"description": "CONTENTS_TEAM2"
+	},
+
+	"CONTENTS_IGNORE_NODRAW_OPAQUE": {
+		"prefix": "CONTENTS_IGNORE_NODRAW_OPAQUE",
+		"body": [
+		  "CONTENTS_IGNORE_NODRAW_OPAQUE"
+		],
+		"description": "CONTENTS_IGNORE_NODRAW_OPAQUE"
+	},
+
+	"CONTENTS_MOVEABLE": {
+		"prefix": "CONTENTS_MOVEABLE",
+		"body": [
+		  "CONTENTS_MOVEABLE"
+		],
+		"description": "CONTENTS_MOVEABLE"
+	},
+
+	"CONTENTS_AREAPORTAL": {
+		"prefix": "CONTENTS_AREAPORTAL",
+		"body": [
+		  "CONTENTS_AREAPORTAL"
+		],
+		"description": "CONTENTS_AREAPORTAL"
+	},
+
+	"CONTENTS_PLAYERCLIP": {
+		"prefix": "CONTENTS_PLAYERCLIP",
+		"body": [
+		  "CONTENTS_PLAYERCLIP"
+		],
+		"description": "CONTENTS_PLAYERCLIP"
+	},
+
+	"CONTENTS_MONSTERCLIP": {
+		"prefix": "CONTENTS_MONSTERCLIP",
+		"body": [
+		  "CONTENTS_MONSTERCLIP"
+		],
+		"description": "CONTENTS_MONSTERCLIP"
+	},
+
+	"CONTENTS_CURRENT_0": {
+		"prefix": "CONTENTS_CURRENT_0",
+		"body": [
+		  "CONTENTS_CURRENT_0"
+		],
+		"description": "CONTENTS_CURRENT_0"
+	},
+
+	"CONTENTS_CURRENT_90": {
+		"prefix": "CONTENTS_CURRENT_90",
+		"body": [
+		  "CONTENTS_CURRENT_90"
+		],
+		"description": "CONTENTS_CURRENT_90"
+	},
+
+	"CONTENTS_CURRENT_180": {
+		"prefix": "CONTENTS_CURRENT_180",
+		"body": [
+		  "CONTENTS_CURRENT_180"
+		],
+		"description": "CONTENTS_CURRENT_180"
+	},
+
+	"CONTENTS_CURRENT_270": {
+		"prefix": "CONTENTS_CURRENT_270",
+		"body": [
+		  "CONTENTS_CURRENT_270"
+		],
+		"description": "CONTENTS_CURRENT_270"
+	},
+
+	"CONTENTS_CURRENT_UP": {
+		"prefix": "CONTENTS_CURRENT_UP",
+		"body": [
+		  "CONTENTS_CURRENT_UP"
+		],
+		"description": "CONTENTS_CURRENT_UP"
+	},
+
+	"CONTENTS_CURRENT_DOWN": {
+		"prefix": "CONTENTS_CURRENT_DOWN",
+		"body": [
+		  "CONTENTS_CURRENT_DOWN"
+		],
+		"description": "CONTENTS_CURRENT_DOWN"
+	},
+
+	"CONTENTS_ORIGIN": {
+		"prefix": "CONTENTS_ORIGIN",
+		"body": [
+		  "CONTENTS_ORIGIN"
+		],
+		"description": "CONTENTS_ORIGIN"
+	},
+
+	"CONTENTS_MONSTER": {
+		"prefix": "CONTENTS_MONSTER",
+		"body": [
+		  "CONTENTS_MONSTER"
+		],
+		"description": "CONTENTS_MONSTER"
+	},
+
+	"CONTENTS_DEBRIS": {
+		"prefix": "CONTENTS_DEBRIS",
+		"body": [
+		  "CONTENTS_DEBRIS"
+		],
+		"description": "CONTENTS_DEBRIS"
+	},
+
+	"CONTENTS_DETAIL": {
+		"prefix": "CONTENTS_DETAIL",
+		"body": [
+		  "CONTENTS_DETAIL"
+		],
+		"description": "CONTENTS_DETAIL"
+	},
+
+	"CONTENTS_TRANSLUCENT": {
+		"prefix": "CONTENTS_TRANSLUCENT",
+		"body": [
+		  "CONTENTS_TRANSLUCENT"
+		],
+		"description": "CONTENTS_TRANSLUCENT"
+	},
+
+	"CONTENTS_LADDER": {
+		"prefix": "CONTENTS_LADDER",
+		"body": [
+		  "CONTENTS_LADDER"
+		],
+		"description": "CONTENTS_LADDER"
+	},
+
+	"CONTENTS_HITBOX": {
+		"prefix": "CONTENTS_HITBOX",
+		"body": [
+		  "CONTENTS_HITBOX"
+		],
+		"description": "CONTENTS_HITBOX"
+	},
+
+	"SURF_LIGHT": {
+		"prefix": "SURF_LIGHT",
+		"body": [
+		  "SURF_LIGHT"
+		],
+		"description": "SURF_LIGHT"
+	},
+
+	"SURF_SKY2D": {
+		"prefix": "SURF_SKY2D",
+		"body": [
+		  "SURF_SKY2D"
+		],
+		"description": "SURF_SKY2D"
+	},
+
+	"SURF_SKY": {
+		"prefix": "SURF_SKY",
+		"body": [
+		  "SURF_SKY"
+		],
+		"description": "SURF_SKY"
+	},
+
+	"SURF_WARP": {
+		"prefix": "SURF_WARP",
+		"body": [
+		  "SURF_WARP"
+		],
+		"description": "SURF_WARP"
+	},
+
+	"SURF_TRANS": {
+		"prefix": "SURF_TRANS",
+		"body": [
+		  "SURF_TRANS"
+		],
+		"description": "SURF_TRANS"
+	},
+
+	"SURF_NOPORTAL": {
+		"prefix": "SURF_NOPORTAL",
+		"body": [
+		  "SURF_NOPORTAL"
+		],
+		"description": "SURF_NOPORTAL"
+	},
+
+	"SURF_TRIGGER": {
+		"prefix": "SURF_TRIGGER",
+		"body": [
+		  "SURF_TRIGGER"
+		],
+		"description": "SURF_TRIGGER"
+	},
+
+	"SURF_NODRAW": {
+		"prefix": "SURF_NODRAW",
+		"body": [
+		  "SURF_NODRAW"
+		],
+		"description": "SURF_NODRAW"
+	},
+
+	"SURF_HINT": {
+		"prefix": "SURF_HINT",
+		"body": [
+		  "SURF_HINT"
+		],
+		"description": "SURF_HINT"
+	},
+
+	"SURF_SKIP": {
+		"prefix": "SURF_SKIP",
+		"body": [
+		  "SURF_SKIP"
+		],
+		"description": "SURF_SKIP"
+	},
+
+	"SURF_NOLIGHT": {
+		"prefix": "SURF_NOLIGHT",
+		"body": [
+		  "SURF_NOLIGHT"
+		],
+		"description": "SURF_NOLIGHT"
+	},
+
+	"SURF_BUMPLIGHT": {
+		"prefix": "SURF_BUMPLIGHT",
+		"body": [
+		  "SURF_BUMPLIGHT"
+		],
+		"description": "SURF_BUMPLIGHT"
+	},
+
+	"SURF_NOSHADOWS": {
+		"prefix": "SURF_NOSHADOWS",
+		"body": [
+		  "SURF_NOSHADOWS"
+		],
+		"description": "SURF_NOSHADOWS"
+	},
+
+	"SURF_NODECALS": {
+		"prefix": "SURF_NODECALS",
+		"body": [
+		  "SURF_NODECALS"
+		],
+		"description": "SURF_NODECALS"
+	},
+
+	"SURF_NOPAINT": {
+		"prefix": "SURF_NOPAINT",
+		"body": [
+		  "SURF_NOPAINT"
+		],
+		"description": "SURF_NOPAINT"
+	},
+
+	"SURF_NOCHOP": {
+		"prefix": "SURF_NOCHOP",
+		"body": [
+		  "SURF_NOCHOP"
+		],
+		"description": "SURF_NOCHOP"
+	},
+
+	"SURF_HITBOX": {
+		"prefix": "SURF_HITBOX",
+		"body": [
+		  "SURF_HITBOX"
+		],
+		"description": "SURF_HITBOX"
+	},
+
+	"MASK_ALL": {
+		"prefix": "MASK_ALL",
+		"body": [
+		  "MASK_ALL"
+		],
+		"description": "MASK_ALL"
+	},
+
+	"MASK_SOLID": {
+		"prefix": "MASK_SOLID",
+		"body": [
+		  "MASK_SOLID"
+		],
+		"description": "MASK_SOLID"
+	},
+
+	"MASK_PLAYERSOLID": {
+		"prefix": "MASK_PLAYERSOLID",
+		"body": [
+		  "MASK_PLAYERSOLID"
+		],
+		"description": "MASK_PLAYERSOLID"
+	},
+
+	"MASK_NPCSOLID": {
+		"prefix": "MASK_NPCSOLID",
+		"body": [
+		  "MASK_NPCSOLID"
+		],
+		"description": "MASK_NPCSOLID"
+	},
+
+	"MASK_NPCFLUID": {
+		"prefix": "MASK_NPCFLUID",
+		"body": [
+		  "MASK_NPCFLUID"
+		],
+		"description": "MASK_NPCFLUID"
+	},
+
+	"MASK_WATER": {
+		"prefix": "MASK_WATER",
+		"body": [
+		  "MASK_WATER"
+		],
+		"description": "MASK_WATER"
+	},
+
+	"MASK_OPAQUE": {
+		"prefix": "MASK_OPAQUE",
+		"body": [
+		  "MASK_OPAQUE"
+		],
+		"description": "MASK_OPAQUE"
+	},
+
+	"MASK_OPAQUE_AND_NPCS": {
+		"prefix": "MASK_OPAQUE_AND_NPCS",
+		"body": [
+		  "MASK_OPAQUE_AND_NPCS"
+		],
+		"description": "MASK_OPAQUE_AND_NPCS"
+	},
+
+	"MASK_BLOCKLOS": {
+		"prefix": "MASK_BLOCKLOS",
+		"body": [
+		  "MASK_BLOCKLOS"
+		],
+		"description": "MASK_BLOCKLOS"
+	},
+
+	"MASK_BLOCKLOS_AND_NPCS": {
+		"prefix": "MASK_BLOCKLOS_AND_NPCS",
+		"body": [
+		  "MASK_BLOCKLOS_AND_NPCS"
+		],
+		"description": "MASK_BLOCKLOS_AND_NPCS"
+	},
+
+	"MASK_VISIBLE": {
+		"prefix": "MASK_VISIBLE",
+		"body": [
+		  "MASK_VISIBLE"
+		],
+		"description": "MASK_VISIBLE"
+	},
+
+	"MASK_VISIBLE_AND_NPCS": {
+		"prefix": "MASK_VISIBLE_AND_NPCS",
+		"body": [
+		  "MASK_VISIBLE_AND_NPCS"
+		],
+		"description": "MASK_VISIBLE_AND_NPCS"
+	},
+
+	"MASK_SHOT": {
+		"prefix": "MASK_SHOT",
+		"body": [
+		  "MASK_SHOT"
+		],
+		"description": "MASK_SHOT"
+	},
+
+	"MASK_SHOT_BRUSHONLY": {
+		"prefix": "MASK_SHOT_BRUSHONLY",
+		"body": [
+		  "MASK_SHOT_BRUSHONLY"
+		],
+		"description": "MASK_SHOT_BRUSHONLY"
+	},
+
+	"MASK_SHOT_HULL": {
+		"prefix": "MASK_SHOT_HULL",
+		"body": [
+		  "MASK_SHOT_HULL"
+		],
+		"description": "MASK_SHOT_HULL"
+	},
+
+	"MASK_SHOT_PORTAL": {
+		"prefix": "MASK_SHOT_PORTAL",
+		"body": [
+		  "MASK_SHOT_PORTAL"
+		],
+		"description": "MASK_SHOT_PORTAL"
+	},
+
+	"MASK_SOLID_BRUSHONLY": {
+		"prefix": "MASK_SOLID_BRUSHONLY",
+		"body": [
+		  "MASK_SOLID_BRUSHONLY"
+		],
+		"description": "MASK_SOLID_BRUSHONLY"
+	},
+
+	"MASK_PLAYERSOLID_BRUSHONLY": {
+		"prefix": "MASK_PLAYERSOLID_BRUSHONLY",
+		"body": [
+		  "MASK_PLAYERSOLID_BRUSHONLY"
+		],
+		"description": "MASK_PLAYERSOLID_BRUSHONLY"
+	},
+
+	"MASK_NPCSOLID_BRUSHONLY": {
+		"prefix": "MASK_NPCSOLID_BRUSHONLY",
+		"body": [
+		  "MASK_NPCSOLID_BRUSHONLY"
+		],
+		"description": "MASK_NPCSOLID_BRUSHONLY"
+	},
+
+	"MASK_NPCWORLDSTATIC": {
+		"prefix": "MASK_NPCWORLDSTATIC",
+		"body": [
+		  "MASK_NPCWORLDSTATIC"
+		],
+		"description": "MASK_NPCWORLDSTATIC"
+	},
+
+	"MASK_NPCWORLDSTATIC_FLUID": {
+		"prefix": "MASK_NPCWORLDSTATIC_FLUID",
+		"body": [
+		  "MASK_NPCWORLDSTATIC_FLUID"
+		],
+		"description": "MASK_NPCWORLDSTATIC_FLUID"
+	},
+
+	"MASK_SPLITAREAPORTAL": {
+		"prefix": "MASK_SPLITAREAPORTAL",
+		"body": [
+		  "MASK_SPLITAREAPORTAL"
+		],
+		"description": "MASK_SPLITAREAPORTAL"
+	},
+
+	"MASK_CURRENT": {
+		"prefix": "MASK_CURRENT",
+		"body": [
+		  "MASK_CURRENT"
+		],
+		"description": "MASK_CURRENT"
+	},
+
+	"MASK_DEADSOLID": {
+		"prefix": "MASK_DEADSOLID",
+		"body": [
+		  "MASK_DEADSOLID"
+		],
+		"description": "MASK_DEADSOLID"
+	},
+
+	"MAX_COORD_INTEGER": {
+		"prefix": "MAX_COORD_INTEGER",
+		"body": [
+		  "MAX_COORD_INTEGER"
+		],
+		"description": "MAX_COORD_INTEGER"
+	},
+
+	"COORD_EXTENT": {
+		"prefix": "COORD_EXTENT",
+		"body": [
+		  "COORD_EXTENT"
+		],
+		"description": "COORD_EXTENT"
+	},
+
+	"MAX_TRACE_LENGTH": {
+		"prefix": "MAX_TRACE_LENGTH",
+		"body": [
+		  "MAX_TRACE_LENGTH"
+		],
+		"description": "MAX_TRACE_LENGTH"
+	},
+
+	// Material flags
+	"MATERIAL_VAR_DEBUG": {
+		"prefix": "MATERIAL_VAR_DEBUG",
+		"body": [
+		  "MATERIAL_VAR_DEBUG"
+		],
+		"description": "MATERIAL_VAR_DEBUG"
+	},
+
+	"MATERIAL_VAR_NO_DEBUG_OVERRIDE": {
+		"prefix": "MATERIAL_VAR_NO_DEBUG_OVERRIDE",
+		"body": [
+		  "MATERIAL_VAR_NO_DEBUG_OVERRIDE"
+		],
+		"description": "MATERIAL_VAR_NO_DEBUG_OVERRIDE"
+	},
+
+	"MATERIAL_VAR_NO_DRAW": {
+		"prefix": "MATERIAL_VAR_NO_DRAW",
+		"body": [
+		  "MATERIAL_VAR_NO_DRAW"
+		],
+		"description": "MATERIAL_VAR_NO_DRAW"
+	},
+
+	"MATERIAL_VAR_USE_IN_FILLRATE_MODE": {
+		"prefix": "MATERIAL_VAR_USE_IN_FILLRATE_MODE",
+		"body": [
+		  "MATERIAL_VAR_USE_IN_FILLRATE_MODE"
+		],
+		"description": "MATERIAL_VAR_USE_IN_FILLRATE_MODE"
+	},
+
+	"MATERIAL_VAR_VERTEXCOLOR": {
+		"prefix": "MATERIAL_VAR_VERTEXCOLOR",
+		"body": [
+		  "MATERIAL_VAR_VERTEXCOLOR"
+		],
+		"description": "MATERIAL_VAR_VERTEXCOLOR"
+	},
+
+	"MATERIAL_VAR_VERTEXALPHA": {
+		"prefix": "MATERIAL_VAR_VERTEXALPHA",
+		"body": [
+		  "MATERIAL_VAR_VERTEXALPHA"
+		],
+		"description": "MATERIAL_VAR_VERTEXALPHA"
+	},
+
+	"MATERIAL_VAR_SELFILLUM": {
+		"prefix": "MATERIAL_VAR_SELFILLUM",
+		"body": [
+		  "MATERIAL_VAR_SELFILLUM"
+		],
+		"description": "MATERIAL_VAR_SELFILLUM"
+	},
+
+	"MATERIAL_VAR_ADDITIVE": {
+		"prefix": "MATERIAL_VAR_ADDITIVE",
+		"body": [
+		  "MATERIAL_VAR_ADDITIVE"
+		],
+		"description": "MATERIAL_VAR_ADDITIVE"
+	},
+
+	"MATERIAL_VAR_ALPHATEST": {
+		"prefix": "MATERIAL_VAR_ALPHATEST",
+		"body": [
+		  "MATERIAL_VAR_ALPHATEST"
+		],
+		"description": "MATERIAL_VAR_ALPHATEST"
+	},
+
+	"MATERIAL_VAR_ZNEARER": {
+		"prefix": "MATERIAL_VAR_ZNEARER",
+		"body": [
+		  "MATERIAL_VAR_ZNEARER"
+		],
+		"description": "MATERIAL_VAR_ZNEARER"
+	},
+
+	"MATERIAL_VAR_MODEL": {
+		"prefix": "MATERIAL_VAR_MODEL",
+		"body": [
+		  "MATERIAL_VAR_MODEL"
+		],
+		"description": "MATERIAL_VAR_MODEL"
+	},
+
+	"MATERIAL_VAR_FLAT": {
+		"prefix": "MATERIAL_VAR_FLAT",
+		"body": [
+		  "MATERIAL_VAR_FLAT"
+		],
+		"description": "MATERIAL_VAR_FLAT"
+	},
+
+	"MATERIAL_VAR_NOCULL": {
+		"prefix": "MATERIAL_VAR_NOCULL",
+		"body": [
+		  "MATERIAL_VAR_NOCULL"
+		],
+		"description": "MATERIAL_VAR_NOCULL"
+	},
+
+	"MATERIAL_VAR_NOFOG": {
+		"prefix": "MATERIAL_VAR_NOFOG",
+		"body": [
+		  "MATERIAL_VAR_NOFOG"
+		],
+		"description": "MATERIAL_VAR_NOFOG"
+	},
+
+	"MATERIAL_VAR_IGNOREZ": {
+		"prefix": "MATERIAL_VAR_IGNOREZ",
+		"body": [
+		  "MATERIAL_VAR_IGNOREZ"
+		],
+		"description": "MATERIAL_VAR_IGNOREZ"
+	},
+
+	"MATERIAL_VAR_DECAL": {
+		"prefix": "MATERIAL_VAR_DECAL",
+		"body": [
+		  "MATERIAL_VAR_DECAL"
+		],
+		"description": "MATERIAL_VAR_DECAL"
+	},
+
+	"MATERIAL_VAR_ENVMAPSPHERE": {
+		"prefix": "MATERIAL_VAR_ENVMAPSPHERE",
+		"body": [
+		  "MATERIAL_VAR_ENVMAPSPHERE"
+		],
+		"description": "MATERIAL_VAR_ENVMAPSPHERE"
+	},
+
+	"MATERIAL_VAR_ENVMAPCAMERASPACE": {
+		"prefix": "MATERIAL_VAR_ENVMAPCAMERASPACE",
+		"body": [
+		  "MATERIAL_VAR_ENVMAPCAMERASPACE"
+		],
+		"description": "MATERIAL_VAR_ENVMAPCAMERASPACE"
+	},
+
+	"MATERIAL_VAR_BASEALPHAENVMAPMASK": {
+		"prefix": "MATERIAL_VAR_BASEALPHAENVMAPMASK",
+		"body": [
+		  "MATERIAL_VAR_BASEALPHAENVMAPMASK"
+		],
+		"description": "MATERIAL_VAR_BASEALPHAENVMAPMASK"
+	},
+
+	"MATERIAL_VAR_TRANSLUCENT": {
+		"prefix": "MATERIAL_VAR_TRANSLUCENT",
+		"body": [
+		  "MATERIAL_VAR_TRANSLUCENT"
+		],
+		"description": "MATERIAL_VAR_TRANSLUCENT"
+	},
+
+	"MATERIAL_VAR_NORMALMAPALPHAENVMAPMASK": {
+		"prefix": "MATERIAL_VAR_NORMALMAPALPHAENVMAPMASK",
+		"body": [
+		  "MATERIAL_VAR_NORMALMAPALPHAENVMAPMASK"
+		],
+		"description": "MATERIAL_VAR_NORMALMAPALPHAENVMAPMASK"
+	},
+
+	"MATERIAL_VAR_NEEDS_SOFTWARE_SKINNING": {
+		"prefix": "MATERIAL_VAR_NEEDS_SOFTWARE_SKINNING",
+		"body": [
+		  "MATERIAL_VAR_NEEDS_SOFTWARE_SKINNING"
+		],
+		"description": "MATERIAL_VAR_NEEDS_SOFTWARE_SKINNING"
+	},
+
+	"MATERIAL_VAR_OPAQUETEXTURE": {
+		"prefix": "MATERIAL_VAR_OPAQUETEXTURE",
+		"body": [
+		  "MATERIAL_VAR_OPAQUETEXTURE"
+		],
+		"description": "MATERIAL_VAR_OPAQUETEXTURE"
+	},
+
+	"MATERIAL_VAR_ENVMAPMODE": {
+		"prefix": "MATERIAL_VAR_ENVMAPMODE",
+		"body": [
+		  "MATERIAL_VAR_ENVMAPMODE"
+		],
+		"description": "MATERIAL_VAR_ENVMAPMODE"
+	},
+
+	"MATERIAL_VAR_SUPPRESS_DECALS": {
+		"prefix": "MATERIAL_VAR_SUPPRESS_DECALS",
+		"body": [
+		  "MATERIAL_VAR_SUPPRESS_DECALS"
+		],
+		"description": "MATERIAL_VAR_SUPPRESS_DECALS"
+	},
+
+	"MATERIAL_VAR_HALFLAMBERT": {
+		"prefix": "MATERIAL_VAR_HALFLAMBERT",
+		"body": [
+		  "MATERIAL_VAR_HALFLAMBERT"
+		],
+		"description": "MATERIAL_VAR_HALFLAMBERT"
+	},
+
+	"MATERIAL_VAR_WIREFRAME": {
+		"prefix": "MATERIAL_VAR_WIREFRAME",
+		"body": [
+		  "MATERIAL_VAR_WIREFRAME"
+		],
+		"description": "MATERIAL_VAR_WIREFRAME"
+	},
+
+	"MATERIAL_VAR_ALLOWALPHATOCOVERAGE": {
+		"prefix": "MATERIAL_VAR_ALLOWALPHATOCOVERAGE",
+		"body": [
+		  "MATERIAL_VAR_ALLOWALPHATOCOVERAGE"
+		],
+		"description": "MATERIAL_VAR_ALLOWALPHATOCOVERAGE"
+	},
+
+	"MATERIAL_VAR_ALPHA_MODIFIED_BY_PROXY": {
+		"prefix": "MATERIAL_VAR_ALPHA_MODIFIED_BY_PROXY",
+		"body": [
+		  "MATERIAL_VAR_ALPHA_MODIFIED_BY_PROXY"
+		],
+		"description": "MATERIAL_VAR_ALPHA_MODIFIED_BY_PROXY"
+	},
+
+	"MATERIAL_VAR_VERTEXFOG": {
+		"prefix": "MATERIAL_VAR_VERTEXFOG",
+		"body": [
+		  "MATERIAL_VAR_VERTEXFOG"
+		],
+		"description": "MATERIAL_VAR_VERTEXFOG"
+	  },
+
+	// Loadout slots
+	"LOADOUT_POSITION_PRIMARY": {
+		"prefix": "LOADOUT_POSITION_PRIMARY",
+		"body": [
+		  "LOADOUT_POSITION_PRIMARY"
+		],
+		"description": "LOADOUT_POSITION_PRIMARY"
+	},
+
+	"LOADOUT_POSITION_SECONDARY": {
+		"prefix": "LOADOUT_POSITION_SECONDARY",
+		"body": [
+		  "LOADOUT_POSITION_SECONDARY"
+		],
+		"description": "LOADOUT_POSITION_SECONDARY"
+	},
+
+	"LOADOUT_POSITION_MELEE": {
+		"prefix": "LOADOUT_POSITION_MELEE",
+		"body": [
+		  "LOADOUT_POSITION_MELEE"
+		],
+		"description": "LOADOUT_POSITION_MELEE"
+	},
+
+	"LOADOUT_POSITION_UTILITY": {
+		"prefix": "LOADOUT_POSITION_UTILITY",
+		"body": [
+		  "LOADOUT_POSITION_UTILITY"
+		],
+		"description": "LOADOUT_POSITION_UTILITY"
+	},
+
+	"LOADOUT_POSITION_BUILDING": {
+		"prefix": "LOADOUT_POSITION_BUILDING",
+		"body": [
+		  "LOADOUT_POSITION_BUILDING"
+		],
+		"description": "LOADOUT_POSITION_BUILDING"
+	},
+
+	"LOADOUT_POSITION_PDA": {
+		"prefix": "LOADOUT_POSITION_PDA",
+		"body": [
+		  "LOADOUT_POSITION_PDA"
+		],
+		"description": "LOADOUT_POSITION_PDA"
+	},
+
+	"LOADOUT_POSITION_PDA2": {
+		"prefix": "LOADOUT_POSITION_PDA2",
+		"body": [
+		  "LOADOUT_POSITION_PDA2"
+		],
+		"description": "LOADOUT_POSITION_PDA2"
+	},
+
+	"LOADOUT_POSITION_HEAD": {
+		"prefix": "LOADOUT_POSITION_HEAD",
+		"body": [
+		  "LOADOUT_POSITION_HEAD"
+		],
+		"description": "LOADOUT_POSITION_HEAD"
+	},
+
+	"LOADOUT_POSITION_MISC": {
+		"prefix": "LOADOUT_POSITION_MISC",
+		"body": [
+		  "LOADOUT_POSITION_MISC"
+		],
+		"description": "LOADOUT_POSITION_MISC"
+	},
+
+	"LOADOUT_POSITION_ACTION": {
+		"prefix": "LOADOUT_POSITION_ACTION",
+		"body": [
+		  "LOADOUT_POSITION_ACTION"
+		],
+		"description": "LOADOUT_POSITION_ACTION"
+	},
+
+	"LOADOUT_POSITION_MISC2": {
+		"prefix": "LOADOUT_POSITION_MISC2",
+		"body": [
+		  "LOADOUT_POSITION_MISC2"
+		],
+		"description": "LOADOUT_POSITION_MISC2"
+	},
+
+	"LOADOUT_POSITION_TAUNT": {
+		"prefix": "LOADOUT_POSITION_TAUNT",
+		"body": [
+		  "LOADOUT_POSITION_TAUNT"
+		],
+		"description": "LOADOUT_POSITION_TAUNT"
+	},
+
+	"LOADOUT_POSITION_TAUNT2": {
+		"prefix": "LOADOUT_POSITION_TAUNT2",
+		"body": [
+		  "LOADOUT_POSITION_TAUNT2"
+		],
+		"description": "LOADOUT_POSITION_TAUNT2"
+	},
+
+	"LOADOUT_POSITION_TAUNT3": {
+		"prefix": "LOADOUT_POSITION_TAUNT3",
+		"body": [
+		  "LOADOUT_POSITION_TAUNT3"
+		],
+		"description": "LOADOUT_POSITION_TAUNT3"
+	},
+
+	"LOADOUT_POSITION_TAUNT4": {
+		"prefix": "LOADOUT_POSITION_TAUNT4",
+		"body": [
+		  "LOADOUT_POSITION_TAUNT4"
+		],
+		"description": "LOADOUT_POSITION_TAUNT4"
+	},
+
+	"LOADOUT_POSITION_TAUNT5": {
+		"prefix": "LOADOUT_POSITION_TAUNT5",
+		"body": [
+		  "LOADOUT_POSITION_TAUNT5"
+		],
+		"description": "LOADOUT_POSITION_TAUNT5"
+	},
+
+	"LOADOUT_POSITION_TAUNT6": {
+		"prefix": "LOADOUT_POSITION_TAUNT6",
+		"body": [
+		  "LOADOUT_POSITION_TAUNT6"
+		],
+		"description": "LOADOUT_POSITION_TAUNT6"
+	},
+
+	"LOADOUT_POSITION_TAUNT7": {
+		"prefix": "LOADOUT_POSITION_TAUNT7",
+		"body": [
+		  "LOADOUT_POSITION_TAUNT7"
+		],
+		"description": "LOADOUT_POSITION_TAUNT7"
+	},
+
+	"LOADOUT_POSITION_TAUNT8": {
+		"prefix": "LOADOUT_POSITION_TAUNT8",
+		"body": [
+		  "LOADOUT_POSITION_TAUNT8"
+		],
+		"description": "LOADOUT_POSITION_TAUNT8"
+	},
+
+	// Round states
+	"ROUND_INIT": {
+		"prefix": "ROUND_INIT",
+		"body": [
+		  "ROUND_INIT"
+		],
+		"description": "ROUND_INIT"
+	},
+
+	"ROUND_PREGAME": {
+		"prefix": "ROUND_PREGAME",
+		"body": [
+		  "ROUND_PREGAME"
+		],
+		"description": "ROUND_PREGAME"
+	},
+
+	"ROUND_STARTGAME": {
+		"prefix": "ROUND_STARTGAME",
+		"body": [
+		  "ROUND_STARTGAME"
+		],
+		"description": "ROUND_STARTGAME"
+	},
+
+	"ROUND_PREROUND": {
+		"prefix": "ROUND_PREROUND",
+		"body": [
+		  "ROUND_PREROUND"
+		],
+		"description": "ROUND_PREROUND"
+	},
+
+	"ROUND_RUNNING": {
+		"prefix": "ROUND_RUNNING",
+		"body": [
+		  "ROUND_RUNNING"
+		],
+		"description": "ROUND_RUNNING"
+	},
+
+	"ROUND_TEAMWIN": {
+		"prefix": "ROUND_TEAMWIN",
+		"body": [
+		  "ROUND_TEAMWIN"
+		],
+		"description": "ROUND_TEAMWIN"
+	},
+
+	"ROUND_RESTART": {
+		"prefix": "ROUND_RESTART",
+		"body": [
+		  "ROUND_RESTART"
+		],
+		"description": "ROUND_RESTART"
+	},
+
+	"ROUND_STALEMATE": {
+		"prefix": "ROUND_STALEMATE",
+		"body": [
+		  "ROUND_STALEMATE"
+		],
+		"description": "ROUND_STALEMATE"
+	},
+
+	"ROUND_GAMEOVER": {
+		"prefix": "ROUND_GAMEOVER",
+		"body": [
+		  "ROUND_GAMEOVER"
+		],
+		"description": "ROUND_GAMEOVER"
+	},
+
+	"ROUND_BONUS": {
+		"prefix": "ROUND_BONUS",
+		"body": [
+		  "ROUND_BONUS"
+		],
+		"description": "ROUND_BONUS"
+	},
+
+	"ROUND_BETWEEN_ROUNDS": {
+		"prefix": "ROUND_BETWEEN_ROUNDS",
+		"body": [
+		  "ROUND_BETWEEN_ROUNDS"
+		],
+		"description": "ROUND_BETWEEN_ROUNDS"
+	},
+
+	// Player flags
+	"FL_ONGROUND": {
+		"prefix": "FL_ONGROUND",
+		"body": [
+		  "FL_ONGROUND"
+		],
+		"description": "FL_ONGROUND"
+	},
+
+	"FL_DUCKING": {
+		"prefix": "FL_DUCKING",
+		"body": [
+		  "FL_DUCKING"
+		],
+		"description": "FL_DUCKING"
+	},
+
+	"FL_WATERJUMP": {
+		"prefix": "FL_WATERJUMP",
+		"body": [
+		  "FL_WATERJUMP"
+		],
+		"description": "FL_WATERJUMP"
+	},
+
+	"FL_ONTRAIN": {
+		"prefix": "FL_ONTRAIN",
+		"body": [
+		  "FL_ONTRAIN"
+		],
+		"description": "FL_ONTRAIN"
+	},
+
+	"FL_INRAIN": {
+		"prefix": "FL_INRAIN",
+		"body": [
+		  "FL_INRAIN"
+		],
+		"description": "FL_INRAIN"
+	},
+
+	"FL_FROZEN": {
+		"prefix": "FL_FROZEN",
+		"body": [
+		  "FL_FROZEN"
+		],
+		"description": "FL_FROZEN"
+	},
+
+	"FL_ATCONTROLS": {
+		"prefix": "FL_ATCONTROLS",
+		"body": [
+		  "FL_ATCONTROLS"
+		],
+		"description": "FL_ATCONTROLS"
+	},
+
+	"FL_CLIENT": {
+		"prefix": "FL_CLIENT",
+		"body": [
+		  "FL_CLIENT"
+		],
+		"description": "FL_CLIENT"
+	},
+
+	"FL_FAKECLIENT": {
+		"prefix": "FL_FAKECLIENT",
+		"body": [
+		  "FL_FAKECLIENT"
+		],
+		"description": "FL_FAKECLIENT"
+	},
+
+	"FL_INWATER": {
+		"prefix": "FL_INWATER",
+		"body": [
+		  "FL_INWATER"
+		],
+		"description": "FL_INWATER"
+	},
+
+	// Font flags
+	"FONTFLAG_NONE": {
+		"prefix": "FONTFLAG_NONE",
+		"body": [
+		  "FONTFLAG_NONE"
+		],
+		"description": "FONTFLAG_NONE"
+	},
+
+	"FONTFLAG_ITALIC": {
+		"prefix": "FONTFLAG_ITALIC",
+		"body": [
+		  "FONTFLAG_ITALIC"
+		],
+		"description": "FONTFLAG_ITALIC"
+	},
+
+	"FONTFLAG_UNDERLINE": {
+		"prefix": "FONTFLAG_UNDERLINE",
+		"body": [
+		  "FONTFLAG_UNDERLINE"
+		],
+		"description": "FONTFLAG_UNDERLINE"
+	},
+
+	"FONTFLAG_STRIKEOUT": {
+		"prefix": "FONTFLAG_STRIKEOUT",
+		"body": [
+		  "FONTFLAG_STRIKEOUT"
+		],
+		"description": "FONTFLAG_STRIKEOUT"
+	},
+
+	"FONTFLAG_SYMBOL": {
+		"prefix": "FONTFLAG_SYMBOL",
+		"body": [
+		  "FONTFLAG_SYMBOL"
+		],
+		"description": "FONTFLAG_SYMBOL"
+	},
+
+	"FONTFLAG_ANTIALIAS": {
+		"prefix": "FONTFLAG_ANTIALIAS",
+		"body": [
+		  "FONTFLAG_ANTIALIAS"
+		],
+		"description": "FONTFLAG_ANTIALIAS"
+	},
+
+	"FONTFLAG_GAUSSIANBLUR": {
+		"prefix": "FONTFLAG_GAUSSIANBLUR",
+		"body": [
+		  "FONTFLAG_GAUSSIANBLUR"
+		],
+		"description": "FONTFLAG_GAUSSIANBLUR"
+	},
+
+	"FONTFLAG_ROTARY": {
+		"prefix": "FONTFLAG_ROTARY",
+		"body": [
+		  "FONTFLAG_ROTARY"
+		],
+		"description": "FONTFLAG_ROTARY"
+	},
+
+	"FONTFLAG_DROPSHADOW": {
+		"prefix": "FONTFLAG_DROPSHADOW",
+		"body": [
+		  "FONTFLAG_DROPSHADOW"
+		],
+		"description": "FONTFLAG_DROPSHADOW"
+	},
+
+	"FONTFLAG_ADDITIVE": {
+		"prefix": "FONTFLAG_ADDITIVE",
+		"body": [
+		  "FONTFLAG_ADDITIVE"
+		],
+		"description": "FONTFLAG_ADDITIVE"
+	},
+
+	"FONTFLAG_OUTLINE": {
+		"prefix": "FONTFLAG_OUTLINE",
+		"body": [
+		  "FONTFLAG_OUTLINE"
+		],
+		"description": "FONTFLAG_OUTLINE"
+	},
+
+	"FONTFLAG_CUSTOM": {
+		"prefix": "FONTFLAG_CUSTOM",
+		"body": [
+		  "FONTFLAG_CUSTOM"
+		],
+		"description": "FONTFLAG_CUSTOM"
+	},
+
+	"FONTFLAG_BITMAP": {
+		"prefix": "FONTFLAG_BITMAP",
+		"body": [
+		  "FONTFLAG_BITMAP"
+		],
+		"description": "FONTFLAG_BITMAP"
+	},
+	
+	// Match abandon status
+	"MATCHABANDON_SAFE": {
+		"prefix": "MATCHABANDON_SAFE",
+		"body": [
+		  "MATCHABANDON_SAFE"
+		],
+		"description": "MATCHABANDON_SAFE"
+	},
+
+	"MATCHABANDON_NOPENALTY": {
+		"prefix": "MATCHABANDON_NOPENALTY",
+		"body": [
+		  "MATCHABANDON_NOPENALTY"
+		],
+		"description": "MATCHABANDON_NOPENALTY"
+	},
+
+	"MATCHABANDON_PENTALTY": {
+		"prefix": "MATCHABANDON_PENTALTY",
+		"body": [
+		  "MATCHABANDON_PENTALTY"
+		],
+		"description": "MATCHABANDON_PENTALTY"
+	},
+	
+	// LUA globals
+	"Prints message to console": {
+		"prefix": "print",
+		"body": [
+		  "print( msg )"
+		],
+		"description": "Prints message to console."
+	},
+
+	"Prints a colored message to console": {
+		"prefix": "printc",
+		"body": [
+		  "printc( r, g, b, a, msg )"
+		],
+		"description": "Prints a colored message to console. Each argument is printed on a new line."
+	},
+
+	"Loads a LUA script from given file": {
+		"prefix": "LoadScript",
+		"body": [
+		  "LoadScript( scriptFile )",
+		],
+		"description": "Loads a LUA script from given file."
+	},
+
+	"Unloads a Lua script from given file": {
+		"prefix": "UnloadScript",
+		"body": [
+		  "UnloadScript( scriptFile )"
+		],
+		"description": "Unloads a Lua script from given file."
+	},
+
+	"Returns current script's file name": {
+		"prefix": "GetScriptName",
+		"body": [
+		  "GetScriptName()"
+		],
+		"description": "Returns current script's file name."
+	},
+
+    "GetName": {
+		"prefix": "GetName",
+		"body": [
+		  "GetName()"
+		],
+		"description": ""
+	},
+
+    "GetClass": {
+		"prefix": "GetClass",
+		"body": [
+		  "GetClass()"
+		],
+		"description": ""
+	},
+
+    "Clear": {
+		"prefix": "Clear",
+		"body": [
+		  "Clear()"
+		],
+		"description": ""
+	},
+
+    "Normalize": {
+		"prefix": "Normalize",
+		"body": [
+		  "Normalize()"
+		],
+		"description": ""
+	},
+
+    "Right": {
+		"prefix": "Right",
+		"body": [
+		  "Right()"
+		],
+		"description": ""
+	},
+
+    "Up": {
+	    "prefix": "Up",
+		"body": [
+		  "Up()"
+		],
+		"description": ""
+	},
+
+    "GetID": {
+		"prefix": "GetID",
+		"body": [
+		  "GetID()"
+		],
+		"description": ""
+	},
+
+	// Classes
+
+	// AttributeDefinition
+	"Returns true if the attribute is stored as an integer": {
+		"prefix": "IsStoredAsInteger",
+		"body": [
+		  "IsStoredAsInteger()"
+		],
+		"description": "Returns true if the attribute is stored as an integer. For numeric attibutes, false means it is stored as a float."
+	},
+
+    // DrawModelContext
+	"Returns entity linked to the drawn model, can be nil": {
+		"prefix": "GetEntity",
+		"body": [
+		  "GetEntity()"
+		],
+		"description": "Returns entity linked to the drawn model, can be nil."
+	},
+
+	"Returns the name of the model being drawn": {
+		"prefix": "GetModelName",
+		"body": [
+		  "GetModelName()"
+		],
+		"description": "Returns the name of the model being drawn."
+	},
+
+	"Replace material used to draw the model, material can be found or created via materials": {
+		"prefix": "ForcedMaterialOverride",
+		"body": [
+		  "ForcedMaterialOverride( mat:Material )"
+		],
+		"description": "Replace material used to draw the model. Material can be found or created via materials."
+	},
+
+	"Redraws the model, can be used to achieve various effects with different materials": {
+		"prefix": "DrawExtraPass",
+		"body": [
+		  "DrawExtraPass()"
+		],
+		"description": "Redraws the model. Can be used to achieve various effects with different materials."
+	},
+
+	// Entity
+    "Returns whether the entity is valid": {
+        "prefix": "IsValid",
+        "body": [
+          "IsValid()"
+        ],
+        "description": "Returns whether the entity is valid. This is done automatically and all other functions will return nil if the entity is invalid."
+    },
+
+	"Returns entity index": {
+		"prefix": "GetIndex",
+		"body": [
+		  "GetIndex()"
+		],
+		"description": "Returns entity index"
+	},
+
+	"Returns the team number of the entity": {
+		"prefix": "GetTeamNumber",
+		"body": [
+		  "GetTeamNumber()"
+		],
+		"description": "Returns the team number of the entity"
+	},
+
+	"Returns the absolute position of the entity": {
+		"prefix": "GetAbsOrigin",
+		"body": [
+		  "GetAbsOrigin()"
+		],
+		"description": "Returns the absolute position of the entity"
+	},
+
+	"Sets the absolute position of the entity": {
+		"prefix": "SetAbsOrigin",
+		"body": [
+		  "SetAbsOrigin()"
+		],
+		"description": "Sets the absolute position of the entity"
+	},
+
+	"Returns mins of the entity, must be combined with origin": {
+		"prefix": "GetMins",
+		"body": [
+		  "GetMins()"
+		],
+		"description": "Returns mins of the entity, must be combined with origin"
+	},
+
+	"Returns maxs of the entity, must be combined with origin": {
+		"prefix": "GetMaxs",
+		"body": [
+		  "GetMaxs()"
+		],
+		"description": "Returns maxs of the entity, must be combined with origin"
+	},
+
+	"Returns the health of the entity": {
+		"prefix": "GetHealth",
+		"body": [
+		  "GetHealth()"
+		],
+		"description": "Returns the health of the entity"
+	},
+
+	"Returns the max health of the entity": {
+		"prefix": "GetMaxHealth",
+		"body": [
+		  "GetMaxHealth()"
+		],
+		"description": "Returns the max health of the entity"
+	},
+
+	"Returns true if the entity is a player": {
+		"prefix": "IsPlayer",
+		"body": [
+		  "IsPlayer()"
+		],
+		"description": "Returns true if the entity is a player"
+	},
+
+    "Returns true if the entity is a weapon": {
+        "prefix": "IsWeapon",
+        "body": [
+          "IsWeapon()"
+        ],
+        "description": "Returns true if the entity is a weapon"
+    },
+
+	"Returns true if the entity is alive": {
+		"prefix": "IsAlive",
+		"body": [
+		  "IsAlive()"
+		],
+		"description": "Returns true if the entity is alive"
+	},
+
+	"Returns the estimated absolute velocity of the entity as Vector3": {
+		"prefix": "EstimateAbsVelocity",
+		"body": [
+		  "EstimateAbsVelocity()"
+		],
+		"description": "Returns the estimated absolute velocity of the entity as Vector3"
+	},
+
+	"Returns the move type of the entity (the netvar propr does not work)": {
+		"prefix": "GetMoveType",
+		"body": [
+		  "GetMoveType()"
+		],
+		"description": "Returns the move type of the entity (the netvar propr does not work)"
+	},
+
+	"Returns the hitbox surrounding box of the entity as table of Vector3 mins and maxs": {
+		"prefix": "HitboxSurroundingBox",
+		"body": [
+		  "HitboxSurroundingBox()"
+		],
+		"description": "Returns the hitbox surrounding box of the entity as table of Vector3 mins and maxs"
+	},
+
+	"Returns the hitbox surrounding box of the entity in entity space as table of Vector3 mins and maxs": {
+		"prefix": "EntitySpaceHitboxSurroundingBox",
+		"body": [
+		  "EntitySpaceHitboxSurroundingBox()"
+		],
+		"description": "Returns the hitbox surrounding box of the entity in entity space as table of Vector3 mins and maxs"
+	},
+
+	"Returns world-transformed hitboxes of the entity as table of tables, each containing 2 entries of Vector3: mins and maxs positions of each hitbox": {
+		"prefix": "GetHitboxes",
+		"body": [
+		  "GetHitboxes( [currentTime:number] )"
+		],
+		"description": "Returns world-transformed hitboxes of the entity as table of tables, each containing 2 entries of Vector3: mins and maxs positions of each hitbox. The currentTime argument is optional, by default 0, and can be changed if you want the transform to be based on a different time."
+	},
+
+	"Returns true if the entity is dormant (not being updated)": {
+		"prefix": "IsDormant",
+		"body": [
+		  "IsDormant()"
+		],
+		"description": "Returns true if the entity is dormant (not being updated). Dormant entities are not drawn and shouldn't be interacted with."
+	},
+
+	"If the entity is an item that can be in player's inventory, such as a wearable or a weapon, returns the inventory item as Item": {
+		"prefix": "ToInventoryItem",
+		"body": [
+		  "ToInventoryItem()"
+		],
+		"description": "If the entity is an item that can be in player's inventory, such as a wearable or a weapon, returns the inventory item as Item"
+	},
+
+	// Attributes
+	"Returns the number value of the attribute present on the entity, defaultValue is by default 1.0": {
+		"prefix": "AttributeHookFloat",
+		"body": [
+		  "AttributeHookFloat( name:string, [defaultValue:number] )"
+		],
+		"description": "Returns the number value of the attribute present on the entity, defaultValue is by default 1.0"
+	},
+
+	"Returns the integer value of the attribute present on the entity,defaultValue is by default 1": {
+		"prefix": "AttributeHookInt",
+		"body": [
+		  "AttributeHookInt( name:string, [defaultValue:integer] )"
+		],
+		"description": "Returns the integer value of the attribute present on the entity,defaultValue is by default 1"
+	},
+
+	// Entity netvars/props
+	"Returns the float value of the given netvar": {
+		"prefix": "GetPropFloat",
+		"body": [
+		  "GetPropFloat( propName, ... )"
+		],
+		"description": "Returns the float value of the given netvar"
+	},
+
+	"Returns the int value of the given netvar": {
+		"prefix": "GetPropInt",
+		"body": [
+		  "GetPropInt( propName, ... )"
+		],
+		"description": "Returns the int value of the given netvar"
+	},
+
+	"Returns the bool value of the given netvar": {
+		"prefix": "GetPropBool",
+		"body": [
+		  "GetPropBool( propName, ... )"
+		],
+		"description": "Returns the bool value of the given netvar"
+	},
+
+	"Returns the string value of the given netvar": {
+		"prefix": "GetPropString",
+		"body": [
+		  "GetPropString( propName, ... )"
+		],
+		"description": "Returns the string value of the given netvar"
+	},
+
+	"Returns the vector value of the given netvar": {
+        "prefix": "GetPropVector",
+		"body": [
+		  "GetPropVector( propName, ... )"
+		],
+		"description": "Returns the vector value of the given netvar"
+	},
+
+	"For entity handle props (m_hXXXXX)": {
+		"prefix": "GetPropEntity",
+		"body": [
+		  "GetPropEntity( propName, ... )"
+		],
+		"description": "For entity handle props (m_hXXXXX)"
+	},
+
+	"Sets the float value of the given netvar": {
+		"prefix": "SetPropFloat",
+		"body": [
+		  "SetPropFloat( value:number, propName, ... )"
+		],
+		"description": "Sets the float value of the given netvar."
+	},
+
+	"Sets the int value of the given netvar": {
+		"prefix": "SetPropInt",
+		"body": [
+		  "SetPropInt( value:integer, propName, ... )"
+		],
+		"description": "Sets the int value of the given netvar."
+	},
+
+	"Sets the bool value of the given netvar": {
+		"prefix": "SetPropBool",
+		"body": [
+		  "SetPropBool( value:bool, propName, ... )"
+		],
+		"description": "Sets the bool value of the given netvar."
+	},
+
+	"Set the entity value of the given netvar": {
+		"prefix": "SetPropEntity",
+		"body": [
+		  "SetPropEntity( value:Entity, propName, ... )"
+		],
+		"description": "Set the entity value of the given netvar."
+	},
+
+	"Set the vector value of the given netvar": {
+		"prefix": "SetPropVector",
+		"body": [
+		  "SetPropVector( value:Vector3, propName, ... )"
+		],
+		"description": "Set the vector value of the given netvar."
+	},
+
+	// Prop data tables
+	"Returns a table of floats, index them with integers based on context of the netvar": {
+		"prefix": "GetPropDataTableFloat",
+		"body": [
+		  "GetPropDataTableFloat( propName, ... )"
+		],
+		"description": "Returns a table of floats, index them with integers based on context of the netvar"
+	},
+
+	"Returns a table of ints, index them with integers based on context of the netvar": {
+		"prefix": "GetPropDataTableInt",
+		"body": [
+		  "GetPropDataTableInt( propName, ... )"
+		],
+		"description": "Returns a table of ints, index them with integers based on context of the netvar"
+	},
+
+	"Returns a table of entities, index them with integers based on context of the netvar": {
+		"prefix": "GetPropDataTableEntity",
+		"body": [
+		  "GetPropDataTableEntity( propName, ... )"
+		],
+		"description": "Returns a table of entities, index them with integers based on context of the netvar"
+	},
+
+	"Sets the number value of the given netvar at the given index": {
+		"prefix": "SetPropDataTableFloat",
+		"body": [
+		  "SetPropDataTableFloat( value:number, index:integer, propName, ... )"
+		],
+		"description": "Sets the number value of the given netvar at the given index."
+	},
+
+	"Sets the integer value of the given netvar at the given index": {
+		"prefix": "SetPropDataTableInt",
+		"body": [
+		  "SetPropDataTableInt( value:integer, index:integer, propName, ... )"
+		],
+		"description": "Sets the integer value of the given netvar at the given index."
+	},
+
+	"Sets the Entity value of the given netvar at the given index": {
+		"prefix": "SetPropDataTableEntity",
+		"body": [
+		  "SetPropDataTableEntity( value:Entity, index:integer, propName, ... )"
+		],
+		"description": "Sets the Entity value of the given netvar at the given index."
+	},
+
+	// Player entity methods
+	"Returns whether the player is in the specified condition": {
+		"prefix": "InCond",
+		"body": [
+		  "InCond( condition:integer )"
+		],
+		"description": "Returns whether the player is in the specified condition."
+	},
+
+	"Adds the specified condition to the player, duration is optional (defaults to -1, which means infinite)": {
+		"prefix": "AddCond",
+		"body": [
+		  "AddCond( condition:integer, [duration:number] )"
+		],
+		"description": "Adds the specified condition to the player, duration is optional (defaults to -1, which means infinite)"
+	},
+
+	"Removes the specified condition from the player": {
+		"prefix": "RemoveCond",
+		"body": [
+		  "RemoveCond( condition:integer )"
+		],
+		"description": "Removes the specified condition from the player"
+	},
+
+	"Whether the player is currently crit boosted by an external source": {
+		"prefix": "IsCritBoosted",
+		"body": [
+		  "IsCritBoosted()"
+		],
+		"description": "Whether the player is currently crit boosted by an external source"
+	},
+
+	"Returns the current crit multiplier of the player": {
+		"prefix": "GetCritMult",
+		"body": [
+		  "GetCritMult()"
+		],
+		"description": "Returns the current crit multiplier of the player."
+	},
+
+	"For game mode where players can carry runes, returns the type of rune the player is carrying": {
+		"prefix": "GetCarryingRuneType",
+		"body": [
+		  "GetCarryingRuneType()"
+		],
+		"description": "For game mode where players can carry runes, returns the type of rune the player is carrying"
+	},
+	  
+	"Returns the max health of the player, including any buffs from items or medics": {
+		"prefix": "GetMaxBuffedHealth",
+		"body": [
+		  "GetMaxBuffedHealth()"
+		],
+		"description": "Returns the max health of the player, including any buffs from items or medics"
+	},
+
+	"Returns the entity for the specified loadout slot": {
+		"prefix": "GetEntityForLoadoutSlot",
+		"body": [
+		  "GetEntityForLoadoutSlot( slot:integer )"
+		],
+		"description": "Returns the entity for the specified loadout slot. This can be used to get the hat entity for the slot, or the weapon entity for the slot"
+	},
+
+	"Whether the player is currently in a freezecam after death": {
+		"prefix": "IsInFreezecam",
+		"body": [
+		  "IsInFreezecam()"
+		],
+		"description": "Whether the player is currently in a freezecam after death"
+	},
+
+    // Weapon entity methods
+    "Returns whether the weapon is a weapon that can shoot projectiles or hitscan": {
+        "prefix": "IsShootingWeapon",
+        "body": [
+          "IsShootingWeapon()"
+        ],
+        "description": "Returns whether the weapon is a weapon that can shoot projectiles or hitscan."
+    },
+
+    "Returns whether the weapon is a melee weapon": {
+        "prefix": "IsMeleeWeapon",
+        "body": [
+          "IsMeleeWeapon()"
+        ],
+        "description": "Returns whether the weapon is a melee weapon."
+    },
+
+    "Returns whether the weapon is a medigun, supports all types of mediguns": {
+        "prefix": "IsMedigun",
+        "body": [
+          "IsMedigun()"
+        ],
+        "description": "Returns whether the weapon is a medigun, supports all types of mediguns."
+    },
+
+    "Returns whether the weapon can randomly crit in general, not in it's current state": {
+        "prefix": "CanRandomCrit",
+        "body": [
+          "CanRandomCrit()"
+        ],
+        "description": "Returns whether the weapon can randomly crit in general, not in it's current state."
+    },
+
+    "Returns the loadout slot ID of the weapon": {
+        "prefix": "GetLoadoutSlot",
+        "body": [
+          "GetLoadoutSlot()"
+        ],
+        "description": "Returns the loadout slot ID of the weapon."
+    },
+
+    "Returns the projectile type of the weapon, returns nil if the weapon is not a projectile weapon": {
+        "prefix": "GetWeaponProjectileType",
+        "body": [
+          "GetWeaponProjectileType()"
+        ],
+        "description": "Returns the projectile type of the weapon, returns nil if the weapon is not a projectile weapon."
+    },
+
+    "Returns whether the weapon's view model is flipped": {
+        "prefix": "IsViewModelFlipped",
+        "body": [
+          "IsViewModelFlipped()"
+        ],
+        "description": "Returns whether the weapon's view model is flipped."
+    },
+
+	// Melee Weapon Methods
+    "Returns the swing range of the weapon, returns nil if the weapon is not a melee weapon": {
+        "prefix": "GetSwingRange",
+        "body": [
+          "GetSwingRange()"
+        ],
+        "description": "Returns the swing range of the weapon, returns nil if the weapon is not a melee weapon."
+    },
+
+    "Returns the Trace object result of the weapon's swing": {
+        "prefix": "DoSwingTrace",
+        "body": [
+          "DoSwingTrace()"
+        ],
+        "description": "Returns the Trace object result of the weapon's swing. In simple terms, it simulates what would weapon hit if it was swung."
+    },
+
+	// Medigun methods
+	"Returns the heal rate of the medigun, returns nil if the weapon is not a medigun": {
+		"prefix": "GetMedigunHealRate",
+		"body": [
+		  "GetMedigunHealRate()"
+		],
+		"description": "Returns the heal rate of the medigun, returns nil if the weapon is not a medigun."
+	},
+
+	"Returns the healing stick range of the medigun, returns nil if the weapon is not a medigun": {
+		"prefix": "GetMedigunHealingStickRange",
+		"body": [
+		  "GetMedigunHealingStickRange()"
+		],
+		"description": "Returns the healing stick range of the medigun, returns nil if the weapon is not a medigun."
+	},
+
+	"Returns the healing range of the medigun, returns nil if the weapon is not a medigun": {
+		"prefix": "GetMedigunHealingRange",
+		"body": [
+		  "GetMedigunHealingRange()"
+		],
+		"description": "Returns the healing range of the medigun, returns nil if the weapon is not a medigun."
+	},
+
+	"Returns whether the medigun is allowed to heal the target, returns nil if the weapon is not a medigun": {
+		"prefix": "IsMedigunAllowedToHealTarget",
+		"body": [
+		  "IsMedigunAllowedToHealTarget( target:Entity )"
+		],
+		"description": "Returns whether the medigun is allowed to heal the target, returns nil if the weapon is not a medigun."
+	},
+
+    // Weapon Crit Methods
+    "Returns the current crit token bucket value": {
+        "prefix": "GetCritTokenBucket",
+        "body": [
+          "GetCritTokenBucket()"
+        ],
+        "description": "Returns the current crit token bucket value."
+    },
+
+    "Returns the current crit check count": {
+        "prefix": "GetCritCheckCount",
+        "body": [
+          "GetCritCheckCount()"
+        ],
+        "description": "Returns the current crit check count."
+    },
+
+    "Returns the current crit seed request count": {
+        "prefix": "GetCritSeedRequestCount",
+        "body": [
+          "GetCritSeedRequestCount()"
+        ],
+        "description": "Returns the current crit seed request count."
+    },
+
+    "Returns the current crit seed": {
+        "prefix": "GetCurrentCritSeed",
+        "body": [
+          "GetCurrentCritSeed()"
+        ],
+        "description": "Returns the current crit seed."
+    },
+
+    "Returns the time until the current rapid fire crit is over": {
+        "prefix": "GetRapidFireCritTime",
+        "body": [
+          "GetRapidFireCritTime()"
+        ],
+        "description": "Returns the time until the current rapid fire crit is over."
+    },
+
+    "Returns the time of the last rapid fire crit check": {
+        "prefix": "GetLastRapidFireCritCheckTime",
+        "body": [
+          "GetLastRapidFireCritCheckTime()"
+        ],
+        "description": "Returns the time of the last rapid fire crit check."
+    },
+
+	"Returns the base damage of the weapon": {
+		"prefix": "GetWeaponBaseDamage",
+		"body": [
+		  "GetWeaponBaseDamage()"
+		],
+		"description": "Returns the base damage of the weapon."
+	},
+
+	"Returns the weapon's current crit chance as a number from 0 to 1": {
+		"prefix": "GetCritChance",
+		"body": [
+		  "GetCritChance()"
+		],
+		"description": "Returns the weapon's current crit chance as a number from 0 to 1. This crit chance changes during gameplay based on player's recently dealt damage."
+	},
+
+	"Calculates the cost of a crit based on the given crit parameters": {
+		"prefix": "GetCritCost",
+		"body": [
+		  "GetCritCost( tokenBucket:number, critSeedRequestCount:number, critCheckCount:number )"
+		],
+		"description": "Calculates the cost of a crit based on the given crit parameters. You can either use the GetCritTokenBucket(), GetCritCheckCount(), and GetCritSeedRequestCount() methods to get the current crit parameters, or you can pass your own if you are simulating crits."
+	},
+
+	"This function estimates the observed crit chance": {
+		"prefix": "CalcObservedCritChance",
+		"body": [
+		  "CalcObservedCritChance()"
+		],
+		"description": "This function estimates the observed crit chance. The observed crit chance is calculated on the server from the damage you deal across a game round. It is only rarely sent to the client, but is important for crit calculations."
+	},
+
+	"Returns whether the given command number would result in a crit": {
+		"prefix": "IsAttackCritical",
+		"body": [
+		  "IsAttackCritical( commandNumber:integer )"
+		],
+		"description": "Returns whether the given command number would result in a crit."
+	},
+
+	"Returns the current damage stats": {
+		"prefix": "GetWeaponDamageStats",
+		"body": [
+		  "GetWeaponDamageStats()"
+		],
+		"description": "Returns the current damage stats as a following table:"
+	},
+
+	// EulerAngles
+	"Creates a new instace of EulerAngles": {
+		"prefix": "EulerAngles",
+		"body": [
+		  "EulerAngles( pitch, yaw, roll )"
+		],
+		"description": "Creates a new instace of EulerAngles."
+	},
+
+	"Returns the X, Y, and Z coordinates as a separate variables": {
+		"prefix": "Unpack",
+		"body": [
+		  "Unpack()"
+		],
+		"description": "Returns the X, Y, and Z coordinates as a separate variables."
+	},
+
+	"Returns the forward vector of the angles": {
+		"prefix": "Forward",
+		"body": [
+		  "Forward()"
+		],
+		"description": "Returns the forward vector of the angles"
+	},
+
+	// GameEvent
+	"Returns the string value of the given field": {
+		"prefix": "GetString",
+		"body": [
+		  "GetString( fieldName:string )"
+		],
+		"description": "Returns the string value of the given field"
+	},
+
+	"Returns the int value of the given field": {
+		"prefix": "GetInt",
+		"body": [
+		  "GetInt( fieldName:string )"
+		],
+		"description": "Returns the int value of the given field"
+	},
+
+	"Returns the float value of the given field": {
+		"prefix": "GetFloat",
+		"body": [
+		  "GetFloat( fieldName:string )"
+		],
+		"description": "Returns the float value of the given field"
+	},
+
+	"Sets the string value of the given field": {
+		"prefix": "SetString",
+		"body": [
+		  "SetString( fieldName:string, value:string )"
+		],
+		"description": "Sets the string value of the given field"
+	},
+
+	"Sets the int value of the given field": {
+		"prefix": "SetInt",
+		"body": [
+		  "SetInt( fieldName:string, value:int )"
+		],
+		"description": "Sets the int value of the given field"
+	},
+
+	"Sets the float value of the given field": {
+		"prefix": "SetFloat",
+		"body": [
+		  "SetFloat( fieldName:string, value:float )"
+		],
+		"description": "Sets the float value of the given field"
+	},
+
+	"Sets the bool value of the given field": {
+		"prefix": "SetBool",
+		"body": [
+		  "SetBool( fieldName:string, value:bool )"
+		],
+		"description": "Sets the bool value of the given field"
+	},
+
+	// Item
+	"Returns the item's definition index": {
+		"prefix": "GetDefIndex",
+		"body": [
+		  "GetDefIndex()"
+		],
+		"description": "Returns the item's definition index. Can be used to get the item's definition."
+	},
+
+	"Returns the item's definition as the ItemDefinition object": {
+		"prefix": "GetItemDefinition",
+		"body": [
+		  "GetItemDefinition()"
+		],
+		"description": "Returns the item's definition as the ItemDefinition object."
+	},
+
+	"Returns the item's level": {
+		"prefix": "GetLevel",
+		"body": [
+		  "GetLevel()"
+		],
+		"description": "Returns the item's level."
+	},
+
+	"Returns the item's ID": {
+		"prefix": "GetItemID",
+		"body": [
+		  "GetItemID()"
+		],
+		"description": "Returns the item's ID. This is a unique 64bit ID for the item that identifies it across the economy."
+	},
+
+	"Returns the item's position in the inventory": {
+		"prefix": "GetInventoryPosition",
+		"body": [
+		  "GetInventoryPosition()"
+		],
+		"description": "Returns the item's position in the inventory."
+	},
+
+	"Returns true if the item is equipped for the given class": {
+		"prefix": "IsEquippedForClass",
+		"body": [
+		  "IsEquippedForClass( classid:integer )"
+		],
+		"description": "Returns true if the item is equipped for the given class."
+	},
+	
+	"Sets the value of the given attribute by it's definition": {
+		"prefix": "SetAttribute",
+		"body": [
+		  "SetAttribute( attrDef:AttributeDefinition, value:any )"
+		],
+		"description": "Sets the value of the given attribute by it's definition. The value must be the correct type for the given attribute definition."
+	},
+
+	"Sets the value of the given attribute by it's name": {
+		"prefix": "SetAttribute",
+		"body": [
+		  "SetAttribute( attrName:string, value:any )"
+		],
+		"description": "Sets the value of the given attribute by it's name. The value must be the correct type for the given attribute definition."
+	},
+
+	"Removes the given attribute by it's definition": {
+		"prefix": "RemoveAttribute",
+		"body": [
+		  "RemoveAttribute( attrDef:AttributeDefinition )"
+		],
+		"description": "Removes the given attribute by it's definition."
+	},
+
+	"Removes the given attribute by it's name": {
+		"prefix": "RemoveAttribute",
+		"body": [
+		  "RemoveAttribute( attrName:string )"
+		],
+		"description": "Removes the given attribute by it's name."
+	},
+
+	// ItemDefinition
+	"Returns the loadout slot that the item should be placed in": {
+		"prefix": "GetLoadoutSlot",
+		"body": [
+		  "GetLoadoutSlot()"
+		],
+		"description": "Returns the loadout slot that the item should be placed in."
+	},
+
+	"Returns true if the item is hidden": {
+		"prefix": "IsHidden",
+		"body": [
+		  "IsHidden()"
+		],
+		"description": "Returns true if the item is hidden."
+	},
+
+	"Returns true if the item is a tool, such as a key": {
+		"prefix": "IsTool",
+		"body": [
+		  "IsTool()"
+		],
+		"description": "Returns true if the item is a tool, such as a key."
+	},
+
+	"Returns true if the item is a base item, such as a stock weapon": {
+		"prefix": "IsBaseItem",
+		"body": [
+		  "IsBaseItem()"
+		],
+		"description": "Returns true if the item is a base item, such as a stock weapon."
+	},
+
+	"Returns true if the item is a wearable": {
+		"prefix": "IsWearable",
+		"body": [
+		  "IsWearable()"
+		],
+		"description": "Returns true if the item is a wearable."
+	},
+
+	"Returns the name of the item in the language of the current player": {
+		"prefix": "GetNameTranslated",
+		"body": [
+		  "GetNameTranslated()"
+		],
+		"description": "Returns the name of the item in the language of the current player."
+	},
+
+	"Returns the type name of the item": {
+		"prefix": "GetTypeName",
+		"body": [
+		  "GetTypeName()"
+		],
+		"description": "Returns the type name of the item."
+	},
+
+	"Returns the description of the item": {
+		"prefix": "GetDescription",
+		"body": [
+		  "GetDescription()"
+		],
+		"description": "Returns the description of the item."
+	},
+
+	"Returns the icon name of the item": {
+		"prefix": "GetIconName",
+		"body": [
+		  "GetIconName()"
+		],
+		"description": "Returns the icon name of the item."
+	},
+
+	"Returns the base item name of the item": {
+		"prefix": "GetBaseItemName",
+		"body": [
+		  "GetBaseItemName()"
+		],
+		"description": "Returns the base item name of the item."
+	},
+
+	"Returns the static item attributes as a table where keys are AttributeDefinition objects and values are the values of the attributes": {
+		"prefix": "GetAttributes",
+		"body": [
+		  "GetAttributes()"
+		],
+		"description": "Returns the static item attributes as a table where keys are AttributeDefinition objects and values are the values of the attributes."
+	},
+
+	// MatchGroup
+	"Returns whether the match group is a competitive mode": {
+		"prefix": "IsCompetitiveMode",
+		"body": [
+		  "IsCompetitiveMode()"
+		],
+		"description": "Returns whether the match group is a competitive mode. Can return false if you are using a competitive bypass feature."
+	},
+
+	// MatchMapDefinition
+	"Returns the map name localization key": {
+		"prefix": "GetNameLocKey",
+		"body": [
+		  "GetNameLocKey()"
+		],
+		"description": "Returns the map name localization key."
+	},
+
+	// Material
+	"Returns group the material is part of": {
+		"prefix": "GetTextureGroupName",
+		"body": [
+		  "GetTextureGroupName"
+		],
+		"description": "Returns group the material is part of"
+	},
+
+	  "Modulate transparency of material by given alpha value": {
+		"prefix": "AlphaModulate",
+		"body": [
+		  "AlphaModulate( alpha:number )"
+		],
+		"description": "Modulate transparency of material by given alpha value"
+	},
+
+	"Modulate color of material by given RGB values": {
+		"prefix": "ColorModulate",
+		"body": [
+		  "ColorModulate( red:number, green:number, blue:number )"
+		],
+		"description": "Modulate color of material by given RGB values"
+	},
+
+	"Change a material variable flag ": {
+		"prefix": "SetMaterialVarFlag",
+		"body": [
+		  "SetMaterialVarFlag( flag:integer, set:bool )"
+		],
+		"description": "Change a material variable flag "
+	},
+
+	"Set a shader parameter": {
+		"prefix": "SetShaderParam",
+		"body": [
+		  "SetShaderParam( param:string, value:any )"
+		],
+		"description": "Set a shader parameter, see ShaderParameters for a list of parameters. Supported values are integer, number, Vector3, string."
+	},
+
+	// PartyMemberActivity
+	"Returns the lobby ID of the party member": {
+		"prefix": "GetLobbyID",
+		"body": [
+		  "GetLobbyID()"
+		],
+		"description": "Returns the lobby ID of the party member. This can be used to find out whether the party member is currently in a matchmade game."
+	},
+
+	"Returns whether the party member is currently online": {
+		"prefix": "IsOnline",
+		"body": [
+		  "IsOnline()"
+		],
+		"description": "Returns whether the party member is currently online."
+	},
+
+	"Returns whether the party member is currently blocked from joining a matchmade game": {
+		"prefix": "IsMultiqueueBlocked",
+		"body": [
+		  "IsMultiqueueBlocked()"
+		],
+		"description": "Returns whether the party member is currently blocked from joining a matchmade game."
+	},
+
+	"Returns the client version of the party member": {
+		"prefix": "GetClientVersion",
+		"body": [
+		  "GetClientVersion()"
+		],
+		"description": "Returns the client version of the party member."
+	},
+
+	// StringCmd
+	"Used to get the command string itself": {
+		"prefix": "Get",
+		"body": [
+		  "Get()"
+		],
+		"description": "Used to get the command string itself."
+	},
+
+	"Set the command string": {
+		"prefix": "Set",
+		"body": [
+		  "Set( string:command )"
+		],
+		"description": "Set the command string."
+	},
+	
+	// Trace
+	"Fraction of the trace that was completed": {
+		"prefix": "fraction",
+		"body": [
+		  "fraction"
+		],
+		"description": "Fraction of the trace that was completed."
+	},
+
+	"The entity that was hit": {
+		"prefix": "entity",
+		"body": [
+		  "entity"
+		],
+		"description": "The entity that was hit."
+	},
+
+	"Plane normal of the surface hit": {
+		"prefix": "plane",
+		"body": [
+		  "plane"
+		],
+		"description": "Plane normal of the surface hit."
+	},
+
+	"Contents of the surface hit": {
+		"prefix": "contents",
+		"body": [
+		  "contents"
+		],
+		"description": "Contents of the surface hit."
+	},
+
+	"Hitbox that was hit": {
+		"prefix": "hitbox",
+		"body": [
+		  "hitbox"
+		],
+		"description": "Hitbox that was hit."
+	},
+
+	"Hitgroup that was hit": {
+		"prefix": "hitgroup",
+		"body": [
+		  "hitgroup"
+		],
+		"description": "Hitgroup that was hit."
+	},
+
+	"Whether the trace completed in all solid": {
+		"prefix": "allsolid",
+		"body": [
+		  "allsolid"
+		],
+		"description": "Whether the trace completed in all solid."
+	},
+
+	"Whether the trace started in a solid": {
+		"prefix": "startsolid",
+		"body": [
+		  "startsolid"
+		],
+		"description": "Whether the trace started in a solid."
+	},
+
+	// UserCmd
+	"The number of the command": {
+		"prefix": "command_number",
+		"body": [
+		  "command_number"
+		],
+		"description": "The number of the command."
+	},
+
+	"The current tick count": {
+		"prefix": "tick_count",
+		"body": [
+		  "tick_count"
+		],
+		"description": "The current tick count."
+	},
+
+	"The view angles of the player": {
+		"prefix": "viewangles",
+		"body": [
+		  "viewangles"
+		],
+		"description": "The view angles of the player."
+	},
+
+	"The forward movement of the player": {
+		"prefix": "forwardmove",
+		"body": [
+		  "forwardmove"
+		],
+		"description": "The forward movement of the player."
+	},
+
+	"The sideways movement of the player": {
+		"prefix": "sidemove",
+		"body": [
+		  "sidemove"
+		],
+		"description": "The sideways movement of the player."
+	},
+
+	"The upward movement of the player": {
+		"prefix": "upmove",
+		"body": [
+		  "upmove"
+		],
+		"description": "The upward movement of the player."
+	},
+
+	"The buttons that are pressed": {
+		"prefix": "buttons",
+		"body": [
+		  "buttons"
+		],
+		"description": "The buttons that are pressed. Masked with bits from IN_* enum"
+	},
+
+	"The impulse command that was issued": {
+		"prefix": "impulse",
+		"body": [
+		  "impulse"
+		],
+		"description": "The impulse command that was issued."
+	},
+
+	"The weapon id that is selected": {
+		"prefix": "weaponselect",
+		"body": [
+		  "weaponselect"
+		],
+		"description": "The weapon id that is selected."
+	},
+
+	"The subtype of the weapon": {
+		"prefix": "weaponsubtype",
+		"body": [
+		  "weaponsubtype"
+		],
+		"description": "The subtype of the weapon."
+	},
+
+	"The random seed of the command": {
+		"prefix": "random_seed",
+		"body": [
+		  "random_seed"
+		],
+		"description": "The random seed of the command."
+	},
+
+	"The mouse delta in the x direction": {
+		"prefix": "mousedx",
+		"body": [
+		  "mousedx"
+		],
+		"description": "The mouse delta in the x direction."
+	},
+
+	"The mouse delta in the y direction": {
+		"prefix": "mousedy",
+		"body": [
+		  "mousedy"
+		],
+		"description": "The mouse delta in the y direction."
+	},
+
+	"Whether the command has been predicted": {
+		"prefix": "hasbeenpredicted",
+		"body": [
+		  "hasbeenpredicted"
+		],
+		"description": "Whether the command has been predicted."
+	},
+
+	"Whether the command should be sent to the server or choked": {
+		"prefix": "sendpacket",
+		"body": [
+		  "sendpacket"
+		],
+		"description": "Whether the command should be sent to the server or choked."
+	},
+
+	"Sets the view angles of the player": {
+		"prefix": "SetViewAngles",
+		"body": [
+		  "SetViewAngles( pitch, yaw, roll )"
+		],
+		"description": "Sets the view angles of the player."
+	},
+
+	"returns: pitch, yaw, roll": {
+		"prefix": "GetViewAngles",
+		"body": [
+		  "GetViewAngles()"
+		],
+		"description": "returns: pitch, yaw, roll"
+	},
+
+	"Sets whether the command should be sent to the server or choked": {
+		"prefix": "SetSendPacket",
+		"body": [
+		  "SetSendPacket( sendpacket )"
+		],
+		"description": "Sets whether the command should be sent to the server or choked."
+	},
+
+	"returns: sendpacket": {
+		"prefix": "GetSendPacket",
+		"body": [
+		  "GetSendPacket()"
+		],
+		"description": "returns: sendpacket"
+	},
+
+	"Sets the buttons that are pressed": {
+		"prefix": "SetButtons",
+		"body": [
+		  "SetButtons( buttons )"
+		],
+		"description": "Sets the buttons that are pressed."
+	},
+
+	"returns: buttons": {
+		"prefix": "GetButtons",
+		"body": [
+		  "GetButtons()"
+		],
+		"description": "returns: buttons"
+	},
+
+	"Sets the forward movement of the player": {
+		"prefix": "SetForwardMove",
+		"body": [
+		  "SetForwardMove( float factor )"
+		],
+		"description": "Sets the forward movement of the player."
+	},
+
+	"returns: forwardmove": {
+		"prefix": "GetForwardMove",
+		"body": [
+		  "GetForwardMove()"
+		],
+		"description": "returns: forwardmove"
+	},
+
+	"Sets the sideways movement of the player": {
+		"prefix": "SetSideMove",
+		"body": [
+		  "SetSideMove( float factor )"
+		],
+		"description": "Sets the sideways movement of the player."
+	},
+
+	"returns: sidemove": {
+		"prefix": "GetSideMove",
+		"body": [
+		  "GetSideMove()"
+		],
+		"description": "returns: sidemove"
+	},
+
+	"Sets the upward movement of the player": {
+		"prefix": "SetUpMove",
+		"body": [
+		  "SetUpMove( float factor )"
+		],
+		"description": "Sets the upward movement of the player."
+	},
+
+	"returns: upmove": {
+		"prefix": "GetUpMove",
+		"body": [
+		  "GetUpMove()"
+		],
+		"description": "returns: upmove"
+	},
+
+	// UserMessage
+	"Returns the length of the message in bits": {
+		"prefix": "GetDataBits",
+		"body": [
+		  "GetDataBits()"
+		],
+		"description": "Returns the lenght of the message in bits"
+	},
+
+	"Returns the length of the message in bytes": {
+		"prefix": "GetDataBytes",
+		"body": [
+		  "GetDataBytes()"
+		],
+		"description": "Returns the length of the message in bits"
+	},
+
+	"Resets the read position to the beginning of the message": {
+		"prefix": "Reset",
+		"body": [
+		  "Reset()"
+		],
+		"description": "Resets the read position to the beginning of the message. This is useful if you want to read the message multiple times, but it is not necessary. Each callback receives an already reset user message."
+	},
+
+	"Reads one byte from the message": {
+		"prefix": "ReadByte",
+		"body": [
+		  "ReadByte()"
+		],
+		"description": "Reads one byte from the message."
+	},
+
+	"Reads a single bit from the message": {
+		"prefix": "ReadBit",
+		"body": [
+		  "ReadBit()"
+		],
+		"description": "Reads a single bit from the message."
+	},
+
+	"Reads 4 bytes from the message and returns it as a float": {
+		"prefix": "ReadFloat",
+		"body": [
+		  "ReadFloat( [bitLength:integer] )"
+		],
+		"description": "Reads 4 bytes from the message and returns it as a float. Default bitLength is 32 (4 bytes). For short, use 16, for long, use 64."
+	},
+
+	"Reads 4 bytes from the message and returns it as an integer": {
+		"prefix": "ReadInt",
+		"body": [
+		  "ReadInt( [bitLength:integer] )"
+		],
+		"description": "Reads 4 bytes from the message and returns it as an integer. Default bitLength is 32 (4 bytes). For short, use 16, for long, use 64."
+	},
+
+	"Reads a string from the message": {
+		"prefix": "ReadString",
+		"body": [
+		  "ReadString( maxlen:integer )"
+		],
+		"description": "Reads a string from the message. You must specify valid maxlen. The string will be truncated if it is longer than maxlen."
+	},
+
+	"Returns the current bit position in the message": {
+		"prefix": "GetCurBit",
+		"body": [
+		  "GetCurBit()"
+		],
+		"description": "Returns the current bit position in the message."
+	},
+
+	// Writing
+	"Sets the current bit position in the message": {
+		"prefix": "SetCurBit",
+		"body": [
+		  "SetCurBit( bit:integer )"
+		],
+		"description": "Sets the current bit position in the message."
+	},
+
+	"Writes a single bit to the message": {
+		"prefix": "WriteBit",
+		"body": [
+		  "WriteBit( bit:integer )"
+		],
+		"description": "Writes a single bit to the message."
+	},
+
+	"Writes a single byte to the message": {
+		"prefix": "WriteByte",
+		"body": [
+		  "WriteByte( byte:integer )"
+		],
+		"description": "Writes a single byte to the message."
+	},
+
+	"Writes given string to the message": {
+		"prefix": "WriteString",
+		"body": [
+		  "WriteString( str:string )"
+		],
+		"description": "Writes given string to the message."
+	},
+
+	"Writes an integer to the message": {
+		"prefix": "WriteInt",
+		"body": [
+		  "WriteInt( int:integer, [bitLength:integer] )"
+		],
+		"description": "Writes an integer to the message. Default bitLength is 32 (4 bytes). For short, use 16, for long, use 64."
+	},
+
+	"Writes a float to the message": {
+		"prefix": "WriteFloat",
+		"body": [
+		  "WriteFloat( value:number, [bitLength:integer] )"
+		],
+		"description": "Writes a float to the message. Default bitLength is 32 (4 bytes). For short, use 16, for long, use 64."
+	},
+
+	// Vector3
+	"The length of the vector": {
+		"prefix": "Length",
+		"body": [
+		  "Length()"
+		],
+		"description": "The length of the vector."
+	},
+
+	"The squared length of the vector": {
+		"prefix": "LengthSqr",
+		"body": [
+		  "LengthSqr()"
+		],
+		"description": "The squared length of the vector."
+	},
+
+	"The length of the vector in 2D": {
+		"prefix": "Length2D",
+		"body": [
+		  "Length2D()"
+		],
+		"description": "The length of the vector in 2D."
+	},
+
+	"The squared length of the vector in 2D": {
+		"prefix": "Length2DSqr",
+		"body": [
+		  "Length2DSqr()"
+		],
+		"description": "The squared length of the vector in 2D."
+	},
+
+	"The dot product of the vector and the given vector": {
+		"prefix": "Dot",
+		"body": [
+		  "Dot( Vector3 )"
+		],
+		"description": "The dot product of the vector and the given vector."
+	},
+
+	"The cross product of the vector and the given vector": {
+		"prefix": "Cross",
+		"body": [
+		  "Cross( Vector3 )"
+		],
+		"description": "The cross product of the vector and the given vector."
+	},
+
+	"Returns the angles of the vector": {
+		"prefix": "Angles",
+		"body": [
+		  "Angles()"
+		],
+		"description": "Returns the angles of the vector."
+	},
+	
+	// client
+	"Returns the number of extra inventory slots the user has": {
+		"prefix": "client.GetExtraInventorySlots",
+		"body": [
+		  "client.GetExtraInventorySlots()"
+		],
+		"description": "Returns the number of extra inventory slots the user has."
+	},
+
+	"Returns whether the user is a free trial account": {
+		"prefix": "client.IsFreeTrialAccount",
+		"body": [
+		  "client.IsFreeTrialAccount()"
+		],
+		"description": "Returns whether the user is a free trial account."
+	},
+
+	"Returns whether the user has competitive access": {
+		"prefix": "client.HasCompetitiveAccess",
+		"body": [
+		  "client.HasCompetitiveAccess()"
+		],
+		"description": "Returns whether the user has competitive access."
+	},
+
+	"Returns whether the user is in the coaches list": {
+		"prefix": "client.IsInCoachesList",
+		"body": [
+		  "client.IsInCoachesList()"
+		],
+		"description": "Returns whether the user is in the coaches list."
+	},
+
+	"Translate world position into screen position (x,y)": {
+		"prefix": "client.WorldToScreen",
+		"body": [
+		  "client.WorldToScreen( worldPos:Vector3 )"
+		],
+		"description": "Translate world position into screen position (x,y)"
+	},
+
+	"Run command in game console": {
+		"prefix": "client.Command",
+		"body": [
+		  "client.Command( command:string, unrestrict:bool )"
+		],
+		"description": "Run command in game console"
+	},
+
+	"Say text in chat": {
+		"prefix": "client.ChatSay",
+		"body": [
+		  "client.ChatSay( msg:string )"
+		],
+		"description": "Say text on chat"
+	},
+
+	"Say text in team chat": {
+		"prefix": "client.ChatTeamSay",
+		"body": [
+		  "client.ChatTeamSay( msg:string )"
+		],
+		"description": "Say text on team chat"
+	},
+
+	"Request sending given game event from server": {
+		"prefix": "client.AllowListener",
+		"body": [
+		  "client.AllowListener( eventName:string )"
+		],
+		"description": "Request sending given game event from server"
+	},
+
+	"Return player name by index": {
+		"prefix": "client.GetPlayerNameByIndex",
+		"body": [
+		  "client.GetPlayerNameByIndex( index:integer )"
+		],
+		"description": "Return player name by index"
+	},
+
+	"Return player name by user id": {
+		"prefix": "client.GetPlayerNameByUserID",
+		"body": [
+		  "client.GetPlayerNameByUserID( userID:integer )"
+		],
+		"description": "Return player name by user id"
+	},
+
+	"Returns player name, userid, steamid, isbot, ishltv": {
+		"prefix": "client.GetPlayerInfo",
+		"body": [
+		  "client.GetPlayerInfo( index:integer )"
+		],
+		"description": "Returns player name, userid, steamid, isbot, ishltv "
+	},
+
+	"Return local player index": {
+		"prefix": "client.GetLocalPlayerIndex",
+		"body": [
+		  "client.GetLocalPlayerIndex()"
+		],
+		"description": "Return local player index"
+	},
+
+	"Get game convar value": {
+		"prefix": "client.GetConVar",
+		"body": [
+		  "client.GetConVar( name:string )"
+		],
+		"description": "Get game convar value"
+	},
+
+	"Set game convar value": {
+		"prefix": "client.SetConVar",
+		"body": [
+		  "client.SetConVar( name:string, value:any )"
+		],
+		"description": "Set game convar value. Value can be integer, number, string."
+	},
+
+	"Remove convar protection": {
+		"prefix": "client.RemoveConVarProtection",
+		"body": [
+		  "client.RemoveConVarProtection( name:string )"
+		],
+		"description": "Remove convar protection. This is needed for convars that are not allowed to be changed by the server."
+	},
+
+	"Print text on chat, this text can be colored": {
+		"prefix": "client.ChatPrintf",
+		"body": [
+		  "client.ChatPrintf( msg:string )"
+		],
+		"description": "Print text on chat, this text can be colored."
+	},
+
+	"Returns a localized string": {
+		"prefix": "client.Localize",
+		"body": [
+		  "client.Localize( key:string )"
+		],
+		"description": "Returns a localized string. The localizable strings usually start with a # character, but there are exceptions. Will return nil on failure."
+	},
+
+	// clientstate
+	"Requests a full update from the server": {
+		"prefix": "clientstate.ForceFullUpdate",
+		"body": [
+		  "clientstate.ForceFullUpdate()"
+		],
+		"description": "Requests a full update from the server. This can lag the game a bit and should be used sparingly. It can even cause the game to crash if used incorrectly."
+	},
+
+	"Returns the current client signon state": {
+		"prefix": "clientstate.GetClientSignonState",
+		"body": [
+		  "clientstate.GetClientSignonState()"
+		],
+		"description": "Returns the current client signon state. This is useful for determining if the client is fully connected to the server."
+	},
+
+	"Returns the tick number of the last received tick": {
+		"prefix": "clientstate.GetDeltaTick",
+		"body": [
+		  "clientstate.GetDeltaTick()"
+		],
+		"description": "Returns the tick number of the last received tick."
+	},
+
+	"Returns the last outgoing command number": {
+		"prefix": "clientstate.GetLastOutgoingCommand",
+		"body": [
+		  "clientstate.GetLastOutgoingCommand()"
+		],
+		"description": "Returns the last outgoing command number."
+	},
+
+	"Returns the number of commands the client is currently choking": {
+		"prefix": "clientstate.GetChokedCommands",
+		"body": [
+		  "clientstate.GetChokedCommands()"
+		],
+		"description": "Returns the number of commands the client is currently choking."
+	},
+
+	"Returns the last command acknowledged by the server": {
+		"prefix": "clientstate.GetLastCommandAck",
+		"body": [
+		  "clientstate.GetLastCommandAck()"
+		],
+		"description": "Returns the last command acknowledged by the server."
+	},
+
+	"Returns the time the client connected to the server": {
+		"prefix": "clientstate.GetConnectTime",
+		"body": [
+		  "clientstate.GetConnectTime()"
+		],
+		"description": "Returns the time the client connected to the server."
+	},
+
+	"Returns the time since the last tick was received": {
+		"prefix": "clientstate.GetTimeSinceLastReceived",
+		"body": [
+		  "clientstate.GetTimeSinceLastReceived()"
+		],
+		"description": "Returns the time since the last tick was received."
+	},
+
+	"Returns the incoming latency": {
+		"prefix": "clientstate.GetLatencyIn",
+		"body": [
+		  "clientstate.GetLatencyIn()"
+		],
+		"description": "Returns the incoming latency."
+	},
+
+	"Returns the outgoing latency.": {
+		"prefix": "clientstate.GetLatencyOut",
+		"body": [
+		  "clientstate.GetLatencyOut()"
+		],
+		"description": "Returns the outgoing latency."
+	},
+
+	// draw
+	"Set color for drawing shapes and texts": {
+		"prefix": "draw.Color",
+		"body": [
+		  "draw.Color( r, g, b, a )"
+		],
+		"description": "Set color for drawing shapes and texts"
+	},
+
+	"Draw line from x1, y1 to x2, y2": {
+		"prefix": "draw.Line",
+		"body": [
+		  "draw.Line( x1, y1, x2, y2 )"
+		],
+		"description": "Draw line from x1, y1 to x2, y2"
+	},
+
+	"Draw filled rectangle with top left point at x1, y1 and bottom right point at x2, y2": {
+		"prefix": "draw.FilledRect",
+		"body": [
+		  "draw.FilledRect( x1, y1, x2, y2 )"
+		],
+		"description": "Draw filled rectangle with top left point at x1, y1 and bottom right point at x2, y2"
+	},
+
+	"Draw outlined rectangle with top left point at x1, y1 and bottom right point at x2, y2": {
+		"prefix": "draw.OutlinedRect",
+		"body": [
+		  "draw.OutlinedRect( x1, y1, x2, y2 )"
+		],
+		"description": "Draw outlined rectangle with top left point at x1, y1 and bottom right point at x2, y2"
+	},
+
+	"returns: width, height Get text size with current font": {
+		"prefix": "draw.GetTextSize",
+		"body": [
+		  "draw.GetTextSize( string )"
+		],
+		"description": "returns: width, height Get text size with current font"
+	},
+
+	"Draw text at x, y": {
+		"prefix": "draw.Text",
+		"body": [
+		  "draw.Text( x:integer, y:integer, text:string )"
+		],
+		"description": "Draw text at x, y"
+	},
+
+	"Draw text with shadow at x, y": {
+		"prefix": "draw.TextShadow",
+		"body": [
+		  "draw.TextShadow( x:integer, y:integer, text:string )"
+		],
+		"description": "Draw text with shadow at x, y"
+	},
+
+	"returns: width, height Get game resolution settings": {
+		"prefix": "draw.GetScreenSize",
+		"body": [
+		  "draw.GetScreenSize()"
+		],
+		"description": "returns: width, height Get game resolution settings"
+	},
+
+	"Create font by name": {
+		"prefix": "draw.CreateFont",
+		"body": [
+		  "draw.CreateFont( name:string, height:integer, weight:integer )"
+		],
+		"description": "Create font by name. Font flags are optional and can be combined with bitwise OR. Default font flags are FONTFLAG_CUSTOM | FONTFLAG_ANTIALIAS"
+	},
+
+	"Add font resource by path to ttf file, relative to Team Fortress 2 folder": {
+		"prefix": "draw.AddFontResource",
+		"body": [
+		  "draw.AddFontResource( pathTTF:string )"
+		],
+		"description": "Add font resource by path to ttf file, relative to Team Fortress 2 folder"
+	},
+	
+	"Set current font for drawing. To be used with DrawText": {
+		"prefix": "draw.SetFont",
+		"body": [
+		  "draw.SetFont( font:integer )"
+		],
+		"description": "Set current font for drawing. To be used with DrawText"
+	},
+
+	// draw (Textures)
+	"Create texture from image on the given path": {
+		"prefix": "draw.CreateTexture",
+		"body": [
+		  "draw.CreateTexture( imagePath:string )"
+		],
+		"description": "Create texture from image on the given path. Path is relative to %localappdata%.. But you can also specify an absolute path if you wish. Returns texture id for the newly created texture. Supported image extensions: PNG, JPG, BMP, TGA, VTF"
+	},
+
+	"Create texture from raw rgba data in the format RGBA8888 (one byte per color)": {
+		"prefix": "draw.CreateTextureRGBA",
+		"body": [
+		  "draw.CreateTextureRGBA( rgbaBinaryData:string, width:integer, height:integer )"
+		],
+		"description": "Create texture from raw rgba data in the format RGBA8888 (one byte per color). In this format you must specify the valid width and height of the texture. Returns texture id for the newly created texture."
+	},
+	
+	"Returns: width, height of the texture as integers": {
+		"prefix": "draw.GetTextureSize",
+		"body": [
+		  "draw.GetTextureSize( textureId:integer )"
+		],
+		"description": "Returns: width, height of the texture as integers"
+	},
+
+	"Draw the texture by textureId as a rectangle with top left point at x1, y1 and bottom right point at x2, y2": {
+		"prefix": "draw.TexturedRect",
+		"body": [
+		  "draw.TexturedRect( textureId:integer, x1:integer, y1:integer, x2:integer, y2:integer)"
+		],
+		"description": "Draw the texture by textureId as a rectangle with top left point at x1, y1 and bottom right point at x2, y2."
+	},
+
+	"Delete texture by textureId from memory": {
+		"prefix": "draw.DeleteTexture",
+		"body": [
+		  "draw.DeleteTexture( textureId:integer )"
+		],
+		"description": "Delete texture by textureId from memory. You should do this when unloading your script."
+	},
+
+	// engine
+	"Whether the game console is visible": {
+		"prefix": "engine.Con_IsVisible",
+		"body": [
+		  "engine.Con_IsVisible()"
+		],
+		"description": "Whether the game console is visible."
+	},
+
+	"Whether the game UI is visible": {
+		"prefix": "engine.IsGameUIVisible",
+		"body": [
+		  "engine.IsGameUIVisible()"
+		],
+		"description": "Whether the game UI is visible."
+	},
+
+	"Whether the game is taking a screenshot": {
+		"prefix": "engine.IsTakingScreenshot",
+		"body": [
+		  "engine.IsTakingScreenshot()"
+		],
+		"description": "Whether the game is taking a screenshot."
+	},
+
+	"Traces line from src to dst, returns Trace class": {
+		"prefix": "engine.TraceLine",
+		"body": [
+		  "engine.TraceLine( src:Vector3, dst:Vector3, mask:integer )"
+		],
+		"description": "Traces line from src to dst, returns Trace class"
+	},
+
+	"Traces hull from src to dst, returns Trace class": {
+		"prefix": "engine.TraceHull",
+		"body": [
+		  "engine.TraceHull( src:Vector3, dst:Vector3, mins:Vector3, maxs:Vector3, mask:integer )"
+		],
+		"description": "Traces hull from src to dst, returns Trace class"
+	},
+
+	"Checks if given point is inside wall, returns contents": {
+		"prefix": "engine.GetPointContents",
+		"body": [
+		  "engine.GetPointContents( x:number, y:number, z:number )"
+		],
+		"description": "Checks if given point is inside wall, returns contents"
+	},
+
+	"Returns map name": {
+		"prefix": "engine.GetMapName",
+		"body": [
+		  "engine.GetMapName()"
+		],
+		"description": "Returns map name"
+	},
+
+	"Returns server ip": {
+		"prefix": "engine.GetServerIP",
+		"body": [
+		  "engine.GetServerIP()"
+		],
+		"description": "Returns server ip"
+	},
+
+	"Returns player view angles": {
+		"prefix": "engine.GetViewAngles",
+		"body": [
+		  "engine.GetViewAngles()"
+		],
+		"description": "Returns player view angles"
+	},
+
+	"Sets player view angles": {
+		"prefix": "engine.SetViewAngles",
+		"body": [
+		  "engine.SetViewAngles( angles:EulerAngles )"
+		],
+		"description": "Sets player view angles"
+	},
+
+	"Plays a sound at the given path, relative to the game's root folder": {
+		"prefix": "engine.PlaySound",
+		"body": [
+		  "engine.PlaySound( soundPath:string )"
+		],
+		"description": "Plays a sound at the given path, relative to the game's root folder"
+	},
+
+	"Returns game install directory": {
+		"prefix": "engine.GetGameDir",
+		"body": [
+		  "engine.GetGameDir()"
+		],
+		"description": "Returns game install directory"
+	},
+
+    "Sends key values to server, returns true if successful": {
+        "prefix": "engine.SendKeyValues",
+        "body": [
+          "engine.SendKeyValues( keyValues:string )"
+        ],
+        "description": "Sends key values to server, returns true if successful, this can be used to send very specific commands to the server. For example, buy MvM upgrades, trigger noise makers..."
+    },
+
+	"Creates a notification in the TF2 client": {
+		"prefix": "engine.Notification",
+		"body": [
+		  "engine.Notification( title:string, [longText:string] )"
+		],
+		"description": "Creates a notification in the TF2 client. If longText is not specified, the notification will be a simple popup with title text. If longText is specified, the notification will be a popup with title text, which will open a large window with longText as text."
+	},
+
+	"Sets the seed for the game's uniform random number generator": {
+		"prefix": "engine.RandomSeed",
+		"body": [
+		  "engine.RandomSeed( seed:integer )"
+		],
+		"description": "Sets the seed for the game's uniform random number generator."
+	},
+
+	"Returns a random number between min and max (inclusive), using the game's uniform random number generator": {
+		"prefix": "engine.RandomFloat",
+		"body": [
+		  "engine.RandomFloat( min:number, [max:number = 1] )"
+		],
+		"description": "Returns a random number between min and max (inclusive), using the game's uniform random number generator."
+	},
+
+	"Returns a random integer between min and max (inclusive), using the game's uniform random number generator": {
+		"prefix": "engine.RandomInt",
+		"body": [
+		  "engine.RandomInt( min:integer, [max:integer = 0x7FFF] )"
+		],
+		"description": "Returns a random integer between min and max (inclusive), using the game's uniform random number generator."
+	},
+
+	"Returns a random number between min and max using the exponent, using the game's uniform random number generator": {
+		"prefix": "engine.RandomFloatExp",
+		"body": [
+		  "engine.RandomFloatExp( min:number, max:number, [exponent:number = 1] )"
+		],
+		"description": "Returns a random number between min and max using the exponent, using the game's uniform random number generator."
+	},
+
+    // entities
+	"Find and put into table all entities with given class name": {
+		"prefix": "entities.FindByClass",
+		"body": [
+		  "entities.FindByClass( className:string )"
+		],
+		"description": "Find and put into table all entities with given class name"
+	},
+
+	"Return local player entity": {
+		"prefix": "entities.GetLocalPlayer",
+		"body": [
+		  "entities.GetLocalPlayer()"
+		],
+		"description": "Return local player entity"
+	},
+
+	"Return entity by index": {
+		"prefix": "entities.GetByIndex",
+		"body": [
+		  "entities.GetByIndex( index:integer )"
+		],
+		"description": "Return entity by index"
+	},
+
+	"Return entity by user id": {
+		"prefix": "entities.GetByUserID",
+		"body": [
+		  "entities.GetByUserID( userID:integer )"
+		],
+		"description": "Return entity by user id"
+	},
+
+	"Return player resources entity": {
+		"prefix": "entities.GetPlayerResources",
+		"body": [
+		  "entities.GetPlayerResources()"
+		],
+		"description": "Return player resources entity"
+	},
+    
+	// filesystem
+	"Creates a directory at the specified path. Returns true if the directory was created, false if unsuccessful": {
+		"prefix": "filesystem.CreateDirectory",
+		"body": [
+		  "filesystem.CreateDirectory( string:path )"
+		],
+		"description": "Creates a directory at the specified path. Returns true if the directory was created, false if unsuccessful."
+	},
+
+	"Enumerates the files and directories in the specified directory. The callback function receives the filename and attributes of each file or directory": {
+		"prefix": "filesystem.EnumerateDirectory",
+		"body": [
+		  "filesystem.EnumerateDirectory( string:path, function( filename:string, attributes:integer ) )"
+		],
+		"description": "Enumerates the files and directories in the specified directory. The callback function receives the filename and attributes of each file or directory."
+	},
+
+	"Returns the attributes of the file at the specified path": {
+		"prefix": "filesystem.GetFileAttributes",
+		"body": [
+		  "filesystem.GetFileAttributes( string:path )"
+		],
+		"description": "Returns the attributes of the file at the specified path."
+	},
+
+	"Sets the attributes of the file at the specified path": {
+		"prefix": "filesystem.SetFileAttributes",
+		"body": [
+		  "filesystem.SetFileAttributes( string:path, integer:attributes )"
+		],
+		"description": "Sets the attributes of the file at the specified path."
+	},
+
+	// gamecoordinator
+	"Returns true if the player is connected to the game coordinator": {
+		"prefix": "gamecoordinator.ConnectedToGC",
+		"body": [
+		  "gamecoordinator.ConnectedToGC()"
+		],
+		"description": "Returns true if the player is connected to the game coordinator."
+	},
+
+	"Returns true if the player is in the end of match phase": {
+		"prefix": "gamecoordinator.InEndOfMatch",
+		"body": [
+		  "gamecoordinator.InEndOfMatch()"
+		],
+		"description": "Returns true if the player is in the end of match phase."
+	},
+
+	"Returns true if the player is assigned to a live match": {
+		"prefix": "gamecoordinator.HasLiveMatch",
+		"body": [
+		  "gamecoordinator.HasLiveMatch()"
+		],
+		"description": "Returns true if the player is assigned to a live match."
+	},
+
+	"Returns true if the player is connected to the assigned match server": {
+		"prefix": "gamecoordinator.IsConnectedToMatchServer",
+		"body": [
+		  "gamecoordinator.IsConnectedToMatchServer()"
+		],
+		"description": "Returns true if the player is connected to the assigned match server."
+	},
+
+	"Abandons the current match and forcefully disconnects the player from the match server": {
+		"prefix": "gamecoordinator.AbandonMatch",
+		"body": [
+		  "gamecoordinator.AbandonMatch()"
+		],
+		"description": "Abandons the current match and forcefully disconnects the player from the match server."
+	},
+
+	"Returns the status of the match relative to the player connection": {
+		"prefix": "gamecoordinator.GetMatchAbandonStatus",
+		"body": [
+		  "gamecoordinator.GetMatchAbandonStatus()"
+		],
+		"description": "Returns the status of the match relative to the player connection."
+	},
+
+	"Returns the ping data for all available data centers in a table": {
+		"prefix": "gamecoordinator.GetDataCenterPingData",
+		"body": [
+		  "gamecoordinator.GetDataCenterPingData()"
+		],
+		"description": "Returns Returns the ping data for all available data centers in a table. Table example:status of the match relative to the player connection."
+	},
+
+	"Returns the number of match invites the player has": {
+		"prefix": "gamecoordinator.GetNumMatchInvites",
+		"body": [
+		  "gamecoordinator.GetNumMatchInvites()"
+		],
+		"description": "Returns the number of match invites the player has."
+	},
+
+	"Accepts all match invites the player has": {
+		"prefix": "gamecoordinator.AcceptMatchInvites",
+		"body": [
+		  "gamecoordinator.AcceptMatchInvites()"
+		],
+		"description": "Accepts all match invites the player has. Usually it's just one, and they are automatically accepted after some time anyway."
+	},
+
+	"Returns a localized string. The localizable strings usually start with a # character, but there are exceptions. Will return nil on failure.": {
+		"prefix": "gamecoordinator.EnumerateQueueMapsHealth",
+		"body": [
+		  "gamecoordinator.EnumerateQueueMapsHealth( callback:function( MatchMapDefinition, number ) ) )"
+		],
+		"description": "Returns a localized string. The localizable strings usually start with a # character, but there are exceptions. Will return nil on failure."
+	},
+	
+	// gamerules
+	"Returns true if the match is a casual match": {
+		"prefix": "gamerules.IsMatchTypeCasual",
+		"body": [
+		  "gamerules.IsMatchTypeCasual()"
+		],
+		"description": "Returns true if the match is a casual match."
+	},
+
+	"Returns true if the match is a competitive match": {
+		"prefix": "gamerules.IsMatchTypeCompetitive",
+		"body": [
+		  "gamerules.IsMatchTypeCompetitive()"
+		],
+		"description": "Returns true if the match is a competitive match."
+	},
+
+	"Returns true if the matchmaking match has ended": {
+		"prefix": "gamerules.IsManagedMatchEnded",
+		"body": [
+		  "gamerules.IsManagedMatchEnded()"
+		],
+		"description": "Returns true if the matchmaking match has ended."
+	},
+
+	"Returns the time left in the match": {
+		"prefix": "gamerules.GetTimeLeftInMatch",
+		"body": [
+		  "gamerules.GetTimeLeftInMatch()"
+		],
+		"description": "Returns the time left in the match."
+	},
+
+	"When truce is active, players cannot attack each other": {
+		"prefix": "gamerules.IsTruceActive",
+		"body": [
+		  "gamerules.IsTruceActive()"
+		],
+		"description": "When truce is active, players cannot attack each other."
+	},
+
+	"Returns true if the current match is a MvM game": {
+		"prefix": "gamerules.IsMvM",
+		"body": [
+		  "gamerules.IsMvM()"
+		],
+		"description": "Returns true if the current match is a MvM game."
+	},
+
+	"Returns the current match group": {
+		"prefix": "gamerules.GetCurrentMatchGroup",
+		"body": [
+		  "gamerules.GetCurrentMatchGroup()"
+		],
+		"description": "Returns the current match group."
+	},
+
+	"Returns true if current gamemode allows players to use the grappling hook": {
+		"prefix": "gamerules.IsUsingGrapplingHook",
+		"body": [
+		  "gamerules.IsUsingGrapplingHook()"
+		],
+		"description": "Returns true if current gamemode allows players to use the grappling hook."
+	},
+
+	"Returns true if current gamemode allows players to use spells": {
+		"prefix": "gamerules.IsUsingSpells",
+		"body": [
+		  "gamerules.IsUsingSpells()"
+		],
+		"description": "Returns true if current gamemode allows players to use spells."
+	},
+
+	"Returns the current state of the round as integer": {
+		"prefix": "gamerules.GetRoundState",
+		"body": [
+		  "gamerules.GetRoundState()"
+		],
+		"description": "Returns the current state of the round as integer."
+	},
+
+	// globals
+	"Returns server tick interval": {
+		"prefix": "globals.TickInterval",
+		"body": [
+		  "globals.TickInterval()"
+		],
+		"description": "Returns server tick interval"
+	},
+
+	"Returns client tick count": {
+		"prefix": "globals.TickCount",
+		"body": [
+		  "globals.TickCount()"
+		],
+		"description": "Returns client tick count"
+	},
+
+	"Returns the time since start of the game": {
+		"prefix": "globals.RealTime",
+		"body": [
+		  "globals.RealTime()"
+		],
+		"description": "Returns the time since start of the game"
+	},
+
+	"Returns the current time": {
+		"prefix": "globals.CurTime",
+		"body": [
+		  "globals.CurTime()"
+		],
+		"description": "Returns the current time"
+	},
+
+	"Returns the frame count": {
+		"prefix": "globals.FrameCount",
+		"body": [
+		  "globals.FrameCount()"
+		],
+		"description": "Returns the frame count"
+	},
+
+	"Return delta time between frames": {
+		"prefix": "globals.FrameTime",
+		"body": [
+		  "globals.FrameTime()"
+		],
+		"description": "Return delta time between frames"
+	},
+
+	"Return delta time between frames[2]": {
+		"prefix": "globals.AbsoluteFrameTime",
+		"body": [
+		  "globals.AbsoluteFrameTime()"
+		],
+		"description": "Return delta time between frames"
+	},
+
+	"Max player count of the current server": {
+		"prefix": "globals.MaxClients",
+		"body": [
+		  "globals.MaxClients()"
+		],
+		"description": "Max player count of the current server"
+	},
+
+	// input
+	"Returns the current mouse position (x, y)": {
+		"prefix": "input.GetMousePos",
+		"body": [
+		  "input.GetMousePos()"
+		],
+		"description": "Returns the current mouse position (x, y)"
+	},
+
+	"Whether the specified button is down": {
+		"prefix": "input.IsButtonDown",
+		"body": [
+		  "input.IsButtonDown( button:integer )"
+		],
+		"description": "Whether the specified button is down."
+	},
+
+	"Whether the specified button is pressed": {
+		"prefix": "input.IsButtonPressed",
+		"body": [
+		  "input.IsButtonPressed( button:integer )"
+		],
+		"description": "Whether the specified button is pressed."
+	},
+
+	"Whether the specified button is released": {
+		"prefix": "input.IsButtonReleased",
+		"body": [
+		  "input.IsButtonReleased( button:integer )"
+		],
+		"description": "Whether the specified button is released."
+	},
+
+	// inventory
+	"Callback is called for each item in the inventory": {
+		"prefix": "inventory.Enumerate",
+		"body": [
+		  "inventory.Enumerate( callback:function( item ) )"
+		],
+		"description": "Callback is called for each item in the inventory. The item is passed as the first argument and is of type Item."
+	},
+
+	"Returns the item at the given position in the inventory": {
+		"prefix": "inventory.GetItemByPosition",
+		"body": [
+		  "inventory.GetItemByPosition( position:integer )"
+		],
+		"description": "Returns the item at the given position in the inventory."
+	},
+
+	"Returns the maximum number of items that can be in the inventory": {
+		"prefix": "inventory.GetMaxItemCount",
+		"body": [
+		  "inventory.GetMaxItemCount()"
+		],
+		"description": "Returns the maximum number of items that can be in the inventory."
+	},
+
+	"Returns the item with the given 64bit item ID": {
+		"prefix": "inventory.GetItemByItemID",
+		"body": [
+		  "inventory.GetItemByItemID( itemID:integer )"
+		],
+		"description": "Returns the item with the given 64bit item ID."
+	},
+
+	"Returns the item that is in the given slot in the given class' loadout slot": {
+		"prefix": "inventory.GetItemInLoadout",
+		"body": [
+		  "inventory.GetItemInLoadout( classid:integer, slot:integer )"
+		],
+		"description": "Returns the item that is in the given slot in the given class' loadout slot."
+	},
+	
+	"Creates a fake item with the given parameters": {
+		"prefix": "inventory.CreateFakeItem",
+		"body": [
+		  "inventory.CreateFakeItem( itemdef:ItemDefinition, pickupOrPosition:integer, itemID64:integer, quality:integer, origin:integer, level:integer, isNewItem:bool )"
+		],
+		"description": "Creates a fake item with the given parameters. The item definition is of type ItemDefinition. The pickupOrPosition parameter is the pickup method, if isNewItem parameter is true, and the inventory position of the item if isNewItem parameter is false. The itemID64 is the unique 64bit item ID of the item, you can use -1 to generate a random ID. For quality and origin you can use constants. The level is the item's level."
+	},
+
+	// itemschema
+	"Returns the item definition for the item with the given ID": {
+		"prefix": "itemschema.GetItemDefinitionByID",
+		"body": [
+		  "itemschema.GetItemDefinitionByID( id:integer )"
+		],
+		"description": "Returns the item definition for the item with the given ID."
+	},
+
+	"Returns the item definition for the item with the given name": {
+		"prefix": "itemschema.GetItemDefinitionByName",
+		"body": [
+		  "itemschema.GetItemDefinitionByName( name:string )"
+		],
+		"description": "Returns the item definition for the item with the given name."
+	},
+
+	"Enumerates all item definitions, calling the callback for each one": {
+		"prefix": "itemschema.Enumerate",
+		"body": [
+		  "itemschema.Enumerate( callback(itemDefinition) )"
+		],
+		"description": "Enumerates all item definitions, calling the callback for each one."
+	},
+
+	"Returns the attribute definition for the item with the given name": {
+		"prefix": "itemschema.GetAttributeDefinitionByName",
+		"body": [
+		  "itemschema.GetAttributeDefinitionByName( name:string )"
+		],
+		"description": "Returns the attribute definition for the item with the given name."
+	},
+
+	"Enumerates all attribute definitions, calling the callback for each one": {
+		"prefix": "itemschema.EnumerateAttributes",
+		"body": [
+		  "itemschema.EnumerateAttributes( callback:function(attributeDefinition) )"
+		],
+		"description": "Enumerates all attribute definitions, calling the callback for each one."
+	},
+
+	// materials
+	"Find a material by name": {
+		"prefix": "materials.Find",
+		"body": [
+		  "materials.Find( name:string )"
+		],
+		"description": "Find a material by name"
+	},
+
+	"Enumerate all loaded materials and call the callback function for each one": {
+		"prefix": "materials.Enumerate",
+		"body": [
+		  "materials.Enumerate( callback( mat ) )"
+		],
+		"description": "Enumerate all loaded materials and call the callback function for each one. The only argument in the callback is the Material object."
+	},
+
+	"Create custom material following the Valve Material Type syntax": {
+		"prefix": "materials.Create",
+		"body": [
+		  "materials.Create( name:string, vmt:string )"
+		],
+		"description": "Create custom material following the Valve Material Type syntax. VMT should be a string containing the full material definition. Name should be an unique name of the material."
+	},
+
+	// party
+	"Returns the player's party leader's SteamID as string": {
+		"prefix": "party.GetLeader",
+		"body": [
+		  "party.GetLeader()"
+		],
+		"description": "Returns the player's party leader's SteamID as string."
+	},
+
+	"Returns a table containing the player's party members' SteamIDs as strings": {
+		"prefix": "party.GetMembers",
+		"body": [
+		  "party.GetMembers()"
+		],
+		"description": "Returns a table containing the player's party members' SteamIDs as strings."
+	},
+
+	"Returns a table containing the player's pending party members' SteamIDs as strings": {
+		"prefix": "party.GetPendingMembers",
+		"body": [
+		  "party.GetPendingMembers()"
+		],
+		"description": "Returns a table containing the player's pending party members' SteamIDs as strings. These members are invited to party, but have not joined yet."
+	},
+
+	"Returns the player's party's group ID.": {
+		"prefix": "party.GetGroupID",
+		"body": [
+		  "party.GetGroupID()"
+		],
+		"description": "Returns the player's party's group ID."
+	},
+
+	"Returns a table containing the player's queued match groups as their ID": {
+		"prefix": "party.GetQueuedMatchGroups",
+		"body": [
+		  "party.GetQueuedMatchGroups()"
+		],
+		"description": "Returns a table containing the player's queued match groups as their ID. 7 is in this case 12v12 Casual Match."
+	},
+
+	"Returns a table where values are all possible match groups as MatchGroup objects": {
+		"prefix": "party.GetAllMatchGroups",
+		"body": [
+		  "party.GetAllMatchGroups()"
+		],
+		"description": "Returns a table where values are all possible match groups as MatchGroup objects."
+	},
+
+	"Leaves the current party": {
+		"prefix": "party.Leave",
+		"body": [
+		  "party.Leave()"
+		],
+		"description": "Leaves the current party."
+	},
+
+	"Returns true if the player can queue for the given match group": {
+		"prefix": "party.CanQueueForMatchGroup",
+		"body": [
+		  "party.CanQueueForMatchGroup( matchGroup:MatchGroup )"
+		],
+		"description": "Returns true if the player can queue for the given match group. If the player can not queue for the match groups, returns a table of reasons why the player can not queue."
+	},
+
+	"Requests to queue up for a match group": {
+		"prefix": "party.QueueUp",
+		"body": [
+		  "party.QueueUp( matchGroup:integer )"
+		],
+		"description": "Requests to queue up for a match group."
+	},
+
+	"Cancles the request to queue up for a match group": {
+		"prefix": "party.CancelQueue",
+		"body": [
+		  "party.CancelQueue( matchGroup:integer )"
+		],
+		"description": "Cancles the request to queue up for a match group."
+	},
+
+	"Whether the player is in the standby queue": {
+		"prefix": "party.IsInStandbyQueue",
+		"body": [
+		  "party.IsInStandbyQueue()"
+		],
+		"description": "Whether the player is in the standby queue. That refers to queueing up for an ongoing match in your party."
+	},
+
+	"Returns whether the player can queue up for a standby match": {
+		"prefix": "party.CanQueueForStandby",
+		"body": [
+		  "party.CanQueueForStandby()"
+		],
+		"description": "Returns whether the player can queue up for a standby match. That refers to an ongoing match in your party."
+	},
+
+	"Requests to queue up for a standby match in your party": {
+		"prefix": "party.QueueUpStandby",
+		"body": [
+		  "party.QueueUpStandby()"
+		],
+		"description": "Requests to queue up for a standby match in your party. That refers to an ongoing match in your party."
+	},
+	
+	"Cancels the request to queue up for a standby match in your party": {
+		"prefix": "party.CancelQueueStandby",
+		"body": [
+		  "party.CancelQueueStandby()"
+		],
+		"description": "Cancels the request to queue up for a standby match in your party. That refers to an ongoing match in your party."
+	},
+
+	"Returns a PartyMemberActivity object for the party member at the given index": {
+		"prefix": "party.GetMemberActivity",
+		"body": [
+		  "party.GetMemberActivity( index:integer )"
+		],
+		"description": "Returns a PartyMemberActivity object for the party member at the given index. See GetMembers() for the index."
+	},
+
+	"Promotes the given player to the party leader": {
+		"prefix": "party.PromoteMemberToLeader",
+		"body": [
+		  "party.PromoteMemberToLeader( steamid:string )"
+		],
+		"description": "Promotes the given player to the party leader. Works only if you are the party leader."
+	},
+
+	"Kicks the given player from the party": {
+		"prefix": "party.KickMember",
+		"body": [
+		  "party.KickMember( steamid:string )"
+		],
+		"description": "Kicks the given player from the party. Works only if you are the party leader."
+	},
+
+	// playerlist
+	"Returns the priority of the player" : {
+		"prefix": "playerlist.GetPriority",
+		"body": [
+			"playerlist.GetPriority( player:Entity )"
+		],
+		"description": "Returns the priority of the player."
+	},
+
+	"Returns the priority of the player by user ID" : {
+		"prefix": "playerlist.GetPriority",
+		"body": [
+			"playerlist.GetPriority( userID:number )"
+		],
+		"description": "Returns the priority of the player by user ID."
+	},
+
+	"Returns the priority of the player by Steam ID" : {
+		"prefix": "playerlist.GetPriority",
+		"body": [
+			"playerlist.GetPriority( steamID:string )"
+		],
+		"description": "Returns the priority of the player by Steam ID."
+	},
+	
+	"Sets the priority of the player" : {
+		"prefix": "playerlist.SetPriority",
+		"body": [
+			"playerlist.SetPriority( player:Entity, priority:number )'"
+		],
+		"description": "Sets the priority of the player."
+	},
+
+	"Sets the priority of the player by user ID" : {
+		"prefix": "playerlist.SetPriority",
+		"body": [
+			"playerlist.SetPriority( userID:number, priority:number )'"
+		],
+		"description": "Sets the priority of the player by user ID."
+	},
+
+	"Sets the priority of the player by Steam ID" : {
+		"prefix": "playerlist.SetPriority",
+		"body": [
+			"playerlist.SetPriority( steamID:string, priority:number )'"
+		],
+		"description": "Sets the priority of the player by Steam ID."
+	},
+
+	"Returns the color of the player" : {
+		"prefix": "playerlist.GetColor",
+		"body": [
+			"playerlist.GetColor( player:Entity )"
+		],
+		"description": "Returns the color of the player."
+	},
+	
+	"Returns the color of the player by user ID" : {
+		"prefix": "playerlist.GetColor",
+		"body": [
+			"playerlist.GetColor( userID:number )"
+		],
+		"description": "Returns the color of the player by user ID."
+	},
+
+	"Returns the color of the player by Steam ID" : {
+		"prefix": "playerlist.GetColor",
+		"body": [
+			"playerlist.GetColor( steamID:string )"
+		],
+		"description": "Returns the color of the player by Steam ID."
+	},
+
+	"Sets the color of the player" : {
+		"prefix": "playerlist.SetColor",
+		"body": [
+			"playerlist.SetColor( player:Entity, color:number )"
+		],
+		"description": "Sets the color of the player."
+	},
+
+	"Sets the color of the player by user ID" : {
+		"prefix": "playerlist.SetColor",
+		"body": [
+			"playerlist.SetColor( userID:number, color:number )"
+		],
+		"description": "Sets the color of the player by user ID."
+	},
+
+	"Sets the color of the player by Steam ID" : {
+		"prefix": "playerlist.SetColor",
+		"body": [
+			"playerlist.SetColor( steamID:string, color:number )"
+		],
+		"description": "Sets the color of the player by Steam ID."
+	},
+
+	// steam
+	"Returns SteamID of the user as string": {
+		"prefix": "steam.GetSteamID",
+		"body": [
+		  "steam.GetSteamID()"
+		],
+		"description": "Returns SteamID of the user as string."
+	},
+
+	"Returns the player name of the player having the given SteamID": {
+		"prefix": "steam.GetPlayerName",
+		"body": [
+		  "steam.GetPlayerName( steamid:string )"
+		],
+		"description": "Returns the player name of the player having the given SteamID."
+	},
+
+	"Returns true if the player is a friend of the user": {
+		"prefix": "steam.IsFriend",
+		"body": [
+		  "steam.IsFriend( steamid:string )"
+		],
+		"description": "Returns true if the player is a friend of the user."
+	},
+
+	"Returns a table of all friends of the user": {
+		"prefix": "steam.GetFriends",
+		"body": [
+		  "steam.GetFriends()"
+		],
+		"description": "Returns a table of all friends of the user."
+	},
+
+	"Returns the 64bit SteamID of the player as a long integer": {
+		"prefix": "steam.ToSteamID64",
+		"body": [
+		  "steam.ToSteamID64( steamid:string )"
+		],
+		"description": "Returns the 64bit SteamID of the player as a long integer."
+	},
+
+	// vector
+	"Add two vectors": {
+		"prefix": "vector.Add",
+		"body": [
+		  "vector.Add( {x,y,z}, {x,y,z} )"
+		],
+		"description": "Add two vectors"
+	},
+
+	"Subtract two vectors": {
+		"prefix": "vector.Subtract",
+		"body": [
+		  "vector.Subtract( {x,y,z}, {x,y,z} )"
+		],
+		"description": "Subtract two vectors"
+	},
+
+	"Multiply vector by scalar": {
+		"prefix": "vector.Multiply",
+		"body": [
+		  "vector.Multiply( {x,y,z}, m )"
+		],
+		"description": "Multiply vector by scalar"
+	},
+
+	"Divide vector by scalar": {
+		"prefix": "vector.Divide",
+		"body": [
+		  "vector.Divide( {x,y,z}, d )"
+		],
+		"description": "Divide vector by scalar"
+	},
+
+	"Get vector length": {
+		"prefix": "vector.Length",
+		"body": [
+		  "vector.Length( {x,y,z} )"
+		],
+		"description": "Get vector length"
+	},
+
+	"Get vector squared length": {
+		"prefix": "vector.LengthSqr",
+		"body": [
+		  "vector.LengthSqr( {x,y,z} )"
+		],
+		"description": "Get vector squared length"
+	},
+
+	"Get distance between two vectors": {
+		"prefix": "vector.Distance",
+		"body": [
+		  "vector.Distance( {x,y,z}, {x,y,z} )"
+		],
+		"description": "Get distance between two vectors"
+	},
+
+	"Normalize vector": {
+		"prefix": "vector.Normalize",
+		"body": [
+		  "vector.Normalize( {x,y,z} )"
+		],
+		"description": "Normalize vector"
+	},
+
+	"Get vector angles": {
+		"prefix": "vector.Angles",
+		"body": [
+		  "vector.Angles( {pitch,yaw,roll} )"
+		],
+		"description": "Get vector angles"
+	},
+
+	"Get forward vector angle": {
+		"prefix": "vector.AngleForward",
+		"body": [
+		  "vector.AngleForward( {pitch,yaw,roll} )"
+		],
+		"description": "Get forward vector angle"
+	},
+
+	"Get right vector angle": {
+		"prefix": "vector.AngleRight",
+		"body": [
+		  "vector.AngleRight( {pitch,yaw,roll} )",
+		],
+		"description": "Get right vector angle"
+	},
+
+	"Get up vector angle": {
+		"prefix": "vector.AngleUp",
+		"body": [
+		  "vector.AngleUp( {pitch,yaw,roll} )"
+		],
+		"description": "Get up vector angle"
+	},
+
+	"Normalize vector angles": {
+		"prefix": "vector.AngleNormalize",
+		"body": [
+		  "vector.AngleNormalize( {pitch,yaw,roll} )"
+		],
+		"description": "Normalize vector angles"
+	},
+}
