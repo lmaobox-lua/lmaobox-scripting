@@ -78,11 +78,6 @@ local function capture_input( self )
     return status, self.held, input_key_name[button]
 end
 
-local function get_text_from_input( self )
-    local button = self.button
-    local pressed, press = input.IsButtonDown( button ), input.IsButtonPressed( button )
-end
-
 local function new_input( code )
     if type( code ) ~= 'number' then
         return
@@ -99,8 +94,7 @@ local function new_input( code )
      }
     local mt = setmetatable( key_event[code], {
         __index = {
-            capture_input = capture_input,
-            get_text = get_text_from_input
+            capture_input = capture_input
          },
         __tostring = function( self )
             if not self.key_name then
@@ -124,6 +118,30 @@ local function get_current_fastest_input()
     return tbl[next( tbl, nil )]
 end
 
+-- not supporting ? " " all sort of that yet
+local rawdata, queuetext = {}, {}
+local function lmaobox_get_text_from_input()
+    for i = 1, 109 do
+        local pressed, press = input.IsButtonDown( i ), input.IsButtonPressed( i )
+        if pressed and rawdata[i] ~= press then
+            rawdata[i] = press
+            if i == KEY_BACKSPACE then
+                table.remove( queuetext, #queuetext )
+            else
+                if input_key_name[i] == 'SPACE' then
+                    table.insert( queuetext, ' ' )
+                elseif input_key_name[i] == 'ENTER' then
+                    --table.insert( queuetext, '\n' )
+                else
+                    table.insert( queuetext, input_key_name[i] )
+                end
+            end
+        end
+    end
+    print(#queuetext)
+    return queuetext
+end
+
 callbacks.Register( 'Unload', function()
     -- preload()
 end )
@@ -133,7 +151,6 @@ local function preload()
 end
 
 --- 
-
 local key_h = new_input( MOUSE_5 )
 local new_key = nil
 callbacks.Register( 'Draw', function()
@@ -160,6 +177,9 @@ callbacks.Register( 'Draw', function()
             draw.Text( 250, 250, 'double tapping!' )
         end
     end
+    print( table.concat( lmaobox_get_text_from_input() ) )
+
+
     -- print( key_h:capture_input() )
 end )
 
