@@ -1,0 +1,8 @@
+"VertexLitGeneric"
+{
+	"$basetexture"						"vgui/white_additive"
+	"$bumpmap"							"vgui/white_additive"
+	"$selfillum"						"1"
+	"$selfillumfresnel"					"1"
+	"$selfillumfresnelminmaxexp"		"[-0.25 1 1]"
+}
