@@ -4,7 +4,7 @@ local hasJson, json = pcall( require, 'dkjson' )
 local template = "\n* [%s] is missing, download and put the file in lmaobox lua folder:\n%s"
 assert( hasMenuLib, template:format( template, 'Menu.lua', 'https://github.com/lnx00/Lmaobox-LUA/blob/main/Menu.lua' ) )
 -- assert( hasMsgPack, string.format(template, 'msgpack.lua', 'https://github.com/kieselsteini/msgpack/blob/master/msgpack.lua') )
-assert( hasJson, template:format( template, 'json.lua', 'https://github.com/rxi/json.lua/blob/master/json.lua' ) )
+assert( hasJson, template:format( template, 'json.lua', [[http://dkolf.de/src/dkjson-lua.fsl/home]] ) )
 
 -- forward declare
 local function guiUpdate()
