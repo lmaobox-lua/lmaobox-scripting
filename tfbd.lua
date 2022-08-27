@@ -174,7 +174,7 @@ local function on_client_connect()
             find_suspect( name, steamid3 )
             ::e::
         end
-        callbacks.Unregister( 'Draw', 'unique1' )
+        callbacks.Unregister( 'Draw', '' )
     end
 end
 
@@ -182,7 +182,7 @@ callbacks.Register( 'FireGameEvent', function( e )
     local event = e:GetName()
 
     if event == 'game_newmap' then
-        callbacks.Register( 'Draw', 'unique1', on_client_connect )
+        callbacks.Register( 'Draw', on_client_connect )
         return
     end
 

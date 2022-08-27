@@ -1,138 +1,199 @@
-local myfont = draw.CreateFont( "verdana", 2 ^ 4, 800, FONTFLAG_CUSTOM | FONTFLAG_OUTLINE | FONTFLAG_DROPSHADOW )
-local myfont2 = draw.CreateFont( 'verdana', 2 ^ 4, 600, FONTFLAG_CUSTOM | FONTFLAG_OUTLINE )
-
-callbacks.Register( 'CreateMove', function( cmd )
-    local player = entities.GetLocalPlayer()
-    local wpn = player:GetPropEntity( "m_hActiveWeapon" )
-
-    if player:IsAlive() and wpn ~= nil then
-        if wpn:IsAttackCritical( cmd.command_number ) == true then
-            -- printc(255, 0, 255, 255, cmd.command_number)
-        end
+local weapon_name_cache = {}
+local function get_weapon_name( any )
+    if type( any ) == 'number' then
+        return weapon_name_cache[any] or get_weapon_name( itemschema.GetItemDefinitionByID( any ) )
     end
-end )
 
-local critState = { CRIT_BUCKET_EMPTY, CRIT_OBSERVED_CAP, CRIT_DISABLED, CRIT_BOOSTED_EXTERNAL_SOURCE, CRIT_STREAMING }
+    local meta = getmetatable( any )
+
+    if meta['__name'] == 'Entity' then
+        if any:IsWeapon() then
+            return get_weapon_name( any:GetPropInt( 'm_iItemDefinitionIndex' ) )
+        end
+        return 'entity is not a weapon'
+    end
+
+    if meta['__name'] == 'ItemDefinition' then
+        if weapon_name_cache[any] then
+            return weapon_name_cache[any]
+        end
+        local special = tostring( any ):match( 'TF_WEAPON_[%a%A]*' )
+        if special then
+            local i1 = client.Localize( special )
+            if i1:len() ~= 0 then
+                weapon_name_cache[any:GetID()] = i1
+                return i1
+            end
+            weapon_name_cache[any:GetID()] = client.Localize( any:GetTypeName():gsub( '_Type', '' ) )
+            return weapon_name_cache[any:GetID()]
+        end
+        for attrDef, value in pairs( any:GetAttributes() ) do
+            local name = attrDef:GetName()
+            if name == 'paintkit_proto_def_index' or name == 'limited quantity item' then
+                weapon_name_cache[any:GetID()] = client.Localize( any:GetTypeName():gsub( '_Type', '' ) )
+                return weapon_name_cache[any:GetID()]
+            end
+        end
+        weapon_name_cache[any:GetID()] = tostring( any:GetNameTranslated() )
+        return weapon_name_cache[any:GetID()]
+    end
+end
+
+local function is_rapid_fire_weapon( wpn )
+    -- todo: Ask bf to add GetWeaponData.m_bUseRapidFireCrits
+    return wpn:GetLastRapidFireCritCheckTime() > 0 or wpn:GetClass() == 'CTFMinigun'
+end
+
+local function get_crit_cap( wpn )
+    local me_crit_multiplier = entities.GetLocalPlayer():GetCritMult()
+    local chance = 0.02
+
+    if wpn:IsMeleeWeapon() then
+        chance = 0.15
+    end
+    local multiplier_crit_chance = wpn:AttributeHookFloat( "mult_crit_chance", me_crit_multiplier * chance )
+
+    if is_rapid_fire_weapon( wpn ) then
+        local total_crit_chance = math.max( math.min( 0.02 * me_crit_multiplier, 0.01 ), 0.99 )
+        local crit_duration = 2.0
+        local non_crit_duration = (crit_duration / total_crit_chance) - crit_duration
+        local start_crit_chance = 1 / non_crit_duration
+        multiplier_crit_chance = wpn:AttributeHookFloat( "mult_crit_chance", start_crit_chance )
+    end
+
+    return multiplier_crit_chance
+end
+
+--- 
+
+local indicator = draw.CreateFont( 'Verdana', 16, 700, FONTFLAG_CUSTOM | FONTFLAG_OUTLINE )
+-- draw.CreateFont( 'Verdana', 24, 700, FONTFLAG_CUSTOM | FONTFLAG_ANTIALIAS )
 
 callbacks.Register( "Draw", function()
-    local w, h = draw.GetScreenSize()
-    local cw, ch = w // 2, h // 2 + 15
-    draw.Color( 255, 255, 255, 255 )
-    draw.SetFont( myfont )
+    local width, height = draw.GetScreenSize()
+    local width_center, height_center = width // 2, height // 2
+    draw.SetFont( indicator )
+    draw.Color( 0, 0, 0, 255 )
+    local me = entities.GetLocalPlayer()
 
-    local player = entities.GetLocalPlayer()
-    local wpn = player:GetPropEntity( "m_hActiveWeapon" )
-    local wpnid = wpn:GetPropInt( 'm_iItemDefinitionIndex' )
+    if not me then
+        return
+    end
 
-    if player:IsAlive() and wpn ~= nil then
-        local weapon_item_definition = itemschema.GetItemDefinitionByID( wpnid )
-        local tokenBucket, critCheckCount, critSeedRequestCount, critSeed, rapidFireCritTime,
-            lastRapidFireCritCheckTime, critChance, critCost, dmgStats, totalDmg, criticalDmg, meleeDmg, baseDmg,
-            calcObservedCritChance, critMult
+    local wpn = me:GetPropEntity( 'm_hActiveWeapon' )
 
-        tokenBucket = wpn:GetCritTokenBucket()
-        baseDmg = wpn:GetWeaponBaseDamage()
-        critCheckCount = wpn:GetCritCheckCount()
-        critSeedRequestCount = wpn:GetCritSeedRequestCount()
-        critSeed = wpn:GetCurrentCritSeed()
-        critMult = wpn:GetCritMult()
-        rapidFireCritTime = wpn:GetRapidFireCritTime()
-        lastRapidFireCritCheckTime = wpn:GetLastRapidFireCritCheckTime()
-        critChance = wpn:GetCritChance()
-        calcObservedCritChance = wpn:CalcObservedCritChance()
-        critCost = wpn:GetCritCost( tokenBucket, critSeedRequestCount, critCheckCount )
-        dmgStats = wpn:GetWeaponDamageStats()
-        totalDmg = dmgStats.total
-        criticalDmg = dmgStats.critical
-        meleeDmg = dmgStats.melee
+    if not wpn or not me:IsAlive() then
+        return
+    end
 
-        -- draw.Text limits to 511 char
-        draw.SetFont( myfont2 )
-        local t1, t2, t3, t4 = { 'superior name', 'base dmg', 'CritTokenBucket', 'CritCheckCount',
-                                 'CritSeedRequestCount', 'CurrentCritSeed', 'CritMult', 'RapidFireCritTime',
-                                 'LastRapidFireCritCheckTime', 'CritChance', 'CalcObservedCritChance', 'CritCost',
-                                 'totalDmg', 'criticalDmg', 'meleeDmg', 'storedCrits (inaccurate)', 'mult_crit_chance',
-                                 'm_flObservedCritChance' },
-            { tostring( weapon_item_definition:GetNameTranslated() ),  baseDmg, tokenBucket, critCheckCount,
-              critSeedRequestCount, critSeed, critMult, rapidFireCritTime, lastRapidFireCritCheckTime, critChance,
-              calcObservedCritChance, critCost, totalDmg, criticalDmg, meleeDmg, tokenBucket // critCost,
-              wpn:AttributeHookFloat( 'mult_crit_chance' ), wpn:GetPropFloat( 'm_flObservedCritChance' ) }, 150, 0
-        for i, name in ipairs( t1 ) do
-            local tw, th = draw.GetTextSize( name )
-            t4 = t4 < tw and tw or t4
-            draw.Text( 100, t3, name )
-            t3 = t3 + th
+    local name = get_weapon_name( wpn )
+
+    local rapidfire_history, rapidfire_check_time = wpn:GetRapidFireCritTime(), wpn:GetLastRapidFireCritCheckTime()
+
+    local bucket_current, bucket_cap, bucket_bottom, bucket_start = wpn:GetCritTokenBucket(), client.GetConVar(
+        'tf_weapon_criticals_bucket_cap' ), client.GetConVar( 'tf_weapon_criticals_bucket_bottom' ), client.GetConVar(
+        'tf_weapon_criticals_bucket_default' )
+
+    local crit_check, crit_request = wpn:GetCritCheckCount(), wpn:GetCritSeedRequestCount()
+    local observed_crit_chance = wpn:CalcObservedCritChance()
+    local wpn_critchance = wpn:GetCritChance()
+    local wpn_seed = wpn:GetCurrentCritSeed()
+    local wpn_can_crit = wpn:CanRandomCrit()
+    local damage_base = wpn:GetWeaponBaseDamage()
+    local stats = wpn:GetWeaponDamageStats()
+    local cost = wpn:GetCritCost( bucket_current, crit_request, crit_check )
+
+    local server_allow_crit = false
+    local can_criticals_melee = client.GetConVar( 'tf_weapon_criticals_melee' )
+    local can_weapon_criticals = client.GetConVar( 'tf_weapon_criticals' )
+
+    if wpn:IsMeleeWeapon() then
+        if can_criticals_melee == 2 or (can_weapon_criticals == 1 and can_criticals_melee == 1) then
+            server_allow_crit = true
         end
-        t3 = 150
-        for i, name in ipairs( t2 ) do
-            draw.Color( 36, 255, 122, 255 )
-            if type( name ) == 'number' then
-                name = tonumber( string.format( "%.3f", name ) )
-            end
-            name = tostring( name )
-            local tw, th = draw.GetTextSize( name )
-            draw.Text( 100 + t4 + 20, t3, name )
-            t3 = t3 + th
-        end
-        draw.SetFont( myfont )
-
-        -- (the + 0.1 is always added to the comparsion)
-        local cmpCritChance = critChance + 0.1
-        draw.Color( 255, 255, 255, 255 )
-        local text, tw, th
-
-        --[[
-            if critcheckcount == 0, crit seed won't be updated
-        ]]
-
-
-        -- invalid + hardcode value
-        if not wpn:CanRandomCrit() then
-            text = "Random crit disabled :("
-            tw, th = draw.GetTextSize( text )
-            return draw.Text( cw - (tw // 2), ch, text )
-        end
-
-        if wpn:IsMeleeWeapon() then
-            local mult_crit_chance = wpn:AttributeHookFloat( 'mult_crit_chance' )
-            -- print(mult_crit_chance)
-        end
-
-        -- printc(255, 0, 255, 255, '----')
-        -- printLuaTable(weapon_item_definition:GetAttributes()) -- damage penalty: 0.85000002384186
-        -- printc(0, 255, 255, 255, '----')
-
-        if tokenBucket < critCost then
-            text = "Bucket is low"
-            tw, th = draw.GetTextSize( text )
-            return draw.Text( cw - (tw // 2), ch, text )
-        end
-
-        -- If we are allowed to crit
-        if cmpCritChance > wpn:CalcObservedCritChance() and (critSeed > -1 or wpn:GetSwingRange()) then
-            text = "Crit ready"
-            tw, th = draw.GetTextSize( text )
-            draw.Text( cw - (tw // 2), ch, text )
-        else -- Figure out how much damage we need
-            local requiredTotalDamage = (criticalDmg * (2.0 * cmpCritChance + 1.0)) / cmpCritChance / 3.0
-            local requiredDamage = requiredTotalDamage - totalDmg
-            text = "Damage needed to crit: " .. math.floor( requiredDamage )
-            tw, th = draw.GetTextSize( text )
-            draw.Text( cw - (tw // 2), ch, text )
+    elseif wpn:IsShootingWeapon() then
+        if can_weapon_criticals == 1 then
+            server_allow_crit = true
         end
     end
+
+    ---- 
+    local startpos, txt_x, txt_y = 130, draw.GetTextSize( name )
+    draw.FilledRect( startpos, startpos, startpos + txt_x, startpos + txt_y )
+    draw.Color( 255, 255, 255, 255 )
+    draw.TextShadow( startpos, startpos, name )
+    local wpndebug = {
+        variable = { 'server_allow_crit', 'rapidfire_history', 'rapidfire_check_time', 'bucket_current', 'bucket_cap',
+                     'bucket_bottom', 'bucket_start', 'cost', 'crit_check', 'crit_request', 'observed_crit_chance',
+                     'wpn_critchance', 'wpn_seed', 'damage_base', 'total', 'critical', 'melee' },
+        value = { server_allow_crit, rapidfire_history, rapidfire_check_time, bucket_current, bucket_cap, bucket_bottom,
+                  bucket_start, cost, crit_check, crit_request, observed_crit_chance, wpn_critchance, wpn_seed,
+                  damage_base, stats.total, stats.critical, stats.melee }
+     }
+
+    local i, j, space = 0, 0, 0
+    for _, name in ipairs( wpndebug.variable ) do
+        local width, height = draw.GetTextSize( name )
+        if width + startpos > space - 100 then
+            space = width + startpos + 100
+        end
+        draw.Text( startpos, startpos + math.floor( height * i ) + txt_y * 2, name )
+        i = i + 1.3
+    end
+    draw.Color( 36, 255, 122, 255 )
+    for _, value in ipairs( wpndebug.value ) do
+        if type( value ) == 'number' and math.floor( value ) ~= value then
+            value = string.format( "%.6s", value )
+        end
+        local width, height = draw.GetTextSize( tostring( value ) )
+        draw.Text( space - (width // 2), startpos + math.floor( height * j ) + txt_y * 2, tostring( value ) )
+        j = j + 1.3
+    end
+
+    --- 
+    draw.Color( 255, 255, 255, 255 )
+    local data, text = {}
+    local cmpCritChance = wpn_critchance + 0.1
+
+    if not server_allow_crit then
+        data[#data + 1] = 'server disabled crit'
+    end
+
+    if not wpn:CanRandomCrit() then
+        data[#data + 1] = 'no random crit'
+    end
+
+    for i = 1, bucket_cap // damage_base do
+        print( string.format('cost: %s, request: %d', wpn:GetCritCost( bucket_start, 1, i ), i) )
+    end
+
+    if cmpCritChance < wpn:CalcObservedCritChance() then
+        local requiredTotalDamage = (stats.critical * (2.0 * cmpCritChance + 1.0)) / cmpCritChance / 3.0
+        local requiredDamage = requiredTotalDamage - stats.total
+        data[#data + 1] = 'deal ' .. math.floor( requiredDamage ) .. ' damage'
+    end
+
+    if bucket_current < math.floor( cost ) then
+        data[#data + 1] = 'low bucket'
+    end
+
+    if bucket_current == bucket_cap then
+        data[#data + 1] = 'bucket reached cap'
+    end
+
+    if is_rapid_fire_weapon( wpn ) then
+        data[#data + 1] = 'rapidfire-able'
+    end
+
+    if rapidfire_history - globals.CurTime() > 0 then
+        data[#data + 1] = 'rapid firing: ' .. string.format( "%.4s", rapidfire_history - globals.CurTime() )
+    end
+
+    text = table.concat( data, ', ' )
+    txt_x, txt_y = draw.GetTextSize( text )
+    draw.Text( width_center - math.floor( txt_x / 2 ), math.floor( height_center * 1.05 ), text )
+
 end )
 
---[[
-            tokenBucket = wpn:GetCritTokenBucket()
-        critCheckCount = wpn:GetCritCheckCount()
-        critSeedRequestCount = wpn:GetCritSeedRequestCount()
-        critSeed = wpn:GetCurrentCritSeed()
-        rapidFireCritTime = wpn:GetRapidFireCritTime()
-        critChance = wpn:GetCritChance()
-        critCost = wpn:GetCritCost( tokenBucket, critSeedRequestCount, critCheckCount )
-        dmgStats = wpn:GetWeaponDamageStats()
-        totalDmg = dmgStats.total
-        criticalDmg = dmgStats.critical
-        meleeDmg = dmgStats.melee
-]]
+-- mult_dmg : damage bonus / penalty (modifier)
+
