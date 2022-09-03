@@ -89,6 +89,8 @@ local event = {
             -- reasons[2]: player is already queueing for ... (maybe we should replace with GetQueuedMatchGroups() instead)
             if reasons == true then
                 queueable_match_group[name] = MatchGroup
+            else
+                printLuaTable(reasons)
             end
         end
     end
@@ -100,9 +102,27 @@ callbacks.Register( 'FireGameEvent', function( e )
     end
 end )
 callbacks.Register( 'SendStringCmd', function( cmd )
-    parse( cmd:Get() )
-    UnloadScript( GetScriptName() )
-    LoadScript( GetScriptName() )
+    --parse( cmd:Get() )
+    --UnloadScript( GetScriptName() )
+    --LoadScript( GetScriptName() )
 end )
 
 event.party_updated()
+
+local gamemodes = party.GetAllMatchGroups()
+for name, MatchGroup in pairs( gamemodes ) do
+    local reasons = party.CanQueueForMatchGroup( MatchGroup )
+    -- reasons[2]: player is already queueing for ... (maybe we should replace with GetQueuedMatchGroups() instead)
+    if reasons == true then
+        queueable_match_group[name] = MatchGroup
+        party.QueueUp( MatchGroup )
+    else
+        --printLuaTable(reasons) 
+    end
+end
+
+-- cannot join a lobby if another player is requesting to join ur lobby.
+
+-- to enable party bypass, set 'share my lobby' or 'auto accept invites' to true
+
+-- tf_party_debug <- useful cvar use it.

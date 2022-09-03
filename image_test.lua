@@ -83,10 +83,10 @@ local image_mt = {
             end
         end,
         unpack = function( self, format_str )
-            local unpacked = { struct.unpack( format_str, self.content, self.offset ) }
+            local unpacked = { string.unpack( format_str, self.content, self.offset ) }
 
             if self.size_cache[format_str] == nil then
-                self.size_cache[format_str] = struct.pack( format_str, table.unpack( unpacked ) ):len()
+                self.size_cache[format_str] = string.pack( format_str, table.unpack( unpacked ) ):len()
             end
             self.offset = self.offset + self.size_cache[format_str]
 
@@ -137,13 +137,7 @@ local function load_png( content )
     local len, chunk = buf:unpack( '>I' ), buf:unpack( 'c4' )
     assert( chunk == 'IDAT', 'invalid IDAT chunk' )
     while chunk == 'IDAT' do
-        -- buf:seek( len )
-        -- local color = {}
-        for i = 1, len do
-            table.insert( self.idat, buf:unpack( 'B' ) )
-            --    color[i] = buf:unpack( 'B' )
-        end
-
+        buf:seek( len )
         buf:seek( 4 )
         len = buf:unpack( '>I' )
         chunk = buf:unpack( 'c4' )
@@ -168,5 +162,6 @@ end
 local f<close> = io.open( engine.GetGameDir() .. '//data.png', 'rb' )
 local d = f:read( 'all' )
 local p = load_png( d )
+printLuaTable(p)
 
 -- https://www.nayuki.io/page/png-file-chunk-inspector#:~:text=A%20PNG%20file%20is%20composed,depend%20on%20the%20chunk%20type.
