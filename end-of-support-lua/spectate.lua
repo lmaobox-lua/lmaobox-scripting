@@ -6,7 +6,7 @@ local spectate_mode = {
     '1st person', -- follow a player in first person view
     '3rd person', -- follow a player in third person view
     'spy cam', -- PASSTIME point of interest - game objective, big fight, anything interesting; added in the middle of the enum due to tons of hard-coded "<ROAMING" enum compares 
-    'flight' -- free roaming
+    'free cam' -- free roaming
  }
 
 local team_name = {
