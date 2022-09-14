@@ -6,6 +6,7 @@ local function parser( self, args )
     if fn then
         return fn( { table.unpack( args, 2, #args ) } )
     end
+    return false
 end
 
 local function tokenizer( text )
@@ -13,7 +14,10 @@ local function tokenizer( text )
         return
     end
     local args = {}
-    for token in text:lower():gmatch( "%g+" ) do
+    for token in text:gmatch( "%g+" ) do
+        if #args == 0 then
+            token = token:lower()
+        end
         args[#args + 1] = token
     end
     return parser( command, args )
@@ -32,6 +36,13 @@ local function var( name, val, mt )
         return
     end
     command[name:lower()] = val
+end
+
+local function is_lobby_leader( steamid )
+    if not steamid then
+        steamid = steam.GetSteamID()
+    end
+    return party.GetLeader() == steamid
 end
 
 local predict_match_group = {}
@@ -69,28 +80,36 @@ local q___mt = setmetatable( {
  }, {
     __index = q__proxy,
     __newindex = function( self, index, value )
-        local c, v = self.count, self.index
-        if not value and v then
+        local c, k = self.count, q__proxy[index]
+        index = predict_match_group[index]
+        if not index then
+            return
+        end
+        if not value and k then
             q__proxy[index] = nil
             c = c - 1
-        elseif value and not v then
+        elseif value and not k then
             q__proxy[index] = {}
-            q__proxy[index]['delay'] = value
-            q__proxy[index]['time'] = os.clock() + value
             c = c + 1
-        elseif value and v then
-            q__proxy[index]['delay'] = value
-            q__proxy[index]['time'] = os.clock() + value
+            goto assign
+        elseif value and k then
             c = c
+            goto assign
         end
+        goto continue
+        ::assign::
+        value = math.min( math.max( math.abs( value ), 0.75 ), 7200 )
+        q__proxy[index]['delay'] = value
+        q__proxy[index]['time'] = os.clock() + value
+        ::continue::
         self.count = c
         callbacks.Unregister( 'Draw', 'auto_queue' )
         if c > 0 then
             callbacks.Register( 'Draw', 'auto_queue', function()
-                for k, t in pairs( q__proxy ) do
+                for mode, t in pairs( q__proxy ) do
                     if os.clock() > t['time'] then
-                        t.time = os.clock() + t['delay']
-                        queue_func( predict_match_group[k] )
+                        t['time'] = os.clock() + t['delay']
+                        queue_func( mode )
                     end
                 end
             end )
@@ -98,20 +117,108 @@ local q___mt = setmetatable( {
     end
  } )
 
-var( 'queue', {}, {
-    __call = function( self, args )
-        local str, time = table.unpack( args )
-        if not time then
-            q___mt[predict_match_group[str]] = nil
-        else
-            q___mt[predict_match_group[str]] = tonumber( time )
+-- TODO : rework queue -> support queue standby + clear nextgame queue + clear standby queue
+var( 'queue', function( args )
+    local str, time = table.unpack( args )
+
+    if str == 'clear' then
+        for k, g in pairs( party.GetAllMatchGroups() ) do
+            party.CancelQueue( g )
         end
-        queue_func( str )
+        q__proxy = {}
+        q___mt.count = 0
+        return callbacks.Unregister( 'Draw', 'auto_queue' )
     end
- } )
+
+    q___mt[predict_match_group[str]] = tonumber( time )
+    queue_func( str )
+end )
+
+-- tf_party_debug
+-- tf_party_incoming_invites_debug 
+
+local session_ban = {}
+local ban_duration = 600 -- 10 minutes
+
+local function leader_lobby_method( args, callback, fmt )
+    if not is_lobby_leader() then
+        return print( 'I\'m not lobby leader.' )
+    end
+    local any = table.concat( args, ' ' )
+    local guessName = any:match( "^[\"']+(.-)[\"']+$" ) -- pattern devil
+    local indexOrSteam64 = tonumber( any )
+    local stack = party.GetMembers()
+    for index, steam3 in ipairs( stack ) do
+        local name = steam.GetPlayerName( steam3 )
+        local steam64 = steam.ToSteamID64( steam3 )
+        -- LuaFormatter off 
+        if indexOrSteam64   == index 
+        or indexOrSteam64   == steam64
+        or guessName        == name 
+        or any              == steam3 then
+        -- LuaFormatter on 
+            local template = {
+                ['party_member_index'] = index,
+                ['steam3'] = steam3,
+                ['steam64'] = steam64,
+                ['name'] = name
+             }
+            if fmt then
+                print( (fmt:gsub( '(%b{})', function( w )
+                    return template[w:sub( 2, -2 )] or w
+                end )) )
+            end
+            return callback( steam3 ), steam3
+        end
+    end
+end
+
+-- TODO : force lobby setting to TRUE to enable lobby bypass
+var( 'invite', function( args )
+    local o_share_my_lobby = gui.GetValue('share my lobby')
+    
+end )
+
+var( 'kick', function( args )
+    leader_lobby_method( args, party.KickMember,
+        '[SUISEX] Kicking : {name}, index: {party_member_index}, steamid3: {steam3}' )
+end )
+
+var( 'transfer', function( args )
+    leader_lobby_method( args, party.PromoteMemberToLeader,
+        '[SUISEX] Giving lobby ownership to : {name}, index: {party_member_index}, steamid3: {steam3}' )
+end )
+
+var( 'ban', function( args )
+    local _, steam3 = leader_lobby_method( args, party.KickMember,
+        '[SUISEX] Temp Banning : {name}, index: {party_member_index}, steamid3: {steam3}' )
+    if steam3 then
+        session_ban[steam3] = os.clock() + ban_duration
+    end
+end )
+
+-- TODO: ...
+local e = {
+    ['lobby_updated'] = function( event )
+        for index, steam3 in ipairs( party.GetPendingMembers() ) do
+            if session_ban[steam3] < os.clock() then
+                party.KickMember( steam3 )
+                print( '[SUISEX] Expected ' .. steam3 .. ' cannot join for:' .. os.clock() - session_ban[steam3] )
+            end
+        end
+    end
+ }
+
+callbacks.Register( 'FireGameEvent', function( event )
+    local v = e[event:GetName()]
+    if v then
+        v( event )
+    end
+end )
 
 callbacks.Register( 'SendStringCmd', function( cmd )
     if tokenizer( cmd:Get() ) ~= false then
         cmd:Set( '' )
     end
 end )
+
