@@ -173,11 +173,17 @@ local function leader_lobby_method( args, callback, fmt )
     end
 end
 
--- TODO : force lobby setting to TRUE to enable lobby bypass
 var( 'invite', function( args )
-    local o_share_my_lobby = gui.GetValue('share my lobby')
-    
+    local ref = 'share my lobby' 
+    local original = gui.GetValue(ref)
+    local steam64 = steam.ToSteamID64( args[1] )
+    gui.SetValue( ref, true )
+    client.Command( 'tf_party_force_update', true )
+    client.Command( 'tf_party_invite_user %d', true )
+
 end )
+
+-- tf_party_request_join_user 
 
 var( 'kick', function( args )
     leader_lobby_method( args, party.KickMember,

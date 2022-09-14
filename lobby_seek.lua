@@ -58,6 +58,7 @@ local command = {
     -- user leave
     -- user standby <join/leave/get>
     -- user priority index | userid | steamid <get, set, color> <opt val>
+    -- user map <mapbitgetto>
     ['user'] = function( args )
 
     end
