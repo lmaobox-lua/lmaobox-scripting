@@ -1,128 +1,117 @@
--- MannUp
--- Competitive6v6
--- SpecialEvent
--- Casual
--- BootCamp
-local queueable_match_group, members, join_pendings, leader, groupid = {}
+-- made exclusively for discord: 232641555398131712
+local command = {}
 
-local function autoqueue()
-
-end
-
-local function party_say( text )
-end
-
-local command = {
-
-    -- queue all 
-    -- queue autoqueue [mode]
-    -- queue casual, competitive
-    ['queue'] = {
-        all = function()
-            for name, matchgroup in pairs( queueable_match_group ) do
-                party.QueueUp( matchgroup )
-            end
-        end,
-        autoqueue = autoqueue
-     },
-
-    -- info leader
-    -- info groupid
-    -- info leave
-    -- info join
-    -- info pending
-    ['info'] = {
-        leader = function()
-            party_say( 'current leader: ' .. steam.GetPlayerName( leader ) )
-        end,
-        groupid = function()
-            party_say( 'current groupid: ' .. groupid )
-        end,
-        leave = function()
-            party_say( 'last 5 entries (members left):' )
-        end,
-        join = function()
-            party_say( 'last 5 entries (members joined):' )
-        end,
-        pending = function()
-            party_say( 'last 5 entries (members in waiting room):' )
-        end
-     },
-
-    --- whitelisting needed!
-    -- user connect <community ip> <opt password>
-    -- user disconnect
-    -- user lua <filename>
-    -- user leader <steamid>
-    -- user kick <steamid> | offline | banned
-    -- user leave
-    -- user standby <join/leave/get>
-    -- user priority index | userid | steamid <get, set, color> <opt val>
-    ['user'] = function( args )
-
+local function parser( self, args )
+    local fn = self[args[1]]
+    if fn then
+        return fn( { table.unpack( args, 2, #args ) } )
     end
- }
+end
 
-local function parse( text )
+local function tokenizer( text )
+    if #text == 0 then
+        return
+    end
     local args = {}
-    for w in text:gmatch( "%S+" ) do
-        args[#args + 1] = w:lower()
+    for token in text:lower():gmatch( "%g+" ) do
+        args[#args + 1] = token
     end
-    command[table.remove( args, 1 )]( args )
+    return parser( command, args )
 end
 
-local event = {
-    ['party_chat'] = function( e )
-        local steamid64, text, type
-        steamid64 = e:GetInt( 'steamid' )
-        text = e:GetString( 'text' )
-        type = e:GetInt( 'type' )
-        parse( text )
-    end,
-    ['party_updated'] = function()
-        members = party.GetMembers()
-        leader = party.GetLeader()
-        groupid = party.GetGroupID()
-        local gamemodes = party.GetAllMatchGroups()
-        for name, MatchGroup in pairs( gamemodes ) do
-            local reasons = party.CanQueueForMatchGroup( MatchGroup )
-            -- reasons[2]: player is already queueing for ... (maybe we should replace with GetQueuedMatchGroups() instead)
+local function var( name, val, mt )
+    local t = type( val )
+    if t == 'table' then
+        if not mt then
+            mt = {
+                __call = parser
+             }
+        end
+        setmetatable( val, mt )
+    elseif t ~= 'function' then
+        return
+    end
+    command[name:lower()] = val
+end
+
+local predict_match_group = {}
+do
+    local matchgroups = party.GetAllMatchGroups()
+    for k in pairs( matchgroups ) do
+        local i = 1
+        for j = 2, #k do
+            local s = k:sub( i, j )
+            predict_match_group[s:lower()] = k
+            predict_match_group[s] = k
+        end
+    end
+end
+
+local queue_func = function( str )
+    local matchgroups = party.GetAllMatchGroups()
+    for k, mode in pairs( matchgroups ) do
+        if predict_match_group[str] == k then
+            local reasons = party.CanQueueForMatchGroup( mode )
             if reasons == true then
-                queueable_match_group[name] = MatchGroup
+                party.QueueUp( mode )
             else
-                printLuaTable(reasons)
+                for k, v in pairs( reasons ) do
+                    -- print( v )
+                end
             end
         end
     end
- }
-callbacks.Register( 'FireGameEvent', function( e )
-    local f = event[e:GetName()]
-    if f then
-        f( e )
-    end
-end )
-callbacks.Register( 'SendStringCmd', function( cmd )
-    --parse( cmd:Get() )
-    --UnloadScript( GetScriptName() )
-    --LoadScript( GetScriptName() )
-end )
-
-event.party_updated()
-
-local gamemodes = party.GetAllMatchGroups()
-for name, MatchGroup in pairs( gamemodes ) do
-    local reasons = party.CanQueueForMatchGroup( MatchGroup )
-    -- reasons[2]: player is already queueing for ... (maybe we should replace with GetQueuedMatchGroups() instead)
-    if reasons == true then
-        queueable_match_group[name] = MatchGroup
-        party.QueueUp( MatchGroup )
-    else
-        --printLuaTable(reasons) 
-    end
 end
 
--- cannot join a lobby if another player is requesting to join ur lobby.
+local q__proxy = {}
+local q___mt = setmetatable( {
+    count = 0
+ }, {
+    __index = q__proxy,
+    __newindex = function( self, index, value )
+        local c, v = self.count, self.index
+        if not value and v then
+            q__proxy[index] = nil
+            c = c - 1
+        elseif value and not v then
+            q__proxy[index] = {}
+            q__proxy[index]['delay'] = value
+            q__proxy[index]['time'] = os.clock() + value
+            c = c + 1
+        elseif value and v then
+            q__proxy[index]['delay'] = value
+            q__proxy[index]['time'] = os.clock() + value
+            c = c
+        end
+        self.count = c
+        callbacks.Unregister( 'Draw', 'auto_queue' )
+        if c > 0 then
+            callbacks.Register( 'Draw', 'auto_queue', function()
+                for k, t in pairs( q__proxy ) do
+                    if os.clock() > t['time'] then
+                        t.time = os.clock() + t['delay']
+                        queue_func( predict_match_group[k] )
+                    end
+                end
+            end )
+        end
+    end
+ } )
 
--- to enable party bypass, set 'share my lobby' or 'auto accept invites' to true
+var( 'queue', {}, {
+    __call = function( self, args )
+        local str, time = table.unpack( args )
+        if not time then
+            q___mt[predict_match_group[str]] = nil
+        else
+            q___mt[predict_match_group[str]] = tonumber( time )
+        end
+        queue_func( str )
+    end
+ } )
 
--- tf_party_debug <- useful cvar use it.
+callbacks.Register( 'SendStringCmd', function( cmd )
+    if tokenizer( cmd:Get() ) ~= false then
+        cmd:Set( '' )
+    end
+end )
