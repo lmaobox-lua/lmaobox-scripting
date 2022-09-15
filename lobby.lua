@@ -59,15 +59,23 @@ do
 end
 
 local queue_func = function( str )
+    if not gamecoordinator.ConnectedToGC() then
+        print( "failed to queue : not connected to GC" )
+    end
     local matchgroups = party.GetAllMatchGroups()
     for k, mode in pairs( matchgroups ) do
         if predict_match_group[str] == k then
+            local id = mode:GetID()
             local reasons = party.CanQueueForMatchGroup( mode )
-            if reasons == true then
-                party.QueueUp( mode )
-            else
-                for k, v in pairs( reasons ) do
-                    -- print( v )
+            local shouldQueue = gamerules.GetCurrentMatchGroup() ~= id or gamerules.GetCurrentMatchGroup() == id and
+                                    gamecoordinator.InEndOfMatch()
+            if shouldQueue then
+                if reasons == true then
+                    party.QueueUp( mode )
+                else
+                    for k, v in pairs( reasons ) do
+                        -- print( v )
+                    end
                 end
             end
         end
@@ -118,6 +126,7 @@ local q___mt = setmetatable( {
  } )
 
 -- TODO : rework queue -> support queue standby + clear nextgame queue + clear standby queue
+-- TODO : add an option to stop queue if we're already ingame in that gamemode.
 var( 'queue', function( args )
     local str, time = table.unpack( args )
 
@@ -173,17 +182,33 @@ local function leader_lobby_method( args, callback, fmt )
     end
 end
 
-var( 'invite', function( args )
-    local ref = 'share my lobby' 
-    local original = gui.GetValue(ref)
-    local steam64 = steam.ToSteamID64( args[1] )
-    gui.SetValue( ref, true )
+local function generic_func( cmd, steamid, fmt )
+    local ref = 'share my lobby'
+    local original = gui.GetValue( ref )
+    local steam64 = steam.ToSteamID64( steamid )
+    gui.SetValue( ref, 1 )
     client.Command( 'tf_party_force_update', true )
-    client.Command( 'tf_party_invite_user %d', true )
+    client.Command( cmd .. steam64, true )
+    local template = {
+        ['steam64'] = steam64,
+        ['name'] = steam.GetPlayerName( steam64 )
+     }
+    if fmt then
+        print( (fmt:gsub( '(%b{})', function( w )
+            return template[w:sub( 2, -2 )] or w
+        end )) )
+    end
+    gui.SetValue( ref, original )
 
+end
+
+var( 'invite', function( args )
+    generic_func( 'tf_party_invite_user ', args[1], '[SUISEX] Inviting user to lobby: {name}, steamid64: {steam64}' )
 end )
 
--- tf_party_request_join_user 
+var( 'join', function( args )
+    generic_func( 'tf_party_request_join_user ', args[1], '[SUISEX] Join user\'slobby: {name}, steamid64: {steam64}' )
+end )
 
 var( 'kick', function( args )
     leader_lobby_method( args, party.KickMember,
@@ -203,7 +228,31 @@ var( 'ban', function( args )
     end
 end )
 
--- TODO: ...
+local function PartySay( message )
+    client.Command( string.format( 'tf_party_chat %q', message:gsub( '"', "'" ) ), true )
+end
+
+var( 'fun', function()
+    PartySay( 'There\'s no fun' )
+end )
+
+-- todo : table format would look nice :) + 3 conditional check is dumb.
+var( 'info', {
+    ['lobby'] = function( args )
+        local index = tonumber( args[1] )
+        local members = party.GetMembers()
+        if index and #members < index then
+            index = nil
+        end
+        for i = index and index or 1, index and index or #members do
+            local name, a = steam.GetPlayerName( members[i] ), party.GetMemberActivity( i )
+            print( string.format( 'index: %d, name: %s, online: %s, lobbyID: %d, clientver: %d', i, name, a:IsOnline(),
+                a:GetLobbyID(), a:GetClientVersion() ) )
+        end
+    end
+ } )
+
+-- TODO: ... this looks rough.
 local e = {
     ['lobby_updated'] = function( event )
         for index, steam3 in ipairs( party.GetPendingMembers() ) do
@@ -228,3 +277,28 @@ callbacks.Register( 'SendStringCmd', function( cmd )
     end
 end )
 
+if party.GetGroupID() == nil then
+    print "Creating a party shared object"
+    party.QueueUp( party.GetAllMatchGroups()['SpecialEvent'] )
+end
+
+callbacks.Register( 'Draw', function()
+    draw.SetFont( 21 )
+    draw.Color( 255, 255, 255, 255 )
+    draw.Text( 200, 280, 'NumMatchInvites: ' .. gamecoordinator.GetNumMatchInvites() )
+
+end )
+
+-- local x, y = 900, 200
+-- local dcp, sort_dcp = gamecoordinator.GetDataCenterPingData(), {}
+-- for datacenter, ping in pairs( dcp ) do
+--     sort_dcp[#sort_dcp + 1] = { datacenter, ping }
+-- end
+-- table.sort( sort_dcp, function( l, r )
+--     return l[2] < r[2]
+-- end )
+-- for index, t in ipairs( sort_dcp ) do
+--     print( index )
+--     draw.Text( x, y, t[1] .. ': ' .. t[2] )
+--     y = y + 20
+-- end
