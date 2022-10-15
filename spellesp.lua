@@ -46,60 +46,6 @@ local translations = {
      },
     ["ITEM_SPELL_RARE"] = {
         ["localized_fallback"] = "Rare Spell"
-     },
-    -- Imagine coding like this (it gives brain damage)
-    -- Halloween Spell Names
-    ["TF_Spell_Fireball"] = {
-        ["localized_string_key"] = "TF_Spellbook_Type",
-        ["localized_fallback"] = "Fireball"
-     },
-    ["TF_Spell_Bats"] = {
-        ["localized_string_key"] = "TF_Spell_Bats",
-        ["localized_fallback"] = "Swarm of Bats"
-     },
-    ["TF_Spell_OverHeal"] = {
-        ["localized_string_key"] = "TF_Spell_OverHeal",
-        ["localized_fallback"] = "Overheal"
-     },
-    ["TF_Spell_MIRV"] = {
-        ["localized_string_key"] = "TF_Spell_MIRV",
-        ["localized_fallback"] = "Pumpkin MIRV"
-     },
-    ["TF_Spell_BlastJump"] = {
-        ["localized_string_key"] = "TF_Spell_BlastJump",
-        ["localized_fallback"] = "Blast Jump"
-     },
-    ["TF_Spell_Stealth"] = {
-        ["localized_string_key"] = "TF_Spell_Stealth",
-        ["localized_fallback"] = "Stealth"
-     },
-    ["TF_Spell_Teleport"] = {
-        ["localized_string_key"] = "TF_Spell_Teleport",
-        ["localized_fallback"] = "Shadow Leap"
-     },
-    ["TF_Spell_LightningBall"] = {
-        ["localized_string_key"] = "TF_Spell_LightningBall",
-        ["localized_fallback"] = "Ball o' Lightning"
-     },
-    ["TF_Spell_Athletic"] = {
-        ["localized_string_key"] = "TF_Spell_Athletic",
-        ["localized_fallback"] = "Power Up"
-     },
-    ["TF_Spell_Meteor"] = {
-        ["localized_string_key"] = "TF_Spell_Meteor",
-        ["localized_fallback"] = "Meteor Shower"
-     },
-    ["TF_Spell_SpawnBoss"] = {
-        ["localized_string_key"] = "TF_Spell_SpawnBoss",
-        ["localized_fallback"] = "Monocolus"
-     },
-    ["TF_Spell_SkeletonHorde"] = {
-        ["localized_string_key"] = "TF_Spell_SkeletonHorde",
-        ["localized_fallback"] = "Skeleton Horde"
-     },
-    ["TF_Spell_BombHead"] = {
-        ["localized_string_key"] = "TF_Spell_BombHead",
-        ["localized_fallback"] = "Bomb Head"
      }
  }
 for k, t in pairs( translations ) do
@@ -114,22 +60,22 @@ end
 local spell_e = {
     [-2] = "", -- Rolling spell
     [-1] = nil,
-    [0] = "TF_Spell_Fireball",
-    "TF_Spell_Bats",
-    "TF_Spell_OverHeal",
-    "TF_Spell_MIRV",
-    "TF_Spell_BlastJump", -- Handled using the non-condition spell way
-    "TF_Spell_Stealth",
-    "TF_Spell_Teleport",
-    "TF_Spell_LightningBall",
-    "TF_Spell_Athletic",
-    "TF_Spell_Meteor",
-    "TF_Spell_SpawnBoss",
-    "TF_Spell_SkeletonHorde",
+    [0] = "Fireball",
+    "Swarm of Bats",
+    "Overheal",
+    "Pumpkin MIRV",
+    "Blast Jump",
+    "Stealth",
+    "Shadow Leap",
+    "Ball O' Lightning",
+    "Power Up",
+    "Meteor Shower",
+    "Summon MONOCULUS",
+    "Skeletons Horde",
     "Boxing Rocket",
-    "B.A.S.E. Jump", -- Handled using the non-condition spell way
-    "TF_Spell_OverHeal",
-    "TF_Spell_BombHead"
+    "B.A.S.E. Jump",
+    "Overheal",
+    "Bomb Head",
  }
 for index = 0, #spell_e do
     local name = spell_e[index]
