@@ -26,13 +26,21 @@ local win32_file_attributes = {
  }
 
 ---@region signature
---- @class module
-local luapath
 --- @field fs filesystem 
 --- @field env environment
 --- @field info os constants
 --- @field file io contents
 local fs, env, info, file = {}, {}, {}, {}
+--- @class module
+local luapath = {
+    _VERSION = 'luapath 0.1',
+    _NAME = "luapath",
+    fs = fs,
+    env = env,
+    info = info,
+    --- 
+    file = file
+ }
 info.platform = 'windows'
 info.sep = '\\'
 info.altsep = '/'
@@ -44,14 +52,14 @@ info.pathsep = ';'
 
 --- fetch the current working directory path.
 --- @return string
-local function cwd()
+function luapath.cwd()
     return (engine.GetGameDir():gsub('[\\/][^\\/]+$', ''))
 end
 
 --- returns a idx, part iterator to get parts in the path.
 --- @param path: string
 --- @return function(): idx, string
-local function parts(path)
+function luapath.parts(path)
     local idx = 0
     local next_pc = path:gmatch('([^\\/]+)([\\/]*)')
     return function()
@@ -64,17 +72,17 @@ local function parts(path)
 end
 
 ---
-local function parse()
+function luapath.parse()
 end
 
-local function applysepparts()
+function luapath.applysepparts()
 
 end
 
 --- return joined normalized path string
 --- @param arg: string
 --- @return string
-local function resolve(...)
+function luapath.resolve(...)
     --- TODO resolve
     local arg = { ... }
     for i, v in ipairs(arg) do
@@ -85,7 +93,7 @@ end
 --- return joined normalized path string using alternative sep.
 --- @param arg: string
 --- @return string
-local function alt(...)
+function luapath.alt(...)
     --- TODO alt
 end
 
@@ -242,21 +250,6 @@ function file.delete(filepath)
     return os.remove(filepath)
 end
 
-luapath = {
-    _VERSION = 'luapath 0.1',
-    ----
-    cwd = cwd,
-    parts = parts,
-    parse = parse,
-    resolve = resolve,
-    alt = alt,
-    ----
-    fs = fs,
-    env = env,
-    info = info,
-    --- 
-    file = file
- }
 setmetatable(luapath, {
     __call = resolve,
     __name = 'luapath'
@@ -275,6 +268,6 @@ if not ... then
         return luapath
     end
 else
-    return luapath       
+    return luapath
 end
 

@@ -6,5 +6,5 @@
     "luahelper.format.chop_down_kv_table": true,
     "luahelper.format.spaces_inside_table_braces": true,
     "luahelper.format.double_quote_to_single_quote": true,
-    "todo-tree.regex.regex": "(--|//|#|<!--|;|/\\*|^|^[ \\t]*(-|\\d+.))\\s*($TAGS)"
+    "todo-tree.regex.regex": "(--|//|#|<!--|;|/\\*|^|^[ \\t]*(-|\\d+.))\\s*($TAGS)",
 }
