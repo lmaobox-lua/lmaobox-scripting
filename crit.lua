@@ -32,11 +32,11 @@ local function remap_val_clamped(val, A, B, C, D)
 end
 
 local function can_fire_critical_shot(character, itemDefinitionIndex, weaponBaseDamge)
-    if character == TF2_Spy then
-        return not wpn:IsMeleeWeapon()
-    end
     if weapon_cannot_randomly_crit[itemDefinitionIndex] then
         return false
+    end
+    if character == TF2_Spy then
+        return not wpn:IsMeleeWeapon()
     end
     if weaponBaseDamge <= 0 then
         return false
@@ -139,7 +139,7 @@ callbacks.Register('CreateMove', 'CreateMove-N8bat', function()
             i = i + 1
             cost = wpn:GetCritCost(tmp, cache.critRequestCount + i, cache.critCheckCount)
             tmp = tmp - cost
-            print((string.format('[crit] stored: %.2d | %6.6g - %4.6g = %6.6g', i, tmp + cost, cost, tmp)))
+            -- print((string.format('[crit] stored: %.2d | %6.6g - %4.6g = %6.6g', i, tmp + cost, cost, tmp)))
         end
 
         tmp = cache.bucket
