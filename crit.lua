@@ -1,6 +1,5 @@
 ---@author:  2022-11-28 16:02:52
--- If you see this error 
--- 50: attempt to concatenate a nil value (field 'shots_till_bucket_full')
+-- If you see this error: attempt to concatenate a nil value (field 'attacksTillBucketFull')
 -- It's safe to ignore! 
 -- I was simply caching GetWeaponData() because CreateMove updates more often than Draw
 local colors = {
@@ -12,9 +11,6 @@ local colors = {
  }
 
 local storage = {
-    critChance = 0,
-    observedCritChance = 0,
-    roundDamageStats = {},
     [0] = {}
  }
 
@@ -51,7 +47,7 @@ end
 local fontID = draw.CreateFont('Verdana', 16, 700, FONTFLAG_CUSTOM | FONTFLAG_OUTLINE)
 callbacks.Unregister('Draw', 'Draw-F3drQ')
 callbacks.Register('Draw', 'Draw-F3drQ', function()
-    if not storage.weaponCanRandomCrit then
+    if clientstate.GetClientSignonState() ~= 6 or not storage.weaponCanRandomCrit then
         return
     end
 
@@ -62,12 +58,12 @@ callbacks.Register('Draw', 'Draw-F3drQ', function()
     local x, y = 600, 800
     draw.SetFont(fontID)
 
-    local weaponinfo = storage[0]
+    local cache = storage[0]
 
     local sv_allow_crit = wpn:CanRandomCrit()
     if wpn:IsMeleeWeapon() then
         local tf_weapon_criticals_melee = client.GetConVar('tf_weapon_criticals_melee')
-        sv_allow_crit = (sv_allow_crit and tf_weapon_criticals_melee == 1) or (tf_weapon_criticals_melee == 2)
+        sv_allow_crit = (sv_allow_crit and tf_weapon_criticals_melee == 1) or tf_weapon_criticals_melee == 2
     end
 
     local space = 0
@@ -75,20 +71,22 @@ callbacks.Register('Draw', 'Draw-F3drQ', function()
     function elements:insert(...)
         self[#self + 1] = table.pack(...)
     end
+    local ratio = (cache.critCheckCount / cache.critRequestCount) < 10 and cache.critCheckCount > 0 and
+                      cache.critRequestCount > 0
+    local cmp = (storage.critChance + 0.1 < storage.observedCritChance)
+    local critBoosted = (me:IsCritBoosted() or me:InCond(TFCond_CritCola))
+    local subsequence = 0
 
-    elements:insert('Crit', (me:IsCritBoosted() or me:InCond(TFCond_CritCola)) and colors.blue or sv_allow_crit and
-                        colors.green or colors.gray)
-    elements:insert(weaponinfo.shots_till_bucket_full .. ' attacks left until full bar', nil,
-                    weaponinfo.shots_till_bucket_full ~= 0)
-    elements:insert(weaponinfo.stored_crits .. ' crits available')
-    elements:insert('deal ' .. math.floor(storage.requiredDamage) .. ' damage', nil,
-                    (storage.critChance + 0.1 < storage.observedCritChance))
-    elements:insert('streaming crit', colors.red, wpn:GetRapidFireCritTime() > globals.CurTime())
+    elements:insert('Crit', critBoosted and colors.blue or sv_allow_crit and colors.green or colors.gray)
+    elements:insert(cache.attacksTillBucketFull .. ' attacks left until full bar', nil, cache.attacksTillBucketFull ~= 0)
+    elements:insert(cache.storedCrits .. ' crits available')
+    elements:insert('deal ' .. math.floor(storage.requiredDamage) .. ' damage', nil, cmp)
+    elements:insert('streaming crit', colors.green, wpn:GetRapidFireCritTime() > globals.CurTime())
 
     for i = 1, #elements, 1 do
-        local text, color, visible = elements[i][1], elements[i][2] or colors.white, elements[i][3]
+        local text, color, canRender = elements[i][1], elements[i][2] or colors.white, elements[i][3]
         draw.Color(color[1], color[2], color[3], color[4])
-        if visible ~= false then
+        if canRender ~= false then
             draw.Text(x, y + space, text)
             space = space + 20
         end
@@ -97,43 +95,45 @@ end)
 
 callbacks.Unregister('CreateMove', 'CreateMove-N8bat')
 callbacks.Register('CreateMove', 'CreateMove-N8bat', function()
-    local me, wpn, wpndata, cache
+    local me, wpn, weapondata, cache
     me = entities.GetLocalPlayer()
     -- LuaFormatter off
     storage.weaponCanRandomCrit = false
-    if me and me:IsAlive() then
+    if me:IsAlive() then
         wpn = me:GetPropEntity('m_hActiveWeapon')
         if not wpn then return end
         if not can_fire_critical_shot(me:GetPropInt('m_iClass'), wpn:GetPropInt('m_iItemDefinitionIndex'), wpn:GetWeaponBaseDamage()) then return end
     else return end
     storage.weaponCanRandomCrit = true
     -- LuaFormatter on
-    wpndata = wpn:GetWeaponData()
+    weapondata = wpn:GetWeaponData()
 
-    --- Before you do anything stupid, do not remove those checks below.
+    --- Before you do anything stupid, do not remove those checks below
     cache = storage[0]
-    if wpn:GetIndex() ~= cache.idx or cache.critCheckCount ~= wpn:GetCritCheckCount() then
-        printc(255, 0, 0, 255, '[crit] updating weaponinfo...')
+    if wpn:GetIndex() ~= cache.idx or cache.bucket ~= wpn:GetCritTokenBucket() or cache.critCheckCount ~=
+        wpn:GetCritCheckCount() then
+        -- printc(255, 0, 0, 255, '[crit] updating weaponinfo...')
         -- LuaFormatter off
-        cache.idx                            = wpn:GetIndex()   
-        cache.currentCritSeed                = wpn:GetCurrentCritSeed()
-        cache.bulletsPerShot                 = wpn:AttributeHookFloat('mult_bullets_per_shot', wpndata.bulletsPerShot)
-        cache.added_per_shot                 = wpn:GetWeaponBaseDamage()
-        cache.bucket                         = wpn:GetCritTokenBucket()
-        cache.bucket_max                     = client.GetConVar('tf_weapon_criticals_bucket_cap')
-        cache.bucket_min                     = client.GetConVar('tf_weapon_criticals_bucket_bottom')
-        cache.bucket_start                   = client.GetConVar('tf_weapon_criticals_bucket_default')
-        cache.critRequestCount               = wpn:GetCritSeedRequestCount()
-        cache.critCheckCount                 = wpn:GetCritCheckCount()
-        cache.stored_crits                   = 0
-        cache.shots_till_bucket_full         = 0
+        cache.idx                     = wpn:GetIndex()
+        cache.weapondata              = weapondata
+        cache.currentCritSeed         = wpn:GetCurrentCritSeed()
+        cache.bulletsPerShot          = wpn:AttributeHookFloat('mult_bullets_per_shot', weapondata.bulletsPerShot)
+        cache.addedPerShot            = wpn:GetWeaponBaseDamage()
+        cache.bucket                  = wpn:GetCritTokenBucket()
+        cache.bucketMax               = client.GetConVar('tf_weapon_criticals_bucket_cap')
+        -- cache.bucketMin            = client.GetConVar('tf_weapon_criticals_bucket_bottom')
+        -- cache.bucketStart          = client.GetConVar('tf_weapon_criticals_bucket_default')
+        cache.critRequestCount        = wpn:GetCritSeedRequestCount()
+        cache.critCheckCount          = wpn:GetCritCheckCount()
+        cache.storedCrits             = 0
+        cache.attacksTillBucketFull   = 0
         -- LuaFormatter on
 
         --- If you reload script while 
         local i, j = 0, 0
         local tmp, cost
         cost = wpn:GetCritCost(0, cache.critRequestCount, cache.critCheckCount)
-    
+
         tmp = cache.bucket
         while tmp > cost do
             i = i + 1
@@ -143,25 +143,25 @@ callbacks.Register('CreateMove', 'CreateMove-N8bat', function()
         end
 
         tmp = cache.bucket
-        while tmp < cache.bucket_max do
-            tmp = tmp + cache.added_per_shot
+        while tmp < cache.bucketMax do
+            tmp = tmp + cache.addedPerShot
             j = j + 1
         end
-        print('------------------------------------------------------------------')
+        -- print('------------------------------------------------------------------')
 
-        cache.stored_crits = i
-        cache.shots_till_bucket_full = j
+        cache.storedCrits = i
+        cache.attacksTillBucketFull = j
     end
     storage[0] = cache
 
     --- Re-implement custom GetCritChance() because minigun's spinning weapon state has different crit chance 
-    local dmgCritChance, critMult, critChance
+    local weaponCritChance, critMult, critChance
 
-    dmgCritChance = wpn:IsMeleeWeapon() and 0.15 or 0.02
+    weaponCritChance = wpn:IsMeleeWeapon() and 0.15 or 0.02
     critMult = remap_val_clamped(me:GetPropInt('m_iCritMult'), 0, 255, 1, 4)
-    critChance = wpn:AttributeHookFloat('mult_crit_chance', critMult * dmgCritChance)
+    critChance = wpn:AttributeHookFloat('mult_crit_chance', critMult * weaponCritChance)
 
-    if wpndata.useRapidFireCrits or wpn:GetClass() == 'CTFMinigun' then
+    if weapondata.useRapidFireCrits then
         -- get the total crit chance (ratio of total shots fired we want to be crits)
         local totalCritChance = clamp(0.02 * critMult, 0.01, 0.99)
         -- get the fixed amount of time that we start firing crit shots for	
@@ -177,7 +177,7 @@ callbacks.Register('CreateMove', 'CreateMove-N8bat', function()
     local roundDamageStats = wpn:GetWeaponDamageStats()
     local cmpCritChance = critChance + 0.1
     local requiredTotalDamage = (roundDamageStats['critical'] * (2.0 * cmpCritChance + 1.0)) / cmpCritChance / 3.0
-    storage.requiredDamage = requiredTotalDamage - roundDamageStats['total']
+    storage.requiredDamage = math.ceil(requiredTotalDamage - roundDamageStats['total'])
     storage.observedCritChance = wpn:CalcObservedCritChance()
     storage.critChance = critChance
     storage.roundDamageStats = roundDamageStats

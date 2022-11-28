@@ -313,3 +313,18 @@ callbacks.Register('CreateMove', function(cmd)
 end)
 
 -- mult_dmg : damage bonus / penalty (modifier)
+
+
+--- SOURCE : TG CHAT
+
+-- Ok, I should have made a tutorial on how to use it ages ago. Here is the summary:
+-- - You pick the gun at respawn, wait for the cooldown (usually ~5 seconds, or it will break in the current premium build when you hold m1 asap)
+-- - Start unloading the clip till you reach 100% crit bucket (full green bar)
+-- - When you are up to forcing a crit - don't do it several times in a row or you might get cucked by m_flCritMult jumping sky high so it turns the bar red making you unable to crit at that specific server till the map changes, it has to do with storing your steamid iirc, so retrying or swapping classes wont work. It might first look like its green, but doing any crit shots will produce a false crit and make it red yet again, so don't overdo it
+-- - Valve-approved crit:noncrit ratio is 1:10 and has been verified by me. I never get cucked by the red bar if I keep my crit ratio below this number
+
+-- From my own personal experience it allows you to do crits consistently if you keep the ratio + forcing crits only in case you have the bucket at 100%
+-- Sometimes it allows up to 3 crit shots in a row, but usually the third one is either the last one or fake, making the bar go red again
+
+-- When I casually play with my friends I can easily crit as demo pretty much any time I need, which is ~every 8th player
+
