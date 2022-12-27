@@ -122,7 +122,7 @@ callbacks.Register("CreateMove", function()
     --- Calculate number of crits allowed to withdrawn from bucket
     do
         local i, stored = 0, bucketStored
-        local cost      = wpn:GetCritCost(bucketStored, weaponCritCount, weaponSeedCount)
+        local cost      = math.floor(wpn:GetCritCost(stored, weaponCritCount, weaponSeedCount))
         while stored >= cost do
             i = i + 1
             stored = stored - cost
