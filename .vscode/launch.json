@@ -5,26 +5,20 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "LuaHelper-Debug",
+            "arg": [],
+            "name": "launch",
+            "program": "${workspaceFolder}/${fileBasename}",
             "request": "launch",
-            "name": "LuaHelper-Attach",
-            "cwd": "${workspaceFolder}",
-            "luaFileExtension": "",
-            "connectionPort": 8818,
-            "stopOnEntry": true,
-            "useCHook": true,
-            "autoPathMode": true
+            "stopOnEntry": false,
+            "type": "lua"
         },
         {
-            "type": "LuaHelper-Debug",
+            "name": "launch process",
             "request": "launch",
-            "name": "LuaHelper-DebugFile",
-            "luaPath": "",
-            "packagePath": [],
-            "luaFileExtension": "",
-            "connectionPort": 8818,
+            "runtimeArgs": "${workspaceFolder}/${fileBasename}",
+            "runtimeExecutable": "${workspaceFolder}/lua.exe",
             "stopOnEntry": false,
-            "useCHook": true
-        }
+            "type": "lua"
+        },
     ]
 }

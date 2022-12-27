@@ -2,14 +2,16 @@
 
 ## Life cycle
 
-| Branch | Status    | Future Plan |
-| ------ | --------- | ----------- |
-| master | abandoned | archive     |
-| new    | unknown   | N/A         |
+| Branch | Status                        | Future Plan |
+| ------ | ----------------------------- | ----------- |
+| master | lua forum section in nutshell | -x-         |
+| new    | -x-                           | N/A         |
 
 ## **My naming style**
 
-Derived from
+> Maybe some day... For now it's any
+
+*Derived from*
 
 [https://peps.python.org/pep-0008/#function-and-variable-names](https://peps.python.org/pep-0008/#function-and-variable-names)
 
@@ -27,16 +29,21 @@ Derived from
 
 See [`LICENSE.md`](./LICENSE.md)
 
-The following external library is included in some part of my code
+Additionally, my code may use the following library
 
-| File Name | Link                                                              |
-| --------- | ----------------------------------------------------------------- |
-| json.lua  | [dkolf.de/src/dkjson-lua.fsl/home](dkolf.de/src/dkjson-lua.fsl/home) |
-|           |                                                                   |
+| File Name       | Link                                                                          |
+| --------------- | ----------------------------------------------------------------------------- |
+| json.lua        | [dkolf.de/src/dkjson-lua.fsl/home](dkolf.de/src/dkjson-lua.fsl/home)             |
+| dumbParser.lua  | [github.com/ReFreezed/DumbLuaParser](https://github.com/ReFreezed/DumbLuaParser) |
+| TypeScriptToLua | [https://typescripttolua.github.io](https://typescripttolua.github.io)           |
 
 ## Contact
 
-| -        | -                                        |
+| Platform | ID                                       |
 | -------- | ---------------------------------------- |
 | Discord  | Moonverse#9320 `<@406432257688076289>` |
 | Telegram | [Moonverse](https://t.me/click_here_idiot)  |
+
+## Sponsors
+
+nil

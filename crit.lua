@@ -1,185 +1,172 @@
----@author:  2022-11-28 16:02:52
--- If you see this error: attempt to concatenate a nil value (field 'attacksTillBucketFull')
--- It's safe to ignore! 
--- I was simply caching GetWeaponData() because CreateMove updates more often than Draw
-local colors = {
-    white = { 255, 255, 255, 255 },
-    gray = { 190, 190, 190, 255 },
-    red = { 255, 0, 0, 255 },
-    green = { 36, 255, 122, 255 },
-    blue = { 30, 139, 195, 255 }
- }
+---
+--- For LMAOBOX Lua 5.4 (x86|windows)
+---
 
-local storage = {
-    [0] = {}
- }
+---@type Entity|any
+local wpn
+local ref = {}
+local font = draw.CreateFont('Verdana', 16, 700, FONTFLAG_CUSTOM | FONTFLAG_OUTLINE)
 
--- LuaFormatter off
-local weapon_cannot_randomly_crit = { [441]=true,[416]=true,[40]=true,[594]=true,[595]=true,[813]=true,[834]=true,[141]=true,[1004]=true,[142]=true,[232]=true,[61]=true,[1006]=true,[525]=true,[132]=true,[1082]=true,[266]=true,[482]=true,[327]=true,[307]=true,[357]=true,[404]=true,[812]=true,[833]=true,[237]=true,[265]=true,[155]=true,[460]=true,[1178]=true,[14]=true,[201]=true,[56]=true,[230]=true,[402]=true,[526]=true,[664]=true,[752]=true,[792]=true,[801]=true,[851]=true,[881]=true,[890]=true,[899]=true,[908]=true,[957]=true,[966]=true,[1005]=true,[1092]=true,[1098]=true,[15000]=true,[15007]=true,[15019]=true,[15023]=true,[15033]=true,[15059]=true,[15070]=true,[15071]=true,[15072]=true,[15111]=true,[15112]=true,[15135]=true,[15136]=true,[15154]=true,[30665]=true,[194]=true,[225]=true,[356]=true,[461]=true,[574]=true,[638]=true,[649]=true,[665]=true,[727]=true,[794]=true,[803]=true,[883]=true,[892]=true,[901]=true,[910]=true,[959]=true,[968]=true,[15062]=true,[15094]=true,[15095]=true,[15096]=true,[15118]=true,[15119]=true,[15143]=true,[15144]=true,[131]=true,[406]=true,[1099]=true,[1144]=true,[46]=true,[42]=true,[311]=true,[863]=true,[1002]=true,[159]=true,[433]=true,[1190]=true,[129]=true,[226]=true,[354]=true,[1001]=true,[1101]=true,[1179]=true,[642]=true,[133]=true,[444]=true,[405]=true,[608]=true,[57]=true,[231]=true,[29]=true,[211]=true,[35]=true,[411]=true,[663]=true,[796]=true,[805]=true,[885]=true,[894]=true,[903]=true,[912]=true,[961]=true,[970]=true,[998]=true,[15008]=true,[15010]=true,[15025]=true,[15039]=true,[15050]=true,[15078]=true,[15097]=true,[15121]=true,[15122]=true,[15123]=true,[15145]=true,[15146]=true,[30]=true,[212]=true,[59]=true,[60]=true,[297]=true,[947]=true,[735]=true,[736]=true,[810]=true,[831]=true,[933]=true,[1080]=true,[1102]=true,[140]=true,[1086]=true,[30668]=true,[25]=true,[737]=true,[26]=true,[28]=true,[222]=false,[1121]=false,[1180]=false,[58]=false,[1083]=false,[1105]=false}
--- LuaFormatter on
+local fmt = string.format
 
-local function clamp(x, min, max)
-    return math.min(math.max(x, min), max)
+--- Note: The calculations aren't a hundred percent accurate, but it's close approximation for me and readers to figure out the rest.
+--- Here are some edge case that I didn't handle (on full bucket):
+--- 1. Soilder's Direct hit can withdrawn 3 crits
+--- 2. Sniper's SMG can withdrawn 2 crits
+--- 3. Max withdrawn crit is offset by one on melee weapon
+--- 4. Do %d more attacks to get %d crits
+
+local function ServerAllowRandomCrit()
+    local tf_weapon_criticals = client.GetConVar('tf_weapon_criticals')
+    if wpn:IsMeleeWeapon() then
+        local tf_weapon_criticals_melee = client.GetConVar('tf_weapon_criticals_melee')
+        return (tf_weapon_criticals and tf_weapon_criticals_melee == 1) or tf_weapon_criticals_melee == 2
+    end
+    return tf_weapon_criticals == 1
 end
 
-local function remap_val_clamped(val, A, B, C, D)
-    if A == B then
-        return val >= B and D or C
+callbacks.Register("Draw", function()
+    if not wpn then
+        return
     end
-    local cVal = (val - A) / (B - A)
-    cVal = clamp(cVal, 0.0, 1.0)
-    return C + (D - C) * cVal;
-end
+    local time = wpn:GetRapidFireCritTime() - globals.CurTime()
+    local space = 25
+    local width, height = 200, 10
+    local x, y = 200, 550
+    --- your drawing code here, et cetra
+    --- you want draw code, i give you :)
+    draw.Color(255, 255, 255, 255)
+    draw.SetFont(font)
+    draw.Text(x, y, fmt("(Crit Stored)\t\t%d out of %d", ref.crits, ref.total))
+    y = y + space
+    draw.Color(28, 28, 28, 255)
+    draw.FilledRect(x, y, x + width, y + height + 10)
+    draw.Color(255, 255, 255, 255)
+    draw.OutlinedRect(x - 2, y - 2, x + width + 2, y + height + 10)
+    --- crit
+    draw.Color(30, 255, 0, 255)
+    if input.IsButtonDown(gui.GetValue('crit key')) then
+        draw.Color(115, 0, 255, 255) -- rgb(115, 0, 255)
+    end
+    if (time > 0) then
+        draw.FilledRect(x, y, x + math.floor(width * (time / 2)), y + height)
+    else
+        draw.FilledRect(x, y, x + math.floor(width * (ref.crits / ref.total)), y + height)
+    end
+    --- spent
+    draw.Color(30, 255, 0, 255) -- rgb(30, 255, 0)
+    draw.FilledRect(x, y, x + math.floor(width * (ref.exp_crits / ref.total)), y + height)
+    --- fill bucket
+    draw.Color(149, 0, 255, 255) -- rgb(149, 0, 255)
+    draw.FilledRect(x, y + height,
+        x + math.floor(width * math.min(ref.bucketStored + wpn:GetWeaponBaseDamage(), 1000) / ref.bucketMax)
+        , y + height + 8)
+    --- bucket
+    draw.Color(0, 166, 255, 255) -- rgb(0, 166, 255)
+    draw.FilledRect(x, y + height, x + math.floor(width * (ref.bucketStored / ref.bucketMax)), y + height + 8)
 
-local function can_fire_critical_shot(character, itemDefinitionIndex, weaponBaseDamge)
-    if weapon_cannot_randomly_crit[itemDefinitionIndex] then
-        return false
-    end
-    if character == TF2_Spy then
-        return not wpn:IsMeleeWeapon()
-    end
-    if weaponBaseDamge <= 0 then
-        return false
-    end
-    return true
-end
+    -- x, y = 600, 550
+    -- draw.Color(0, 0, 0, 95)
+    -- draw.FilledRect(x - 20, y, x + 190, y + 130)
+    -- draw.Color(204, 153, 201, 255)
+    -- draw.FilledRect(x, y, x + 170, y + 3)
+    -- draw.Color(255, 255, 255, 255)
+    -- draw.Text(x, y + 20, fmt("Crit fired  \t\t\t\t\t%d", wpn:GetCritSeedRequestCount()))
+    -- draw.Text(x, y + 40, fmt("Seed request\t\t\t%d", wpn:GetCritCheckCount()))
+    -- draw.Text(x, y + 60, fmt("Bucket        \t\t\t\t%.0f", wpn:GetCritTokenBucket()))
+    -- draw.Text(x, y + 80, fmt("Gain      \t\t\t\t\t\t%.0f", wpn:GetWeaponBaseDamage()))
+    -- draw.Text(x, y + 100,
+    --     fmt("Cost         \t\t\t\t\t%f",
+    --         wpn:GetCritCost(wpn:GetCritTokenBucket(), wpn:GetCritCheckCount(), wpn:GetCritSeedRequestCount())))
+    -- draw.Color(204, 153, 201, 255)
+end)
 
-local fontID = draw.CreateFont('Verdana', 16, 700, FONTFLAG_CUSTOM | FONTFLAG_OUTLINE)
-callbacks.Unregister('Draw', 'Draw-F3drQ')
-callbacks.Register('Draw', 'Draw-F3drQ', function()
-    if clientstate.GetClientSignonState() ~= 6 or not storage.weaponCanRandomCrit then
+callbacks.Register("CreateMove", function()
+    local me = entities.GetLocalPlayer()
+    wpn = me:GetPropEntity("m_hActiveWeapon")
+
+    --- Weapon don't spawn yet
+    if not wpn:IsValid() then
+        wpn = nil
         return
     end
 
-    local me, wpn
-    me = entities.GetLocalPlayer()
-    wpn = me:GetPropEntity('m_hActiveWeapon')
-
-    local x, y = 600, 800
-    draw.SetFont(fontID)
-
-    local cache = storage[0]
-
-    local sv_allow_crit = wpn:CanRandomCrit()
-    if wpn:IsMeleeWeapon() then
-        local tf_weapon_criticals_melee = client.GetConVar('tf_weapon_criticals_melee')
-        sv_allow_crit = (sv_allow_crit and tf_weapon_criticals_melee == 1) or tf_weapon_criticals_melee == 2
+    local serverAllowCrit = ServerAllowRandomCrit()
+    local addedPerShot = wpn:GetWeaponBaseDamage()
+    --- This only check if server disabled crit or weapon does not deal damage (defined by WeaponData)
+    --- Refer to TF2 Wiki to get a list of weapon that cannot random crit
+    if serverAllowCrit == false or addedPerShot <= 0 then
+        wpn = nil
+        return
     end
 
-    local space = 0
-    local elements = {}
-    function elements:insert(...)
-        self[#self + 1] = table.pack(...)
-    end
-    local ratio = (cache.critCheckCount / cache.critRequestCount) < 10 and cache.critCheckCount > 0 and
-                      cache.critRequestCount > 0
-    local cmp = (storage.critChance + 0.1 < storage.observedCritChance)
-    local critBoosted = (me:IsCritBoosted() or me:InCond(TFCond_CritCola))
-    local subsequence = 0
+    local bucketStored    = wpn:GetCritTokenBucket()
+    local bucketMax       = client.GetConVar('tf_weapon_criticals_bucket_cap')
+    local weaponCritCount = wpn:GetCritSeedRequestCount()
+    local weaponSeedCount = wpn:GetCritCheckCount()
 
-    elements:insert('Crit', critBoosted and colors.blue or sv_allow_crit and colors.green or colors.gray)
-    elements:insert(cache.attacksTillBucketFull .. ' attacks left until full bar', nil, cache.attacksTillBucketFull ~= 0)
-    elements:insert(cache.storedCrits .. ' crits available')
-    elements:insert('deal ' .. math.floor(storage.requiredDamage) .. ' damage', nil, cmp)
-    elements:insert('streaming crit', colors.green, wpn:GetRapidFireCritTime() > globals.CurTime())
+    local need = math.floor(bucketMax / addedPerShot)
+    local crits, attacks, total = 0, 0, 0
+    local exp_crits = 0
 
-    for i = 1, #elements, 1 do
-        local text, color, canRender = elements[i][1], elements[i][2] or colors.white, elements[i][3]
-        draw.Color(color[1], color[2], color[3], color[4])
-        if canRender ~= false then
-            draw.Text(x, y + space, text)
-            space = space + 20
-        end
-    end
-end)
-
-callbacks.Unregister('CreateMove', 'CreateMove-N8bat')
-callbacks.Register('CreateMove', 'CreateMove-N8bat', function()
-    local me, wpn, weapondata, cache
-    me = entities.GetLocalPlayer()
-    -- LuaFormatter off
-    storage.weaponCanRandomCrit = false
-    if me:IsAlive() then
-        wpn = me:GetPropEntity('m_hActiveWeapon')
-        if not wpn then return end
-        if not can_fire_critical_shot(me:GetPropInt('m_iClass'), wpn:GetPropInt('m_iItemDefinitionIndex'), wpn:GetWeaponBaseDamage()) then return end
-    else return end
-    storage.weaponCanRandomCrit = true
-    -- LuaFormatter on
-    weapondata = wpn:GetWeaponData()
-
-    --- Before you do anything stupid, do not remove those checks below
-    cache = storage[0]
-    if wpn:GetIndex() ~= cache.idx or cache.bucket ~= wpn:GetCritTokenBucket() or cache.critCheckCount ~=
-        wpn:GetCritCheckCount() then
-        -- printc(255, 0, 0, 255, '[crit] updating weaponinfo...')
-        -- LuaFormatter off
-        cache.idx                     = wpn:GetIndex()
-        cache.weapondata              = weapondata
-        cache.currentCritSeed         = wpn:GetCurrentCritSeed()
-        cache.bulletsPerShot          = wpn:AttributeHookFloat('mult_bullets_per_shot', weapondata.bulletsPerShot)
-        cache.addedPerShot            = wpn:GetWeaponBaseDamage()
-        cache.bucket                  = wpn:GetCritTokenBucket()
-        cache.bucketMax               = client.GetConVar('tf_weapon_criticals_bucket_cap')
-        -- cache.bucketMin            = client.GetConVar('tf_weapon_criticals_bucket_bottom')
-        -- cache.bucketStart          = client.GetConVar('tf_weapon_criticals_bucket_default')
-        cache.critRequestCount        = wpn:GetCritSeedRequestCount()
-        cache.critCheckCount          = wpn:GetCritCheckCount()
-        cache.storedCrits             = 0
-        cache.attacksTillBucketFull   = 0
-        -- LuaFormatter on
-
-        --- If you reload script while 
-        local i, j = 0, 0
-        local tmp, cost
-        cost = wpn:GetCritCost(0, cache.critRequestCount, cache.critCheckCount)
-
-        tmp = cache.bucket
-        while tmp > cost do
+    --- Calculate number of attacks needed to fill entire bucket
+    do
+        local i, stored = 0, bucketStored
+        while stored < bucketMax do
+            stored = stored + addedPerShot
             i = i + 1
-            cost = wpn:GetCritCost(tmp, cache.critRequestCount + i, cache.critCheckCount)
-            tmp = tmp - cost
-            -- print((string.format('[crit] stored: %.2d | %6.6g - %4.6g = %6.6g', i, tmp + cost, cost, tmp)))
         end
-
-        tmp = cache.bucket
-        while tmp < cache.bucketMax do
-            tmp = tmp + cache.addedPerShot
-            j = j + 1
-        end
-        -- print('------------------------------------------------------------------')
-
-        cache.storedCrits = i
-        cache.attacksTillBucketFull = j
-    end
-    storage[0] = cache
-
-    --- Re-implement custom GetCritChance() because minigun's spinning weapon state has different crit chance 
-    local weaponCritChance, critMult, critChance
-
-    weaponCritChance = wpn:IsMeleeWeapon() and 0.15 or 0.02
-    critMult = remap_val_clamped(me:GetPropInt('m_iCritMult'), 0, 255, 1, 4)
-    critChance = wpn:AttributeHookFloat('mult_crit_chance', critMult * weaponCritChance)
-
-    if weapondata.useRapidFireCrits then
-        -- get the total crit chance (ratio of total shots fired we want to be crits)
-        local totalCritChance = clamp(0.02 * critMult, 0.01, 0.99)
-        -- get the fixed amount of time that we start firing crit shots for	
-        local rapidCritDuration = 2
-        -- calculate the amount of time, on average, that we want to NOT fire crit shots for in order to achieve the total crit chance we want
-        local nonCritDuration = (rapidCritDuration / totalCritChance) - rapidCritDuration
-        -- calculate the chance per second of non-crit fire that we should transition into critting such that on average we achieve the total crit chance we want
-        local startCritChance = 1 / nonCritDuration
-        critChance = wpn:AttributeHookFloat('mult_crit_chance', startCritChance)
+        attacks = i
     end
 
-    --- This, CalcObservedCritChance(), i have no clue
-    local roundDamageStats = wpn:GetWeaponDamageStats()
-    local cmpCritChance = critChance + 0.1
-    local requiredTotalDamage = (roundDamageStats['critical'] * (2.0 * cmpCritChance + 1.0)) / cmpCritChance / 3.0
-    storage.requiredDamage = math.ceil(requiredTotalDamage - roundDamageStats['total'])
-    storage.observedCritChance = wpn:CalcObservedCritChance()
-    storage.critChance = critChance
-    storage.roundDamageStats = roundDamageStats
+    --- Calculate number of crits allowed to withdrawn from bucket
+    do
+        local i, stored = 0, bucketStored
+        local cost      = wpn:GetCritCost(bucketStored, weaponCritCount, weaponSeedCount)
+        while stored >= cost do
+            i = i + 1
+            stored = stored - cost
+            cost = wpn:GetCritCost(stored, weaponCritCount + i, weaponSeedCount)
+        end
+        crits = i
+    end
 
+    --- Calculate number of crits can be withdrawn when bucket is full
+    --- I don't know why, when shooting a lot after you filled the bucket, crit cost reduced, thus you gain additional crits
+    do
+        local i, cap          = 0, bucketMax
+        local weaponSeedCount = weaponSeedCount + attacks
+        local weaponCritCount = weaponCritCount - need
+        local cost            = math.floor(wpn:GetCritCost(cap, weaponCritCount, weaponSeedCount))
+        while cap >= cost do
+            cap = cap - cost
+            cost = wpn:GetCritCost(cap, weaponCritCount + i, weaponSeedCount)
+            i = i + 1
+        end
+        total = i
+    end
+
+    --- Calculate number of crits allowed to withdrawn from bucket after we shot a crit
+    --- Is This really needed? 3AM brain is not working
+    do
+        local i, stored = 0, bucketStored
+        local stored    = bucketStored - wpn:GetCritCost(bucketStored, weaponCritCount, weaponSeedCount)
+        local cost      = wpn:GetCritCost(stored, weaponCritCount + 1, weaponSeedCount + 1)
+        while stored >= cost do
+            i = i + 1
+            stored = stored - cost
+            cost = wpn:GetCritCost(stored, weaponCritCount + i + 1, weaponSeedCount + 1)
+        end
+        exp_crits = i
+    end
+
+    ref = {
+        crits = crits,
+        exp_crits = exp_crits,
+        attacks = attacks,
+        total = total,
+        cost = math.floor(wpn:GetCritCost(bucketStored, weaponCritCount, weaponSeedCount)),
+        bucketStored = bucketStored,
+        bucketMax = bucketMax,
+    }
 end)

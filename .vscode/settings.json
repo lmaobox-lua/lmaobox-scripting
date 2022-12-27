@@ -7,4 +7,9 @@
     "luahelper.format.spaces_inside_table_braces": true,
     "luahelper.format.double_quote_to_single_quote": true,
     "todo-tree.regex.regex": "(--|//|#|<!--|;|/\\*|^|^[ \\t]*(-|\\d+.))\\s*($TAGS)",
+    "Lua.workspace.library": [
+        "${3rd}/lmaobox-annotation/library"
+    ],
+    "Lua.workspace.checkThirdParty": false,
+    "Lua.completion.autoRequire": false,
 }
