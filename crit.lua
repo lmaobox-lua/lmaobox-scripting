@@ -1,172 +1,390 @@
----
---- For LMAOBOX Lua 5.4 (x86|windows)
----
+--- List of weapons that cannot crit in official TF2 Server
+--
+--- ``CalcIsAttackCriticalHelpers()`` overridden to disable crit, or only grant crit on certain condition
+--
+--- https://wiki.alliedmods.net/Team_fortress_2_item_definition_indexes
+--- https://api.steampowered.com/IEconItems_440/GetSchemaItems/v0001/?key=YOUR_API_KEY Client Item Schema (item_games.txt)
+local sets = {
+    [441] = true,
+    [416] = true,
+    [40] = true,
+    [594] = true,
+    [595] = true,
+    [813] = true,
+    [834] = true,
+    [141] = true,
+    [1004] = true,
+    [142] = true,
+    [232] = true,
+    [61] = true,
+    [1006] = true,
+    [525] = true,
+    [132] = true,
+    [1082] = true,
+    [266] = true,
+    [482] = true,
+    [327] = true,
+    [307] = true,
+    [357] = true,
+    [404] = true,
+    [812] = true,
+    [833] = true,
+    [237] = true,
+    [265] = true,
+    [155] = true,
+    [460] = true,
+    [1178] = true,
+    [14] = true,
+    [201] = true,
+    [56] = true,
+    [230] = true,
+    [402] = true,
+    [526] = true,
+    [664] = true,
+    [752] = true,
+    [792] = true,
+    [801] = true,
+    [851] = true,
+    [881] = true,
+    [890] = true,
+    [899] = true,
+    [908] = true,
+    [957] = true,
+    [966] = true,
+    [1005] = true,
+    [1092] = true,
+    [1098] = true,
+    [15000] = true,
+    [15007] = true,
+    [15019] = true,
+    [15023] = true,
+    [15033] = true,
+    [15059] = true,
+    [15070] = true,
+    [15071] = true,
+    [15072] = true,
+    [15111] = true,
+    [15112] = true,
+    [15135] = true,
+    [15136] = true,
+    [15154] = true,
+    [30665] = true,
+    [194] = true,
+    [225] = true,
+    [356] = true,
+    [461] = true,
+    [574] = true,
+    [638] = true,
+    [649] = true,
+    [665] = true,
+    [727] = true,
+    [794] = true,
+    [803] = true,
+    [883] = true,
+    [892] = true,
+    [901] = true,
+    [910] = true,
+    [959] = true,
+    [968] = true,
+    [15062] = true,
+    [15094] = true,
+    [15095] = true,
+    [15096] = true,
+    [15118] = true,
+    [15119] = true,
+    [15143] = true,
+    [15144] = true,
+    [131] = true,
+    [406] = true,
+    [1099] = true,
+    [1144] = true,
+    [46] = true,
+    [42] = true,
+    [311] = true,
+    [863] = true,
+    [1002] = true,
+    [159] = true,
+    [433] = true,
+    [1190] = true,
+    [129] = true,
+    [226] = true,
+    [354] = true,
+    [1001] = true,
+    [1101] = true,
+    [1179] = true,
+    [642] = true,
+    [133] = true,
+    [444] = true,
+    [405] = true,
+    [608] = true,
+    [57] = true,
+    [231] = true,
+    [29] = true,
+    [211] = true,
+    [35] = true,
+    [411] = true,
+    [663] = true,
+    [796] = true,
+    [805] = true,
+    [885] = true,
+    [894] = true,
+    [903] = true,
+    [912] = true,
+    [961] = true,
+    [970] = true,
+    [998] = true,
+    [15008] = true,
+    [15010] = true,
+    [15025] = true,
+    [15039] = true,
+    [15050] = true,
+    [15078] = true,
+    [15097] = true,
+    [15121] = true,
+    [15122] = true,
+    [15123] = true,
+    [15145] = true,
+    [15146] = true,
+    [30] = true,
+    [212] = true,
+    [59] = true,
+    [60] = true,
+    [297] = true,
+    [947] = true,
+    [735] = true,
+    [736] = true,
+    [810] = true,
+    [831] = true,
+    [933] = true,
+    [1080] = true,
+    [1102] = true,
+    [140] = true,
+    [1086] = true,
+    [30668] = true,
+    [25] = true,
+    [737] = true,
+    [26] = true,
+    [28] = true,
+    [222] = false,
+    [1121] = false,
+    [1180] = false,
+    [58] = false,
+    [1083] = false,
+    [1105] = false
+}
 
----@type Entity|any
-local wpn
-local ref = {}
-local font = draw.CreateFont('Verdana', 16, 700, FONTFLAG_CUSTOM | FONTFLAG_OUTLINE)
+local function ServerAllowRandomCrit(tf_weapon_criticals, tf_weapon_criticals_melee, is_melee)
+    return is_melee and tf_weapon_criticals == 1 or tf_weapon_criticals_melee == 2 or
+        (tf_weapon_criticals == 1 and tf_weapon_criticals_melee == 1)
+end
 
-local fmt = string.format
-
---- Note: The calculations aren't a hundred percent accurate, but it's close approximation for me and readers to figure out the rest.
---- Here are some edge case that I didn't handle (on full bucket):
---- 1. Soilder's Direct hit can withdrawn 3 crits
---- 2. Sniper's SMG can withdrawn 2 crits
---- 3. Max withdrawn crit is offset by one on melee weapon
---- 4. Do %d more attacks to get %d crits
-
-local function ServerAllowRandomCrit()
-    local tf_weapon_criticals = client.GetConVar('tf_weapon_criticals')
-    if wpn:IsMeleeWeapon() then
-        local tf_weapon_criticals_melee = client.GetConVar('tf_weapon_criticals_melee')
-        return (tf_weapon_criticals and tf_weapon_criticals_melee == 1) or tf_weapon_criticals_melee == 2
+local function WeaponAllowRandomCrit(base_damage, item_definition_id, player_class, is_melee)
+    if player_class == 8 and is_melee == true then --- TF2_SPY = 8
+        return false
     end
-    return tf_weapon_criticals == 1
+    return base_damage > 0 and sets[item_definition_id] ~= true
+end
+
+--- Purpose: share data from different callbacks
+local store = {
+    crit_calculator_command_number = -1,
+    required_damage = 0
+}
+
+callbacks.Register("CreateMove", function(cmd) ---@param cmd UserCmd
+    local me     = entities.GetLocalPlayer()
+    local weapon = me:GetPropEntity("m_hActiveWeapon") ---@type Entity
+
+    if not weapon:IsValid() then
+        return
+    end
+
+    local command_number = cmd.command_number
+    store.command_number = command_number
+
+    local player_class
+    local item_definition_id, is_melee, added_per_shot, bucket_current, crit_fired, seed_count, weapon_seed
+    local tf_weapon_criticals, tf_weapon_criticals_melee, bucket_max
+
+    player_class              = me:GetPropInt("m_iClass")
+    is_melee                  = weapon:IsMeleeWeapon()
+    added_per_shot            = weapon:GetWeaponBaseDamage()
+    item_definition_id        = weapon:GetPropInt("m_iItemDefinitionIndex")
+    tf_weapon_criticals       = client.GetConVar("tf_weapon_criticals")
+    tf_weapon_criticals_melee = client.GetConVar("tf_weapon_criticals_melee")
+    bucket_max                = client.GetConVar('tf_weapon_criticals_bucket_cap')
+
+    if ServerAllowRandomCrit(tf_weapon_criticals, tf_weapon_criticals_melee, is_melee) == false or
+        WeaponAllowRandomCrit(added_per_shot, item_definition_id, player_class, is_melee) == false then
+        return
+    end
+
+    store.crit_calculator_command_number = command_number
+    weapon_seed                          = weapon:GetCurrentCritSeed()
+
+    --- do damage penalty calculation
+    do
+        if is_melee then
+            goto _continue_1
+        end
+
+        local crit_chance, round_damage, damage_total, damage_crit
+        local cmpCritChance, requiredTotalDamage
+        local required_damage = 0
+
+        crit_chance  = weapon:GetCritChance()
+        round_damage = weapon:GetWeaponDamageStats()
+        damage_total = round_damage["total"]
+        damage_crit  = round_damage["critical"]
+
+        -- (the + 0.1 is always added to the comparsion)
+        cmpCritChance = crit_chance + 0.1
+
+        if weapon:CalcObservedCritChance() > cmpCritChance then
+            requiredTotalDamage = (damage_crit * (2.0 * cmpCritChance + 1.0)) / cmpCritChance / 3.0
+            required_damage     = requiredTotalDamage - damage_total
+        end
+        store.required_damage = required_damage
+        ::_continue_1::
+    end
+
+    --- do crit bucket calculation
+    if weapon_seed == store.weapon_seed then
+        return
+    end
+    store.weapon_seed = weapon_seed
+
+    bucket_current       = weapon:GetCritTokenBucket()
+    crit_fired           = weapon:GetCritSeedRequestCount()
+    seed_count           = weapon:GetCritCheckCount()
+    store.bucket_current = bucket_current
+    store.crit_fired     = crit_fired
+    store.seed_count     = seed_count
+
+    do
+        local bucket, seed, crit, cost
+        local current_shot_cost    = weapon:GetCritCost(bucket_current, crit_fired, seed_count)
+        local shots_to_fill_bucket = math.ceil(bucket_max / added_per_shot)
+
+        local shots_left_till_bucket_max, critical_attacks, critical_attacks_max = 0, 0, 0
+
+        --- Attacks needed till bucket token max
+        bucket = bucket_current
+
+        while bucket < bucket_max do
+            bucket                     = bucket + added_per_shot
+            shots_left_till_bucket_max = shots_left_till_bucket_max + 1
+        end
+        store.shots_to_fill_bucket = shots_left_till_bucket_max
+
+        --- Amount of critical attacks stored
+        bucket = bucket_current
+
+        while bucket >= math.floor(current_shot_cost) do
+            critical_attacks = critical_attacks + 1
+            bucket           = bucket - weapon:GetCritCost(bucket, crit_fired + critical_attacks, seed_count)
+        end
+        store.critical_attacks = critical_attacks
+
+        --- Total of critical attacks can be filled
+        --- TODO: This calculation may be flawed
+        bucket = bucket_max
+        seed   = seed_count + shots_left_till_bucket_max
+        crit   = crit_fired - shots_to_fill_bucket
+
+        repeat
+            critical_attacks_max = critical_attacks_max + 1
+            cost                 = weapon:GetCritCost(bucket, crit, seed)
+            bucket               = bucket - cost
+        until bucket < cost
+        store.critical_attacks_max = critical_attacks_max
+
+        store.current_shot_cost = current_shot_cost
+        store.rapidfire_duration = weapon:GetRapidFireCritTime() - globals.CurTime()
+    end
+end)
+
+--- draw
+local font = draw.CreateFont("Tahoma", -11, 400, FONTFLAG_CUSTOM | FONTFLAG_OUTLINE)
+
+local function render_text(x, y, text, ...)
+    draw.Color(...)
+    draw.Text(x, y, text)
+    local wide, tall = draw.GetTextSize(text)
+    return y + tall
+end
+
+local function render_filled_rect(x, y, x1, y1, ...)
+    draw.Color(...)
+    draw.FilledRect(x, y, x1, y1)
+end
+
+local function render_outlined_rect(x, y, x1, y1, ...)
+    draw.Color(...)
+    draw.OutlinedRect(x, y, x1, y1)
+end
+
+local function round(num, numDecimalPlaces)
+    local mult = 10 ^ (numDecimalPlaces or 0)
+    return math.floor(num * mult + 0.5) / mult
 end
 
 callbacks.Register("Draw", function()
-    if not wpn then
-        return
-    end
-    local time = wpn:GetRapidFireCritTime() - globals.CurTime()
-    local space = 25
-    local width, height = 200, 10
-    local x, y = 200, 550
-    --- your drawing code here, et cetra
-    --- you want draw code, i give you :)
-    draw.Color(255, 255, 255, 255)
     draw.SetFont(font)
-    draw.Text(x, y, fmt("(Crit Stored)\t\t%d out of %d", ref.crits, ref.total))
-    y = y + space
-    draw.Color(28, 28, 28, 255)
-    draw.FilledRect(x, y, x + width, y + height + 10)
     draw.Color(255, 255, 255, 255)
-    draw.OutlinedRect(x - 2, y - 2, x + width + 2, y + height + 10)
-    --- crit
+    local x       = 200
+    local y       = 550
+    local margin  = 10
+    local padding = 4
+
+    local user_want_force_crit = input.IsButtonDown(gui.GetValue('crit key'))
+
+    if clientstate.GetClientSignonState() ~= 6 then
+        return
+    end
+
+    -- if engine.Con_IsVisible() or engine.IsGameUIVisible() then
+    --     return
+    -- end
+
+    if store.command_number ~= store.crit_calculator_command_number then
+        return
+    end
+
+    local text
+
+    if store.required_damage > 0 then
+        text = ("Penalty\t\t\t  " .. round(store.required_damage, 1) .. ' damage')
+        y    = render_text(x, y, text, 255, 255, 255, 255) + padding
+    end
+
+    text = ("Bucket\t\t\t   " .. round(store.bucket_current, 1))
+    y = render_text(x, y, text, 255, 255, 255, 255)
+
+    text = ("Crit Stored\t\t" .. store.critical_attacks .. ' out of ' .. store.critical_attacks_max)
+    y    = render_text(x, y, text, 255, 255, 255, 255) + padding + margin
+
+    local width    = 200
+    local height   = 8
+    local duration = store.rapidfire_duration
+
+    render_filled_rect(x, y, x + width, y + height + 2, 28, 28, 28, 255)
+    render_outlined_rect(x - 2, y - 2, x + width + 2, y + height + 2, 255, 255, 255, 255)
+
     draw.Color(30, 255, 0, 255)
-    if input.IsButtonDown(gui.GetValue('crit key')) then
-        draw.Color(115, 0, 255, 255) -- rgb(115, 0, 255)
+    if user_want_force_crit then
+        text = ("– " .. round(store.current_shot_cost, 1))
+        render_text(x, y + 20, text, 255, 0, 0, 255)
+        draw.Color(115, 0, 255, 255)
     end
-    if (time > 0) then
-        draw.FilledRect(x, y, x + math.floor(width * (time / 2)), y + height)
+
+    if (duration > 0) then
+        draw.FilledRect(x, y, x + math.floor(width * (duration / 2)), y + height)
     else
-        draw.FilledRect(x, y, x + math.floor(width * (ref.crits / ref.total)), y + height)
-    end
-    --- spent
-    draw.Color(30, 255, 0, 255) -- rgb(30, 255, 0)
-    draw.FilledRect(x, y, x + math.floor(width * (ref.exp_crits / ref.total)), y + height)
-    --- fill bucket
-    draw.Color(149, 0, 255, 255) -- rgb(149, 0, 255)
-    draw.FilledRect(x, y + height,
-        x + math.floor(width * math.min(ref.bucketStored + wpn:GetWeaponBaseDamage(), 1000) / ref.bucketMax)
-        , y + height + 8)
-    --- bucket
-    draw.Color(0, 166, 255, 255) -- rgb(0, 166, 255)
-    draw.FilledRect(x, y + height, x + math.floor(width * (ref.bucketStored / ref.bucketMax)), y + height + 8)
-
-    -- x, y = 600, 550
-    -- draw.Color(0, 0, 0, 95)
-    -- draw.FilledRect(x - 20, y, x + 190, y + 130)
-    -- draw.Color(204, 153, 201, 255)
-    -- draw.FilledRect(x, y, x + 170, y + 3)
-    -- draw.Color(255, 255, 255, 255)
-    -- draw.Text(x, y + 20, fmt("Crit fired  \t\t\t\t\t%d", wpn:GetCritSeedRequestCount()))
-    -- draw.Text(x, y + 40, fmt("Seed request\t\t\t%d", wpn:GetCritCheckCount()))
-    -- draw.Text(x, y + 60, fmt("Bucket        \t\t\t\t%.0f", wpn:GetCritTokenBucket()))
-    -- draw.Text(x, y + 80, fmt("Gain      \t\t\t\t\t\t%.0f", wpn:GetWeaponBaseDamage()))
-    -- draw.Text(x, y + 100,
-    --     fmt("Cost         \t\t\t\t\t%f",
-    --         wpn:GetCritCost(wpn:GetCritTokenBucket(), wpn:GetCritCheckCount(), wpn:GetCritSeedRequestCount())))
-    -- draw.Color(204, 153, 201, 255)
-end)
-
-callbacks.Register("CreateMove", function()
-    local me = entities.GetLocalPlayer()
-    wpn = me:GetPropEntity("m_hActiveWeapon")
-
-    --- Weapon don't spawn yet
-    if not wpn:IsValid() then
-        wpn = nil
-        return
+        draw.FilledRect(x, y, x + math.floor(width * (store.critical_attacks / store.critical_attacks_max)), y + height)
     end
 
-    local serverAllowCrit = ServerAllowRandomCrit()
-    local addedPerShot = wpn:GetWeaponBaseDamage()
-    --- This only check if server disabled crit or weapon does not deal damage (defined by WeaponData)
-    --- Refer to TF2 Wiki to get a list of weapon that cannot random crit
-    if serverAllowCrit == false or addedPerShot <= 0 then
-        wpn = nil
-        return
-    end
+    render_filled_rect(x, y, x + math.floor(width * ((store.critical_attacks - 1) / store.critical_attacks_max)),
+        y + height, 30, 255, 0, 255)
 
-    local bucketStored    = wpn:GetCritTokenBucket()
-    local bucketMax       = client.GetConVar('tf_weapon_criticals_bucket_cap')
-    local weaponCritCount = wpn:GetCritSeedRequestCount()
-    local weaponSeedCount = wpn:GetCritCheckCount()
-
-    local need = math.floor(bucketMax / addedPerShot)
-    local crits, attacks, total = 0, 0, 0
-    local exp_crits = 0
-
-    --- Calculate number of attacks needed to fill entire bucket
-    do
-        local i, stored = 0, bucketStored
-        while stored < bucketMax do
-            stored = stored + addedPerShot
-            i = i + 1
-        end
-        attacks = i
-    end
-
-    --- Calculate number of crits allowed to withdrawn from bucket
-    do
-        local i, stored = 0, bucketStored
-        local cost      = math.floor(wpn:GetCritCost(stored, weaponCritCount, weaponSeedCount))
-        while stored >= cost do
-            i = i + 1
-            stored = stored - cost
-            cost = wpn:GetCritCost(stored, weaponCritCount + i, weaponSeedCount)
-        end
-        crits = i
-    end
-
-    --- Calculate number of crits can be withdrawn when bucket is full
-    --- I don't know why, when shooting a lot after you filled the bucket, crit cost reduced, thus you gain additional crits
-    do
-        local i, cap          = 0, bucketMax
-        local weaponSeedCount = weaponSeedCount + attacks
-        local weaponCritCount = weaponCritCount - need
-        local cost            = math.floor(wpn:GetCritCost(cap, weaponCritCount, weaponSeedCount))
-        while cap >= cost do
-            cap = cap - cost
-            cost = wpn:GetCritCost(cap, weaponCritCount + i, weaponSeedCount)
-            i = i + 1
-        end
-        total = i
-    end
-
-    --- Calculate number of crits allowed to withdrawn from bucket after we shot a crit
-    --- Is This really needed? 3AM brain is not working
-    do
-        local i, stored = 0, bucketStored
-        local stored    = bucketStored - wpn:GetCritCost(bucketStored, weaponCritCount, weaponSeedCount)
-        local cost      = wpn:GetCritCost(stored, weaponCritCount + 1, weaponSeedCount + 1)
-        while stored >= cost do
-            i = i + 1
-            stored = stored - cost
-            cost = wpn:GetCritCost(stored, weaponCritCount + i + 1, weaponSeedCount + 1)
-        end
-        exp_crits = i
-    end
-
-    ref = {
-        crits = crits,
-        exp_crits = exp_crits,
-        attacks = attacks,
-        total = total,
-        cost = math.floor(wpn:GetCritCost(bucketStored, weaponCritCount, weaponSeedCount)),
-        bucketStored = bucketStored,
-        bucketMax = bucketMax,
-    }
 end)
