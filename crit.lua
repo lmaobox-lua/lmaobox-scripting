@@ -191,7 +191,7 @@ local store = {
     required_damage = 0
 }
 
-callbacks.Register("CreateMove", function(cmd) ---@param cmd UserCmd
+callbacks.Register("CreateMove", "crit-helper.CreateMove", function(cmd) ---@param cmd UserCmd
     local me     = entities.GetLocalPlayer()
     local weapon = me:GetPropEntity("m_hActiveWeapon") ---@type Entity
 
@@ -249,19 +249,19 @@ callbacks.Register("CreateMove", function(cmd) ---@param cmd UserCmd
     end
 
     store.rapidfire_duration = weapon:GetRapidFireCritTime() - globals.CurTime()
-    bucket_current       = weapon:GetCritTokenBucket()
+    bucket_current           = weapon:GetCritTokenBucket()
 
     --- do crit bucket calculation
-    if weapon_seed == store.weapon_seed and bucket_current == store.bucket_current  then
+    if weapon_seed == store.weapon_seed and bucket_current == store.bucket_current then
         return
     end
-    store.weapon_seed = weapon_seed
 
     crit_fired           = weapon:GetCritSeedRequestCount()
     seed_count           = weapon:GetCritCheckCount()
     store.bucket_current = bucket_current
     store.crit_fired     = crit_fired
     store.seed_count     = seed_count
+    store.weapon_seed    = weapon_seed
 
     do
         local bucket, seed, crit, cost
@@ -282,23 +282,25 @@ callbacks.Register("CreateMove", function(cmd) ---@param cmd UserCmd
 
         --- Amount of critical attacks stored
         bucket = bucket_current
+        cost   = math.floor(current_shot_cost)
 
-        while bucket >= math.floor(current_shot_cost) do
+        while cost <= bucket do
             critical_attacks = critical_attacks + 1
-            bucket           = bucket - weapon:GetCritCost(bucket, crit_fired + critical_attacks, seed_count)
+            cost             = weapon:GetCritCost(bucket, crit_fired + critical_attacks, seed_count)
+            bucket           = bucket - cost
         end
         store.critical_attacks = critical_attacks
 
         --- Total of critical attacks can be filled
         --- TODO: This calculation may be flawed
         bucket = bucket_max
-        seed   = seed_count + shots_left_till_bucket_max
-        crit   = crit_fired - shots_to_fill_bucket
+        seed   = seed_count + shots_to_fill_bucket
+        crit   = crit_fired - shots_left_till_bucket_max
 
         repeat
-            critical_attacks_max = critical_attacks_max + 1
             cost                 = weapon:GetCritCost(bucket, crit, seed)
             bucket               = bucket - cost
+            critical_attacks_max = critical_attacks_max + 1
         until bucket < cost
         store.critical_attacks_max = critical_attacks_max
     end
@@ -329,7 +331,7 @@ local function round(num, numDecimalPlaces)
     return math.floor(num * mult + 0.5) / mult
 end
 
-callbacks.Register("Draw", function()
+callbacks.Register("Draw", "crit-helper.Draw", function()
     draw.SetFont(font)
     draw.Color(255, 255, 255, 255)
     local x       = 200
