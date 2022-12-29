@@ -248,13 +248,15 @@ callbacks.Register("CreateMove", function(cmd) ---@param cmd UserCmd
         ::_continue_1::
     end
 
+    store.rapidfire_duration = weapon:GetRapidFireCritTime() - globals.CurTime()
+    bucket_current       = weapon:GetCritTokenBucket()
+
     --- do crit bucket calculation
-    if weapon_seed == store.weapon_seed then
+    if weapon_seed == store.weapon_seed and bucket_current == store.bucket_current  then
         return
     end
     store.weapon_seed = weapon_seed
 
-    bucket_current       = weapon:GetCritTokenBucket()
     crit_fired           = weapon:GetCritSeedRequestCount()
     seed_count           = weapon:GetCritCheckCount()
     store.bucket_current = bucket_current
@@ -264,6 +266,7 @@ callbacks.Register("CreateMove", function(cmd) ---@param cmd UserCmd
     do
         local bucket, seed, crit, cost
         local current_shot_cost    = weapon:GetCritCost(bucket_current, crit_fired, seed_count)
+        store.current_shot_cost    = current_shot_cost
         local shots_to_fill_bucket = math.ceil(bucket_max / added_per_shot)
 
         local shots_left_till_bucket_max, critical_attacks, critical_attacks_max = 0, 0, 0
@@ -298,9 +301,6 @@ callbacks.Register("CreateMove", function(cmd) ---@param cmd UserCmd
             bucket               = bucket - cost
         until bucket < cost
         store.critical_attacks_max = critical_attacks_max
-
-        store.current_shot_cost = current_shot_cost
-        store.rapidfire_duration = weapon:GetRapidFireCritTime() - globals.CurTime()
     end
 end)
 
@@ -373,8 +373,6 @@ callbacks.Register("Draw", function()
 
     draw.Color(30, 255, 0, 255)
     if user_want_force_crit then
-        text = ("– " .. round(store.current_shot_cost, 1))
-        render_text(x, y + 20, text, 255, 0, 0, 255)
         draw.Color(115, 0, 255, 255)
     end
 
@@ -387,4 +385,8 @@ callbacks.Register("Draw", function()
     render_filled_rect(x, y, x + math.floor(width * ((store.critical_attacks - 1) / store.critical_attacks_max)),
         y + height, 30, 255, 0, 255)
 
+    if store.bucket_current < math.floor(store.current_shot_cost) then
+        text = ("– " .. round(store.current_shot_cost, 1))
+        y = render_text(x, y + 20, text, 255, 0, 0, 255)
+    end
 end)
