@@ -220,7 +220,8 @@ callbacks.Register("CreateMove", "crit-helper.CreateMove", function(cmd) ---@par
     end
 
     store.crit_calculator_command_number = command_number
-    weapon_seed                          = weapon:GetCurrentCritSeed()
+    store.is_melee                       = is_melee
+    -- store.weapon_seed                    = weapon_seed
 
     --- do damage penalty calculation
     do
@@ -250,18 +251,19 @@ callbacks.Register("CreateMove", "crit-helper.CreateMove", function(cmd) ---@par
 
     store.rapidfire_duration = weapon:GetRapidFireCritTime() - globals.CurTime()
     bucket_current           = weapon:GetCritTokenBucket()
+    seed_count               = weapon:GetCritCheckCount()
 
     --- do crit bucket calculation
-    if weapon_seed == store.weapon_seed and bucket_current == store.bucket_current then
+    if item_definition_id == store.item_definition_id and bucket_current == store.bucket_current and
+        store.seed_count == seed_count then
         return
     end
 
-    crit_fired           = weapon:GetCritSeedRequestCount()
-    seed_count           = weapon:GetCritCheckCount()
-    store.bucket_current = bucket_current
-    store.crit_fired     = crit_fired
-    store.seed_count     = seed_count
-    store.weapon_seed    = weapon_seed
+    crit_fired               = weapon:GetCritSeedRequestCount()
+    store.seed_count         = seed_count
+    store.bucket_current     = bucket_current
+    store.crit_fired         = crit_fired
+    store.item_definition_id = item_definition_id
 
     do
         local bucket, seed, crit, cost
@@ -291,8 +293,9 @@ callbacks.Register("CreateMove", "crit-helper.CreateMove", function(cmd) ---@par
         end
         store.critical_attacks = critical_attacks
 
+        --- TODO: These calculation may be flawed
+
         --- Total of critical attacks can be filled
-        --- TODO: This calculation may be flawed
         bucket = bucket_max
         seed   = seed_count + shots_to_fill_bucket
         crit   = crit_fired - shots_left_till_bucket_max
@@ -303,10 +306,19 @@ callbacks.Register("CreateMove", "crit-helper.CreateMove", function(cmd) ---@par
             critical_attacks_max = critical_attacks_max + 1
         until bucket < cost
         store.critical_attacks_max = critical_attacks_max
+
     end
 end)
 
---- draw
+--- cache invalidation
+callbacks.Register("FireGameEvent", "crit-helper.FireGameEvent", function(event) ---@param event GameEvent
+    local event_name = event:GetName()
+    if event_name == "player_spawn" then
+        store.weapon_seed = 0
+    end
+end)
+
+--- visualize
 local font = draw.CreateFont("Tahoma", -11, 400, FONTFLAG_CUSTOM | FONTFLAG_OUTLINE)
 
 local function render_text(x, y, text, ...)
@@ -331,6 +343,21 @@ local function round(num, numDecimalPlaces)
     return math.floor(num * mult + 0.5) / mult
 end
 
+local function selector(gui_path)
+    local ____switch2 = gui.GetValue(gui_path)
+    local ____cond2 = ____switch2 == "off"
+    if ____cond2 then
+        return false
+    end
+    ____cond2 = ____cond2 or ____switch2 == "force always"
+    if ____cond2 then
+        return true
+    end
+    do
+        return input.IsButtonDown(gui.GetValue("crit key"))
+    end
+end
+
 callbacks.Register("Draw", "crit-helper.Draw", function()
     draw.SetFont(font)
     draw.Color(255, 255, 255, 255)
@@ -339,7 +366,7 @@ callbacks.Register("Draw", "crit-helper.Draw", function()
     local margin  = 10
     local padding = 4
 
-    local user_want_force_crit = input.IsButtonDown(gui.GetValue('crit key'))
+    local user_want_force_crit = store.is_melee and selector("melee crits") or selector("crit hack")
 
     if clientstate.GetClientSignonState() ~= 6 then
         return
@@ -353,22 +380,17 @@ callbacks.Register("Draw", "crit-helper.Draw", function()
         return
     end
 
+    local critical_attacks, critical_attacks_max, rapidfire_duration, required_damage, shots_to_fill_bucket, current_shot_cost, bucket_current = store
+        .critical_attacks, store.critical_attacks_max, store.rapidfire_duration, store.required_damage,
+        store.shots_to_fill_bucket, store.current_shot_cost, store.bucket_current
+
     local text
 
-    if store.required_damage > 0 then
-        text = ("Penalty\t\t\t  " .. round(store.required_damage, 1) .. ' damage')
-        y    = render_text(x, y, text, 255, 255, 255, 255) + padding
-    end
-
-    text = ("Bucket\t\t\t   " .. round(store.bucket_current, 1))
-    y = render_text(x, y, text, 255, 255, 255, 255)
-
-    text = ("Crit Stored\t\t" .. store.critical_attacks .. ' out of ' .. store.critical_attacks_max)
+    text = ("Crit Stored\t\t\t\t\t\t\t\t\t" .. critical_attacks .. ' out of ' .. critical_attacks_max)
     y    = render_text(x, y, text, 255, 255, 255, 255) + padding + margin
 
-    local width    = 200
-    local height   = 8
-    local duration = store.rapidfire_duration
+    local width  = 200
+    local height = 8
 
     render_filled_rect(x, y, x + width, y + height + 2, 28, 28, 28, 255)
     render_outlined_rect(x - 2, y - 2, x + width + 2, y + height + 2, 255, 255, 255, 255)
@@ -377,18 +399,31 @@ callbacks.Register("Draw", "crit-helper.Draw", function()
     if user_want_force_crit then
         draw.Color(115, 0, 255, 255)
     end
-
-    if (duration > 0) then
-        draw.FilledRect(x, y, x + math.floor(width * (duration / 2)), y + height)
-    else
-        draw.FilledRect(x, y, x + math.floor(width * (store.critical_attacks / store.critical_attacks_max)), y + height)
+    if required_damage > 0 then
+        draw.Color(255, 0, 0, 255)
     end
 
-    render_filled_rect(x, y, x + math.floor(width * ((store.critical_attacks - 1) / store.critical_attacks_max)),
+    if (rapidfire_duration > 0) then
+        draw.FilledRect(x, y, x + math.floor(width * (rapidfire_duration / 2)), y + height)
+    else
+        draw.FilledRect(x, y, x + math.floor(width * (critical_attacks / critical_attacks_max)), y + height)
+    end
+
+    render_filled_rect(x, y, x + math.floor(width * ((critical_attacks - 1) / critical_attacks_max)),
         y + height, 30, 255, 0, 255)
 
-    if store.bucket_current < math.floor(store.current_shot_cost) then
-        text = ("– " .. round(store.current_shot_cost, 1))
-        y = render_text(x, y + 20, text, 255, 0, 0, 255)
+    y = y + 20
+
+    if required_damage > 0 then
+        text = ("Penalty")
+        y    = render_text(x, y, text, 255, 255, 255, 255) + padding
+        text = round(required_damage, 1) .. ' damage'
+        y    = render_text(x, y, text, 255, 61, 65, 255) + padding
     end
+
+    if bucket_current < math.floor(current_shot_cost) then
+        text = (round(current_shot_cost, 1) .. " > " .. round(bucket_current, 1))
+        y = render_text(x, y, text, 255, 61, 65, 255) + padding
+    end
+
 end)
