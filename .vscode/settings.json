@@ -12,4 +12,10 @@
     ],
     "Lua.workspace.checkThirdParty": false,
     "Lua.completion.autoRequire": false,
+    "explorer.sortOrder": "type",
+    "Lua.workspace.ignoreDir": [
+        ".vscode",
+        "lua_modules",
+        "lmaobox_modules"
+    ],
 }

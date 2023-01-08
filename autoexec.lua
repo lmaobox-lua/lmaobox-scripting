@@ -1,62 +1,115 @@
-local function isdir(a)
-    return a ~= 0xFFFFFFFF and a & 0x10 ~= 0
+local tf2_directory, script_name
+do
+    tf2_directory = assert(engine.GetGameDir():gsub('\\', '/'):gsub('/[^/]+$', ''))
+    script_name = assert(GetScriptName():match('[^\\]*.lua$'))
+
+    package.path =
+    package.path
+        .. ';' .. tf2_directory .. '/?.lua'
+        .. ';' .. tf2_directory .. '/lmaobox-scripting/?.lua'
+        .. ';' .. tf2_directory .. '/lmaobox-scripting/lua_modules/?.lua'
+        .. ';' .. tf2_directory .. '/lmaobox-scripting/lmaobox_modules/?.lua'
+    package.cpath =
+    package.cpath
+        .. ';' .. tf2_directory .. '/?.dll'
+        .. ';' .. tf2_directory .. '/lmaobox-scripting/?.dll'
+        .. ';' .. tf2_directory .. '/lmaobox-scripting/lua_modules/?.dll'
+        .. ';' .. tf2_directory .. '/lmaobox-scripting/lmaobox_modules/?.dll'
 end
 
-local function join(...)
-    return table.concat({ ... }, '/')
-end
+local console = {}
+local where = package.path
 
-local scripts = {}
--- Replace all backslashes with forward slashes and truncate starting from last slashes
-local root = engine.GetGameDir():gsub('\\', '/'):gsub('/[^/]+$', '') .. '/lmaobox-scripting'
-
-local function iter(filename, fields)
-    if filename ~= '.' and filename ~= '..' then
-        if filename:match('[^.]+$') == 'lua' and not isdir(fields) then
-            if not scripts[filename] then
-                scripts[filename] = join(root, filename)
-                scripts[filename:gsub('.[^.]+$', '')] = join(root, filename)
-            end
-            return
+local function list_console_variable()
+    for key, value in pairs(console) do
+        if key ~= 'lua_cvar' then
+            printc(204, 255, 255, 255, key .. " " .. "(" .. tostring(value) .. ")")
         end
     end
 end
 
-local lastUpd = 0
-local interval = 1
+function console.load(modname)
+    local path = package.searchpath(modname, where, ".", "/") or modname
+    printc(102, 204, 153, 255, "LoadScript([[" .. path .. "]])")
+    LoadScript(path)
+end
 
-callbacks.Unregister('SendStringCmd', '----')
-callbacks.Register('SendStringCmd', '----', function(o)
-    local cmd = o:Get()
-    if cmd:sub(1, 8) == 'lua_file' then
-        if os.time() > lastUpd then
-            --- gay ass solution til i figure out recursion
-            filesystem.EnumerateDirectory('./lmaobox-scripting/*', iter)
-            -- filesystem.EnumerateDirectory('./lmaobox-scripting/lua/*', iter)
-            lastUpd = os.time() + interval
-        end
-        o:Set('')
-        local rel = cmd:sub(10)
-        if #rel == 0 then
-            for k, v in pairs(scripts) do
-                print(k)
-            end
-            return
-        end
-        local ret = scripts[rel] and LoadScript(scripts[rel]) or false
-        printc(125, 0, 88, 255, string.format('attempt to load script %s (result : %s)', rel, ret))
+function console.unload(modname)
+    local path = package.searchpath(modname, where, ".", "/") or modname
+    printc(102, 204, 153, 255, "UnloadScript([[" .. path .. "]])")
+    print(UnloadScript(path))
+end
+
+function console.reload_me()
+    printc(153, 204, 153, 255, "('>`.__.`<)")
+    LoadScript(GetScriptName())
+end
+
+local cvar = {}
+function console.setcvar(variable_name, value)
+    if value == nil then
+        cvar[variable_name] = nil
     end
-    if cmd:sub(1, 11) == 'lua_unload ' then
-        local p = cmd:sub(12)
-        if #p == 0 then
-            return
+end
+
+-- code point constants
+local CHAR_SPACE = 32 -- ' '
+
+callbacks.Unregister('SendStringCmd', 'autoexec.SendStringCmd')
+callbacks.Register('SendStringCmd', 'autoexec.SendStringCmd', function(string_cmd) ---@param string_cmd StringCmd
+    local input, length, position, captured, convar
+    input    = string_cmd:Get()
+    length   = string.len(input)
+    position = 1
+    captured = 0
+    local segments, index
+    segments = {}
+    index    = 0
+
+    while position <= length do
+        local code = string.byte(input, position)
+
+        if code ~= CHAR_SPACE then
+            captured = captured + 1
+            goto __continue__
         end
-        o:Set('')
-        local ret = scripts[p] and UnloadScript(scripts[p]) or UnloadScript(p)
-        printc(125, 0, 88, 255,
-               string.format('attempt to unload script %s (result : %s) (where: %s)', p, ret, scripts[p] or p))
+
+        index           = index + 1
+        segments[index] = string.sub(input, position - captured, position - 1)
+        captured        = 0
+
+        ::__continue__::
+        position = position + 1
     end
+
+    if captured ~= 0 then
+        index           = index + 1
+        segments[index] = string.sub(input, position - captured, position - 1)
+    end
+
+    if index == 0 then
+        return
+    end
+
+    if segments[1] ~= 'do' then
+        return
+    end
+
+    string_cmd:Set('')
+    convar = segments[2]
+
+    if convar == nil then
+        return list_console_variable()
+    end
+
+    local command = console[convar]
+    printc(255, 255, 153, 255, ".." .. script_name .. ":")
+
+    if type(command) == "function" then
+        command(table.unpack(segments, 3))
+        return
+    end
+
+    printc(102, 204, 153, 255, "Unknown command: " .. convar)
+    printc(204, 255, 255, 255, "Type 'do' for a list of commands")
 end)
-
-package.path=package.path .. ';E:/SteamLibrary/steamapps/common/Team Fortress 2/lmaobox-scripting/?.lua' .. ';E:/SteamLibrary/steamapps/common/Team Fortress 2/lmaobox-scripting/../?.lua'
-package.cpath=package.path .. ';E:/SteamLibrary/steamapps/common/Team Fortress 2/lmaobox-scripting/?.dll' .. ';E:/SteamLibrary/steamapps/common/Team Fortress 2/lmaobox-scripting/../?.dll'

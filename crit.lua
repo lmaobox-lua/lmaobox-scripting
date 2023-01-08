@@ -1,8 +1,9 @@
---- List of weapons that cannot crit in official TF2 Server
---
---- ``CalcIsAttackCriticalHelpers()`` overridden to disable crit, or only grant crit on certain condition
---
---- https://wiki.alliedmods.net/Team_fortress_2_item_definition_indexes
+--- Copyright 2022-2023 Lewd Developer. All rights reserved. MIT License
+--- Thanks @blackfire62
+
+--- List of weapons that cannot crit in official TF2 Server                                                                \
+--- source: `CalcIsAttackCriticalHelpers()`                                                                              \
+--- https://wiki.alliedmods.net/Team_fortress_2_item_definition_indexes                                                    \
 --- https://api.steampowered.com/IEconItems_440/GetSchemaItems/v0001/?key=YOUR_API_KEY Client Item Schema (item_games.txt)
 local sets = {
     [441] = true,
@@ -174,11 +175,17 @@ local sets = {
 }
 
 local function ServerAllowRandomCrit(tf_weapon_criticals, tf_weapon_criticals_melee, is_melee)
-    return is_melee and tf_weapon_criticals == 1 or tf_weapon_criticals_melee == 2 or
-        (tf_weapon_criticals == 1 and tf_weapon_criticals_melee == 1)
+    local crits = tf_weapon_criticals == 1
+    if is_melee == false then
+        return crits
+    end
+    if crits and tf_weapon_criticals_melee == 1 then
+        return true
+    end
+    return tf_weapon_criticals_melee ~= 0
 end
 
-local function WeaponAllowRandomCrit(base_damage, item_definition_id, player_class, is_melee)
+local function WeaponCanRandomCrit(base_damage, item_definition_id, player_class, is_melee)
     if player_class == 8 and is_melee == true then --- TF2_SPY = 8
         return false
     end
@@ -186,14 +193,15 @@ local function WeaponAllowRandomCrit(base_damage, item_definition_id, player_cla
 end
 
 --- Purpose: share data from different callbacks
+--- TODO: We could do even better here by pre-calculate and caching result of every weapon in current loadout, then update individual weapon when it's changed
 local store = {
     crit_calculator_command_number = -1,
     required_damage = 0
 }
 
-callbacks.Register("CreateMove", "crit-helper.CreateMove", function(cmd) ---@param cmd UserCmd
+callbacks.Register('CreateMove', 'crit-helper.CreateMove', function(cmd) ---@param cmd UserCmd
     local me     = entities.GetLocalPlayer()
-    local weapon = me:GetPropEntity("m_hActiveWeapon") ---@type Entity
+    local weapon = me:GetPropEntity('m_hActiveWeapon') ---@type Entity
 
     if not weapon:IsValid() then
         return
@@ -203,40 +211,37 @@ callbacks.Register("CreateMove", "crit-helper.CreateMove", function(cmd) ---@par
     store.command_number = command_number
 
     local player_class
-    local item_definition_id, is_melee, added_per_shot, bucket_current, crit_fired, seed_count, weapon_seed
+    local itemdefinition_id, is_melee, added_per_shot, bucket_current, crit_fired, seed_count, current_crit_cost
     local tf_weapon_criticals, tf_weapon_criticals_melee, bucket_max
 
-    player_class              = me:GetPropInt("m_iClass")
+    player_class              = me:GetPropInt('m_iClass')
     is_melee                  = weapon:IsMeleeWeapon()
     added_per_shot            = weapon:GetWeaponBaseDamage()
-    item_definition_id        = weapon:GetPropInt("m_iItemDefinitionIndex")
-    tf_weapon_criticals       = client.GetConVar("tf_weapon_criticals")
-    tf_weapon_criticals_melee = client.GetConVar("tf_weapon_criticals_melee")
+    itemdefinition_id         = weapon:GetPropInt('m_iItemDefinitionIndex')
+    tf_weapon_criticals       = client.GetConVar('tf_weapon_criticals')
+    tf_weapon_criticals_melee = client.GetConVar('tf_weapon_criticals_melee')
     bucket_max                = client.GetConVar('tf_weapon_criticals_bucket_cap')
 
     if ServerAllowRandomCrit(tf_weapon_criticals, tf_weapon_criticals_melee, is_melee) == false or
-        WeaponAllowRandomCrit(added_per_shot, item_definition_id, player_class, is_melee) == false then
+        WeaponCanRandomCrit(added_per_shot, itemdefinition_id, player_class, is_melee) == false then
         return
     end
 
-    store.crit_calculator_command_number = command_number
     store.is_melee                       = is_melee
-    -- store.weapon_seed                    = weapon_seed
+    store.crit_calculator_command_number = command_number
+    store.rapidfire_duration             = weapon:GetRapidFireCritTime() - globals.CurTime()
 
-    --- do damage penalty calculation
-    do
-        if is_melee then
-            goto _continue_1
-        end
-
+    -- calculate damage penalty
+    -- source: game/shared/tf/tf_weaponbase.cpp:4214
+    if is_melee == false then
         local crit_chance, round_damage, damage_total, damage_crit
         local cmpCritChance, requiredTotalDamage
         local required_damage = 0
 
         crit_chance  = weapon:GetCritChance()
         round_damage = weapon:GetWeaponDamageStats()
-        damage_total = round_damage["total"]
-        damage_crit  = round_damage["critical"]
+        damage_total = round_damage['total']
+        damage_crit  = round_damage['critical']
 
         -- (the + 0.1 is always added to the comparsion)
         cmpCritChance = crit_chance + 0.1
@@ -246,80 +251,89 @@ callbacks.Register("CreateMove", "crit-helper.CreateMove", function(cmd) ---@par
             required_damage     = requiredTotalDamage - damage_total
         end
         store.required_damage = required_damage
-        ::_continue_1::
     end
 
-    store.rapidfire_duration = weapon:GetRapidFireCritTime() - globals.CurTime()
-    bucket_current           = weapon:GetCritTokenBucket()
-    seed_count               = weapon:GetCritCheckCount()
+    bucket_current = weapon:GetCritTokenBucket()
+    seed_count     = weapon:GetCritCheckCount()
 
-    --- do crit bucket calculation
-    if item_definition_id == store.item_definition_id and bucket_current == store.bucket_current and
-        store.seed_count == seed_count then
+    -- do crit bucket calculation
+    -- source: game/shared/basecombatweapon_shared.cpp:1609
+    --         game/shared/tf/tf_weaponbase.cpp:1588
+    if itemdefinition_id == store.itemdefinition_id
+        and bucket_current == store.bucket_current
+        and seed_count == store.seed_count then
         return
     end
 
-    crit_fired               = weapon:GetCritSeedRequestCount()
-    store.seed_count         = seed_count
-    store.bucket_current     = bucket_current
-    store.crit_fired         = crit_fired
-    store.item_definition_id = item_definition_id
+    crit_fired              = weapon:GetCritSeedRequestCount()
+    current_crit_cost       = weapon:GetCritCost(bucket_current, crit_fired, seed_count)
+    store.itemdefinition_id = itemdefinition_id
+    store.bucket_current    = bucket_current
+    store.seed_count        = seed_count
+    store.crit_fired        = crit_fired
+    store.current_crit_cost = current_crit_cost
 
     do
-        local bucket, seed, crit, cost
-        local current_shot_cost    = weapon:GetCritCost(bucket_current, crit_fired, seed_count)
-        store.current_shot_cost    = current_shot_cost
-        local shots_to_fill_bucket = math.ceil(bucket_max / added_per_shot)
+        local bucket, seed, cost, crit
+        local shots_to_fill_bucket, shots_till_next_crit, critical_hit, critical_hit_max = 0, 0, 0, 0 -- these value don't modify once calculated
 
-        local shots_left_till_bucket_max, critical_attacks, critical_attacks_max = 0, 0, 0
-
-        --- Attacks needed till bucket token max
-        bucket = bucket_current
-
-        while bucket < bucket_max do
-            bucket                     = bucket + added_per_shot
-            shots_left_till_bucket_max = shots_left_till_bucket_max + 1
+        -- How many attacks needed till current weapon reached bucket cap
+        if is_melee then
+            shots_to_fill_bucket = math.ceil(bucket_max / added_per_shot)
+        else
+            bucket = bucket_current
+            while bucket < bucket_max do
+                bucket               = bucket + added_per_shot
+                shots_to_fill_bucket = shots_to_fill_bucket + 1
+            end
         end
-        store.shots_to_fill_bucket = shots_left_till_bucket_max
+        store.shots_to_fill_bucket = shots_to_fill_bucket
 
-        --- Amount of critical attacks stored
+        -- How many critical hit can player widthdrawn from bucket with current weapon
         bucket = bucket_current
-        cost   = math.floor(current_shot_cost)
-
-        while cost <= bucket do
-            critical_attacks = critical_attacks + 1
-            cost             = weapon:GetCritCost(bucket, crit_fired + critical_attacks, seed_count)
-            bucket           = bucket - cost
+        cost   = math.floor(current_crit_cost)
+        while bucket >= cost do
+            critical_hit = critical_hit + 1
+            cost         = weapon:GetCritCost(bucket, crit_fired + critical_hit, seed_count + critical_hit)
+            bucket       = bucket - cost
         end
-        store.critical_attacks = critical_attacks
+        store.critical_attacks = critical_hit
 
-        --- TODO: These calculation may be flawed
-
-        --- Total of critical attacks can be filled
+        -- Total of critical attacks can be filled on a perfect ratio
+        -- Shoot 9 non-crit shots, then 1 crit shot (for first crit it's 8:1 ratio)
+        -- When bucket is full, first crit costs twice more than consequential crits
         bucket = bucket_max
-        seed   = seed_count + shots_to_fill_bucket
-        crit   = crit_fired - shots_left_till_bucket_max
-
         repeat
-            cost                 = weapon:GetCritCost(bucket, crit, seed)
-            bucket               = bucket - cost
-            critical_attacks_max = critical_attacks_max + 1
+            cost             = weapon:GetCritCost(bucket, 0, 9)
+            bucket           = bucket - cost
+            critical_hit_max = critical_hit_max + 1
         until bucket < cost
-        store.critical_attacks_max = critical_attacks_max
+        store.critical_attacks_max = critical_hit_max
 
-    end
-end)
-
---- cache invalidation
-callbacks.Register("FireGameEvent", "crit-helper.FireGameEvent", function(event) ---@param event GameEvent
-    local event_name = event:GetName()
-    if event_name == "player_spawn" then
-        store.weapon_seed = 0
+        -- Total of attacks needed to get a critical
+        if critical_hit ~= critical_hit_max then
+            repeat
+                crit                 = 0
+                shots_till_next_crit = shots_till_next_crit + 1
+                seed                 = seed_count + shots_till_next_crit
+                bucket               = math.min(bucket_current + (added_per_shot * shots_till_next_crit), 1000)
+                cost                 = math.floor(weapon:GetCritCost(bucket, crit_fired + crit, seed + crit))
+                while bucket >= cost do
+                    crit   = crit + 1
+                    cost   = weapon:GetCritCost(bucket, crit_fired + crit, seed + crit)
+                    bucket = bucket - cost
+                end
+            until crit ~= critical_hit
+        end
+        if weapon:GetWeaponData().useRapidFireCrits then
+            shots_till_next_crit = shots_till_next_crit * 1
+        end
+        store.shots_till_next_crit = shots_till_next_crit
     end
 end)
 
 --- visualize
-local font = draw.CreateFont("Tahoma", -11, 400, FONTFLAG_CUSTOM | FONTFLAG_OUTLINE)
+local font = draw.CreateFont('Tahoma', -11, 400, FONTFLAG_CUSTOM | FONTFLAG_OUTLINE)
 
 local function render_text(x, y, text, ...)
     draw.Color(...)
@@ -343,30 +357,24 @@ local function round(num, numDecimalPlaces)
     return math.floor(num * mult + 0.5) / mult
 end
 
-local function selector(gui_path)
-    local ____switch2 = gui.GetValue(gui_path)
-    local ____cond2 = ____switch2 == "off"
-    if ____cond2 then
+local function gui_state(gui_path)
+    local key = gui.GetValue(gui_path)
+    if key == 'off' then
         return false
-    end
-    ____cond2 = ____cond2 or ____switch2 == "force always"
-    if ____cond2 then
+    elseif key == 'force always' then
         return true
-    end
-    do
-        return input.IsButtonDown(gui.GetValue("crit key"))
+    else
+        return input.IsButtonDown(gui.GetValue('crit key'))
     end
 end
 
-callbacks.Register("Draw", "crit-helper.Draw", function()
+callbacks.Register('Draw', 'crit-helper.Draw', function()
     draw.SetFont(font)
     draw.Color(255, 255, 255, 255)
-    local x       = 200
-    local y       = 550
     local margin  = 10
     local padding = 4
-
-    local user_want_force_crit = store.is_melee and selector("melee crits") or selector("crit hack")
+    local x       = 200
+    local y       = 550 + padding + margin
 
     if clientstate.GetClientSignonState() ~= 6 then
         return
@@ -380,14 +388,15 @@ callbacks.Register("Draw", "crit-helper.Draw", function()
         return
     end
 
-    local critical_attacks, critical_attacks_max, rapidfire_duration, required_damage, shots_to_fill_bucket, current_shot_cost, bucket_current = store
-        .critical_attacks, store.critical_attacks_max, store.rapidfire_duration, store.required_damage,
-        store.shots_to_fill_bucket, store.current_shot_cost, store.bucket_current
+    local user_want_force_crit = store.is_melee and gui_state('melee crits') or gui_state('crit hack')
+
+    local critical_attacks, critical_attacks_max, rapidfire_duration, current_shot_cost, bucket_current, required_damage, shots_till_next_crit, is_melee =
+    store.critical_attacks, store.critical_attacks_max, store.rapidfire_duration,
+        store.current_crit_cost, store.bucket_current, store.required_damage, store.shots_till_next_crit, store.is_melee
+
+    local expression = required_damage > 0 and not is_melee
 
     local text
-
-    text = ("Crit Stored\t\t\t\t\t\t\t\t\t" .. critical_attacks .. ' out of ' .. critical_attacks_max)
-    y    = render_text(x, y, text, 255, 255, 255, 255) + padding + margin
 
     local width  = 200
     local height = 8
@@ -399,7 +408,7 @@ callbacks.Register("Draw", "crit-helper.Draw", function()
     if user_want_force_crit then
         draw.Color(115, 0, 255, 255)
     end
-    if required_damage > 0 then
+    if expression then
         draw.Color(255, 0, 0, 255)
     end
 
@@ -414,16 +423,28 @@ callbacks.Register("Draw", "crit-helper.Draw", function()
 
     y = y + 20
 
-    if required_damage > 0 then
-        text = ("Penalty")
-        y    = render_text(x, y, text, 255, 255, 255, 255) + padding
-        text = round(required_damage, 1) .. ' damage'
+    text = (
+        'Crital Hit' ..
+            '\t\t\t\t\t\t\t\t\t' .. (critical_attacks_max < 10 and '\t  ' or ' ') ..
+            critical_attacks .. ' out of ' .. critical_attacks_max)
+    y    = render_text(x, y, text, 255, 255, 255, 255) + padding
+
+    if not is_melee then
+        text = 'Crit Evo' ..
+            '\t\t\t\t\t\t\t\t\t\t\t\t\t\t' ..
+            (shots_till_next_crit < 10 and ' ' or '') .. shots_till_next_crit
+        y = render_text(x, y, text, 204, 255, 153, 255) + padding
+    end
+
+    if expression then
+        text = 'Damage penalty'
+            .. '\t\t\t\t\t\t\t\t  ' .. (required_damage < 100 and '   ' or '') .. (required_damage < 10 and '  ' or '')
+            .. round(required_damage, 1)
         y    = render_text(x, y, text, 255, 61, 65, 255) + padding
     end
 
     if bucket_current < math.floor(current_shot_cost) then
-        text = (round(current_shot_cost, 1) .. " > " .. round(bucket_current, 1))
+        text = (round(current_shot_cost, 1) .. ' > ' .. round(bucket_current, 1))
         y = render_text(x, y, text, 255, 61, 65, 255) + padding
     end
-
 end)

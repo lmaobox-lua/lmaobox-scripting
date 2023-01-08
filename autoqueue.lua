@@ -1,53 +1,85 @@
----disconnects the player from the server
-local function disconnect_from_server()
+--[[
+    TODO: Look at this shit later
+    Queue up
+
+    Main Queue Mode 
+    + Queue time > delay -> Queue additional game mode
+
+    In Game
+    - queue up for the same game mode once the current game ends.
+
+    Joining Server
+    - Stop all queue , except main queue
+    - Will not queue up
+
+    Main Menu
+    - queue up for the same game mode once the player enters the main menu.
+
+    + Set Map if there's no map selected
+]]
+
+local config = {
+    delay_in_second     = 5,
+    requeue_on_failure  = true,
+    stop_when_connected = false,
+    primary_game_mode   = "Casual",
+    extra_game_mode     = {},
+    queue_up_standby    = false -- casual only
+}
+
+local all_match_groups = party.GetAllMatchGroups()
+local match_group      = all_match_groups[config.primary_game_mode]
+local find_game        = false
+
+local function disconnect()
     if gamecoordinator.GetMatchAbandonStatus() ~= MATCHABANDON_PENTALTY then
         gamecoordinator.AbandonMatch()
-        client.Command("disconnect", true)
+        client.Command("disconnect", not nil)
     end
 end
 
---- Programmatically queue for matchmaking with the same game mode once the current game ends.
---- Can only queue up casual / competitive due to api limitations.
-local matchGroups = party.GetAllMatchGroups()
-local currentMatchGroup = matchGroups["Casual"]
+callbacks.Register("Draw", function()
+    if gamecoordinator.ConnectedToGC() then
 
-local function find_next_match()
-    -- gamecoordinator is offline
-    if not gamecoordinator.ConnectedToGC() then
-        return
-    end
-    -- recieved match invite
-    if gamecoordinator.GetNumMatchInvites() ~= 0 then
-        -- gamecoordinator.AcceptMatchInvites()
-        return
-    end
-    -- there's no matchmade game assigned
-    if gamecoordinator.HasLiveMatch() == false then
-        if currentMatchGroup then
-            local reasons = party.CanQueueForMatchGroup(currentMatchGroup)
+        if gamecoordinator.GetNumMatchInvites() ~= 0 then
+            gamecoordinator.AcceptMatchInvites()
+            return
+        end
+
+        if clientstate.GetClientSignonState() == 6 then
+            if gamerules.GetRoundState() == 8 then
+                if config.stop_when_connected then
+                    return
+                end
+                disconnect()
+                find_game = true
+            end
+
+            match_group = all_match_groups["Bootcamp"]
+            if gamerules.IsMatchTypeCasual() then
+                match_group = all_match_groups["Casual"]
+            end
+            if gamerules.IsMatchTypeCompetitive() then
+                match_group = all_match_groups["Competitive6v6"]
+            end
+        end
+
+        if not find_game then
+            return
+        end
+
+        -- in community server or main menu
+        if not gamecoordinator.HasLiveMatch() then
+            local reasons = party.CanQueueForMatchGroup(match_group)
             if reasons == true then
-                -- queue once
-                party.QueueUp(currentMatchGroup)
-                currentMatchGroup = nil
-            else
-                -- for id, msg in pairs(reasons) do print(id, msg) end
+                party.QueueUp(match_group)
+                return
             end
-        end
-        return
-    end
-    local signOnState = clientstate.GetClientSignonState()
-    if signOnState == 6 and gamerules.GetRoundState() == ROUND_GAMEOVER then
-        disconnect_from_server()
-        return
-    end
-    if signOnState ~= 0 then
-        if gamerules.IsMatchTypeCasual() then
-            currentMatchGroup = matchGroups["Casual"]
-        else if gamerules.IsMatchTypeCompetitive() then
-                currentMatchGroup = matchGroups["Competitive6v6"]
+            for id, msg in pairs(reasons) do
+                print(id, msg)
             end
         end
     end
-end
 
-callbacks.Register("Draw", find_next_match)
+    find_game = false
+end)
