@@ -45,15 +45,32 @@ function console.reload_me()
     LoadScript(GetScriptName())
 end
 
-local cvar = {}
-function console.setcvar(variable_name, value)
-    if value == nil then
-        cvar[variable_name] = nil
-    end
+function console.target(steamid, priority)
+    local priority = priority or 5
+    print(playerlist.SetPriority(steamid, priority))
+    printc(102, 204, 153, 255, "Player Priority" .. " '" .. steam.GetPlayerName(steamid) .. "' " .. "is now " .. priority)
 end
+
+-- local cvar = {}
+-- function console.setcvar(variable_name, value)
+--     if value == nil then
+--         cvar[variable_name] = nil
+--     end
+-- end
+-- local cvar_timer, cvar_update_interval = -1, 0.1
+-- callbacks.Register("Draw", "autoexec.setcvar.Timer", function ()
+--     if globals.CurTime() > cvar_timer then
+--         cvar_timer = globals.CurTime() + cvar_update_interval
+--         for variable_name, value in pairs(cvar) do
+--             client.SetConVar(variable_name, value)
+--         end
+--     end
+-- end)
 
 -- code point constants
 local CHAR_SPACE = 32 -- ' '
+local CHAR_QUOTE = 34 -- '"'
+local CHAR_SINGLE_QUOTE = 39 -- "'"
 
 callbacks.Unregister('SendStringCmd', 'autoexec.SendStringCmd')
 callbacks.Register('SendStringCmd', 'autoexec.SendStringCmd', function(string_cmd) ---@param string_cmd StringCmd
@@ -62,15 +79,25 @@ callbacks.Register('SendStringCmd', 'autoexec.SendStringCmd', function(string_cm
     length   = string.len(input)
     position = 1
     captured = 0
-    local segments, index
+    local segments, index, in_quote
     segments = {}
     index    = 0
 
     while position <= length do
         local code = string.byte(input, position)
 
-        if code ~= CHAR_SPACE then
+        if code == CHAR_QUOTE or code == CHAR_SINGLE_QUOTE then
+            in_quote = not in_quote
+            goto __capture__
+        end
+
+        if code ~= CHAR_SPACE or in_quote then
             captured = captured + 1
+            goto __continue__
+        end
+
+        ::__capture__::
+        if captured == 0 then
             goto __continue__
         end
 
@@ -86,6 +113,7 @@ callbacks.Register('SendStringCmd', 'autoexec.SendStringCmd', function(string_cm
         index           = index + 1
         segments[index] = string.sub(input, position - captured, position - 1)
     end
+
 
     if index == 0 then
         return

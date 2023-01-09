@@ -2,7 +2,7 @@
 --- Thanks @blackfire62
 
 --- List of weapons that cannot crit in official TF2 Server                                                                \
---- source: `CalcIsAttackCriticalHelpers()`                                                                              \
+--- source: `CalcIsAttackCriticalHelpers()`                                                                                \
 --- https://wiki.alliedmods.net/Team_fortress_2_item_definition_indexes                                                    \
 --- https://api.steampowered.com/IEconItems_440/GetSchemaItems/v0001/?key=YOUR_API_KEY Client Item Schema (item_games.txt)
 local sets = {
@@ -325,9 +325,6 @@ callbacks.Register('CreateMove', 'crit-helper.CreateMove', function(cmd) ---@par
                 end
             until crit ~= critical_hit
         end
-        if weapon:GetWeaponData().useRapidFireCrits then
-            shots_till_next_crit = shots_till_next_crit * 1
-        end
         store.shots_till_next_crit = shots_till_next_crit
     end
 end)
@@ -345,6 +342,11 @@ end
 local function render_filled_rect(x, y, x1, y1, ...)
     draw.Color(...)
     draw.FilledRect(x, y, x1, y1)
+end
+
+local function render_textured_rect(id, x, y, x1, y1, ...)
+    draw.Color(...)
+    draw.TexturedRect(id, x, y, x1, y1)
 end
 
 local function render_outlined_rect(x, y, x1, y1, ...)
@@ -390,9 +392,12 @@ callbacks.Register('Draw', 'crit-helper.Draw', function()
 
     local user_want_force_crit = store.is_melee and gui_state('melee crits') or gui_state('crit hack')
 
-    local critical_attacks, critical_attacks_max, rapidfire_duration, current_shot_cost, bucket_current, required_damage, shots_till_next_crit, is_melee =
-    store.critical_attacks, store.critical_attacks_max, store.rapidfire_duration,
-        store.current_crit_cost, store.bucket_current, store.required_damage, store.shots_till_next_crit, store.is_melee
+    local bucket_current, crit_fired, critical_attacks, critical_attacks_max, current_crit_cost, is_melee,
+    itemdefinition_id, rapidfire_duration, required_damage, seed_count, shots_till_next_crit, shots_to_fill_bucket =
+    store.bucket_current, store.crit_fired, store.critical_attacks, store.critical_attacks_max,
+        store.current_crit_cost, store.is_melee, store.itemdefinition_id, store.rapidfire_duration, store.required_damage
+        , store.seed_count,
+        store.shots_till_next_crit, store.shots_to_fill_bucket
 
     local expression = required_damage > 0 and not is_melee
 
@@ -423,28 +428,38 @@ callbacks.Register('Draw', 'crit-helper.Draw', function()
 
     y = y + 20
 
+    -- text = (
+    --     'Ratio' ..
+    --         '\t\t\t\t\t\t\t\t\t\t\t\t\t  ' ..
+    --         1 - round(crit_fired / seed_count, 2))
+    -- y    = render_text(x, y, text, 255, 255, 255, 255) + padding
+
     text = (
         'Crital Hit' ..
-            '\t\t\t\t\t\t\t\t\t' .. (critical_attacks_max < 10 and '\t  ' or ' ') ..
+            '\t\t\t\t\t\t\t\t\t' .. (critical_attacks_max < 10 and '\t ' or ' ') ..
             critical_attacks .. ' out of ' .. critical_attacks_max)
     y    = render_text(x, y, text, 255, 255, 255, 255) + padding
 
-    if not is_melee then
-        text = 'Crit Evo' ..
-            '\t\t\t\t\t\t\t\t\t\t\t\t\t\t' ..
-            (shots_till_next_crit < 10 and ' ' or '') .. shots_till_next_crit
-        y = render_text(x, y, text, 204, 255, 153, 255) + padding
-    end
+
+    text = 'Crit Evo' ..
+        '\t\t\t\t\t\t\t\t\t\t\t\t\t' ..
+        (shots_till_next_crit < 100 and '  ' or '') .. (shots_till_next_crit < 10 and '  ' or '')
+        .. shots_till_next_crit
+    y = render_text(x, y, text, 204, 255, 153, 255) + padding
 
     if expression then
         text = 'Damage penalty'
-            .. '\t\t\t\t\t\t\t\t  ' .. (required_damage < 100 and '   ' or '') .. (required_damage < 10 and '  ' or '')
+            ..
+            '\t\t\t\t\t\t\t\t' ..
+            (required_damage < 1000 and '  ' or '') ..
+            (required_damage < 100 and '  ' or '') .. (required_damage < 10 and '  ' or '')
             .. round(required_damage, 1)
-        y    = render_text(x, y, text, 255, 61, 65, 255) + padding
+        y    = render_text(x, y, text, 204, 51, 51, 255) + padding
     end
 
-    if bucket_current < math.floor(current_shot_cost) then
-        text = (round(current_shot_cost, 1) .. ' > ' .. round(bucket_current, 1))
+    if bucket_current < math.floor(current_crit_cost) then
+        text = (round(current_crit_cost, 1) .. ' > ' .. round(bucket_current, 1))
         y = render_text(x, y, text, 255, 61, 65, 255) + padding
     end
+
 end)
