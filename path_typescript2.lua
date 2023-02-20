@@ -1,4 +1,6 @@
 --[[ Generated with https://github.com/TypeScriptToLua/TypeScriptToLua ]]
+--- Ported from https://github.com/denoland/deno_std/blob/main/path/win32.ts
+
 -- Lua Library inline imports
 local function __TS__StringCharCodeAt(self, index)
     if index ~= index then
@@ -47,7 +49,7 @@ local function __TS__LastIndexOf(a, b)
     if (i == nil) then
         return -1
     end
-    return (#a - i - #b + 2) -1
+    return (#a - i - #b + 2) - 1
 end
 
 local __TS__StringSplit
@@ -219,63 +221,21 @@ function ____exports.resolve(self, ...)
     local resolvedTail = ""
     local resolvedAbsolute = false
     do
-        local Deno = {
-            cwd = function()
-                return [[C:\Users\mayakey\Desktop\filesystem]]
-            end,
-            env = {
-                get = function()
-                    return [[C:\Users\mayakey\Desktop\filesystem]]
-                end
-            }
-        }
         local i = #pathSegments - 1
-        while i >= -1 do
+        while i >= -1 do -- 0
             do
                 local path = ""
-                if i >= 0 then
-                    path = pathSegments[i + 1]
+                if i >= 0 then -- 1 
+                    path = pathSegments[i + 1] -- i
                 elseif resolvedDevice == "" then
-                    local ____Deno_cwd_1 = Deno
-                    if ____Deno_cwd_1 ~= nil then
-                        ____Deno_cwd_1 = ____Deno_cwd_1.cwd
-                    end
-                    if type(____Deno_cwd_1) ~= "function" then
-                        error(
-                            "Resolved a drive-letter-less path without a CWD.",
-                            0
-                        )
-                    end
-                    path = Deno:cwd()
+                    path = ____exports.current_working_directory
+                    print(path)
                 else
-                    local ____Deno_env_5 = Deno
-                    if ____Deno_env_5 ~= nil then
-                        ____Deno_env_5 = ____Deno_env_5.env
-                    end
-                    local ____Deno_env_get_3 = ____Deno_env_5
-                    if ____Deno_env_get_3 ~= nil then
-                        ____Deno_env_get_3 = ____Deno_env_get_3.get
-                    end
-                    local ____temp_9 = type(____Deno_env_get_3) ~= "function"
-                    if not ____temp_9 then
-                        local ____Deno_cwd_7 = Deno
-                        if ____Deno_cwd_7 ~= nil then
-                            ____Deno_cwd_7 = ____Deno_cwd_7.cwd
-                        end
-                        ____temp_9 = type(____Deno_cwd_7) ~= "function"
-                    end
-                    if ____temp_9 then
-                        error(
-                            "Resolved a relative path without a CWD.",
-                            0
-                        )
-                    end
-                    path = Deno:cwd()
-                    if path == nil or string.lower(string.sub(path, 1, 3)) ~= string.lower(resolvedDevice) .. "\\" then
+                    path = ____exports.current_working_directory
+                    if string.lower(string.sub(path, 1, 3)) ~= string.lower(resolvedDevice) .. "\\" then
                         path = resolvedDevice .. "\\"
                     end
                 end
-                print(path, type(path))
                 local len = #path
                 if len == 0 then
                     goto __continue30
@@ -388,6 +348,7 @@ function ____exports.resolve(self, ...)
         "\\",
         ____exports.isPathSeparator
     )
+    print(resolvedDevice, resolvedAbsolute, resolvedTail)
     return (resolvedDevice .. (resolvedAbsolute and "\\" or "")) .. resolvedTail or "."
 end
 
@@ -1218,56 +1179,7 @@ function ____exports.parse(self, path)
     return ret
 end
 
-local inspect = require "lua_modules.inspect"
-
-local print = function(...)
-    local t = { ... }
-    for index, value in pairs(t) do
-        _G.print(value)
-    end
-end
-
--- print(____exports.resolve(nil, "Hello", "d:World.js"))
-print(____exports.normalizeString(nil, "..\\C:\\temp\\\\foo\\bar\\..\\", false, "\\"))
--- print(____exports.normalizeString(nil, "C:\\temp\\hello\\..\\world", false, "\\"))
-
-print(____exports.dirname(nil, '/foo/bar/baz/asdf/quux'))
-
--- print(
---     --
---     ____exports.relative(nil, 'C:\\orandea\\test\\aaa', 'C:\\orandea\\impl\\bbb'),
---     -- // Returns: '/foo/bar/baz/asdf'
---     ____exports.normalize(nil, '/foo/bar//baz/asdf/quux/..'),
---     -- // Returns: 'C:\\temp\\foo\\'
---     ____exports.normalize(nil, 'C:\\temp\\\\foo\\bar\\..\\'),
---     -- // Returns:
---     -- // { root: 'C:\\',
---     -- //   dir: 'C:\\path\\dir',
---     -- //   base: 'file.txt',
---     -- //   ext: '.txt',
---     -- //   name: 'file' }
---     inspect(____exports.parse(nil, 'C:\\path\\dir\\file.txt')),
---     inspect(__TS__StringSplit('foo\\bar\\baz', "\\")),
---     ____exports.toNamespacedPath(nil, "C:\\Windows\\users\\..\\admin"),
---     ____exports.basename(nil, 'C:\\foo.html', '.html'),
---     ____exports.dirname(nil, '/foo/bar/baz/asdf/quux'),
---     ____exports.extname(nil, 'index.html.md'),
---     -- // Returns: 'C:\\path\\dir\\file.txt'
---     ____exports.format(nil, {
---         dir = 'C:\\path\\dir',
---         base = 'file.txt',
---     }),
---     ____exports.isAbsolute(nil, '//server'), -- true
---     ____exports.isAbsolute(nil, '\\\\server'), -- true
---     ____exports.isAbsolute(nil, 'C:/foo/..'), -- true
---     ____exports.isAbsolute(nil, 'C:\\foo\\..'), -- true
---     ____exports.isAbsolute(nil, 'bar\\baz'), -- false
---     ____exports.isAbsolute(nil, 'bar/baz'), -- false
---     ____exports.isAbsolute(nil, '.'), -- false
---     -- // Returns: '/foo/bar/baz/asdf'
---     ____exports.join(nil, '/foo', 'bar', 'baz/asdf', 'quux', '..'),
---     -- // Returns: 'C:\\temp\\foo\\bar'
---     ____exports.normalize(nil, 'C:////temp\\\\/\\/\\/foo/bar')
--- )
+____exports.current_working_directory = "D:\\"
+print(____exports.resolve(nil, ":\\Users\\", "foo", "bar", "..", "baz_asdf", "quux", ".."))
 
 return ____exports

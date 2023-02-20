@@ -41,3 +41,6 @@ luac.out
 
 # vscode files
 *.code-workspace
+
+# private
+secret

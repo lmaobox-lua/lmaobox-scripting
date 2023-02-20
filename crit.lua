@@ -1,10 +1,14 @@
---- Copyright 2022-2023 Lewd Developer. All rights reserved. MIT License
---- Thanks @blackfire62
+--[[
+        Thanks @blackfire62
+        Created in 2023 by Lewd Developer.
+--]] 
+
 
 --- List of weapons that cannot crit in official TF2 Server                                                                \
 --- source: `CalcIsAttackCriticalHelpers()`                                                                                \
 --- https://wiki.alliedmods.net/Team_fortress_2_item_definition_indexes                                                    \
---- https://api.steampowered.com/IEconItems_440/GetSchemaItems/v0001/?key=YOUR_API_KEY Client Item Schema (item_games.txt)
+--- https://api.steampowered.com/IEconItems_440/GetSchemaItems/v0001/?key=YOUR_API_KEY Client Item Schema (item_games.txt) \
+--- https://steamcommunity.com/dev/apikey
 local sets = {
     [441] = true,
     [416] = true,
@@ -406,8 +410,8 @@ callbacks.Register('Draw', 'crit-helper.Draw', function()
     local width  = 200
     local height = 8
 
-    render_filled_rect(x, y, x + width, y + height + 2, 28, 28, 28, 255)
-    render_outlined_rect(x - 2, y - 2, x + width + 2, y + height + 2, 255, 255, 255, 255)
+    -- render_filled_rect(x, y, x + width, y + height + 2, 28, 28, 28, 255)
+    -- render_outlined_rect(x - 2, y - 2, x + width + 2, y + height + 2, 255, 255, 255, 255)
 
     draw.Color(30, 255, 0, 255)
     if user_want_force_crit then
@@ -417,14 +421,14 @@ callbacks.Register('Draw', 'crit-helper.Draw', function()
         draw.Color(255, 0, 0, 255)
     end
 
-    if (rapidfire_duration > 0) then
-        draw.FilledRect(x, y, x + math.floor(width * (rapidfire_duration / 2)), y + height)
-    else
-        draw.FilledRect(x, y, x + math.floor(width * (critical_attacks / critical_attacks_max)), y + height)
-    end
+    -- if (rapidfire_duration > 0) then
+    --     draw.FilledRect(x, y, x + math.floor(width * (rapidfire_duration / 2)), y + height)
+    -- else
+    --     draw.FilledRect(x, y, x + math.floor(width * (critical_attacks / critical_attacks_max)), y + height)
+    -- end
 
-    render_filled_rect(x, y, x + math.floor(width * ((critical_attacks - 1) / critical_attacks_max)),
-        y + height, 30, 255, 0, 255)
+    -- render_filled_rect(x, y, x + math.floor(width * ((critical_attacks - 1) / critical_attacks_max)),
+    --     y + height, 30, 255, 0, 255)
 
     y = y + 20
 

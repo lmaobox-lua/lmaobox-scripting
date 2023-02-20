@@ -194,7 +194,6 @@ local function parse(raw, use_cache)
         end
         area.inherit_visibility_from_area_id = buf:unpack("I")
 
-        -- NOTE: Differnet value in CSGO/TF2
         -- garbage?
         self.garbage = buf:unpack('I')
 

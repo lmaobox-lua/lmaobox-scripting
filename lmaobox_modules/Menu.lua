@@ -36,9 +36,7 @@ if not GradientStatus then
     print("[MenuLib] GradientMask.png not found! Color picker will not work.")
 end
 
-local InputMap = {}
-for i = 0, 9 do InputMap[i + 1] = tostring(i) end
-for i = 65, 90 do InputMap[i - 54] = string.char(i) end
+local InputMap = require "buttoncode_translation"
 
 local function GetCurrentKey()
     for i = 0, 106 do

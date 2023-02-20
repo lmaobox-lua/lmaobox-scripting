@@ -4,21 +4,34 @@ do
     script_name = assert(GetScriptName():match('[^\\]*.lua$'))
 
     package.path =
-    package.path
+        package.path
         .. ';' .. tf2_directory .. '/?.lua'
         .. ';' .. tf2_directory .. '/lmaobox-scripting/?.lua'
         .. ';' .. tf2_directory .. '/lmaobox-scripting/lua_modules/?.lua'
         .. ';' .. tf2_directory .. '/lmaobox-scripting/lmaobox_modules/?.lua'
+        .. ';' .. tf2_directory .. '/lmaobox-scripting/secret/?.lua'
     package.cpath =
-    package.cpath
+        package.cpath
         .. ';' .. tf2_directory .. '/?.dll'
         .. ';' .. tf2_directory .. '/lmaobox-scripting/?.dll'
         .. ';' .. tf2_directory .. '/lmaobox-scripting/lua_modules/?.dll'
         .. ';' .. tf2_directory .. '/lmaobox-scripting/lmaobox_modules/?.dll'
+        .. ';' .. tf2_directory .. '/lmaobox-scripting/secret/?.dll'
 end
 
 local console = {}
 local where = package.path
+
+local function log(...)
+    ---@diagnostic disable: param-type-mismatch
+    local now      = os.time()
+    local utc      = os.time(os.date("!*t", now))
+    local timezone = os.difftime(now, utc)
+    local h, m     = math.modf(timezone / 3600)
+    return (
+        table.concat({ os.date('%Y-%m-%d:%H:%M:%S', now), string.format("%+.4d", 100 * h + 60 * m), ... }, ' ')
+        )
+end
 
 local function list_console_variable()
     for key, value in pairs(console) do
@@ -29,13 +42,13 @@ local function list_console_variable()
 end
 
 function console.load(modname)
-    local path = package.searchpath(modname, where, ".", "/") or modname
+    local path = package.searchpath(modname, where, "/", ".") or modname
     printc(102, 204, 153, 255, "LoadScript([[" .. path .. "]])")
     LoadScript(path)
 end
 
 function console.unload(modname)
-    local path = package.searchpath(modname, where, ".", "/") or modname
+    local path = package.searchpath(modname, where, "/", ".") or modname
     printc(102, 204, 153, 255, "UnloadScript([[" .. path .. "]])")
     print(UnloadScript(path))
 end
@@ -49,6 +62,11 @@ function console.target(steamid, priority)
     local priority = priority or 5
     print(playerlist.SetPriority(steamid, priority))
     printc(102, 204, 153, 255, "Player Priority" .. " '" .. steam.GetPlayerName(steamid) .. "' " .. "is now " .. priority)
+end
+
+-- query player name, steamid and priority by userid/index/name
+function console.query()
+
 end
 
 -- local cvar = {}
@@ -141,3 +159,7 @@ callbacks.Register('SendStringCmd', 'autoexec.SendStringCmd', function(string_cm
     printc(102, 204, 153, 255, "Unknown command: " .. convar)
     printc(204, 255, 255, 255, "Type 'do' for a list of commands")
 end)
+
+console.load('constants')
+console.load('crit')
+console.load('infinite-food')

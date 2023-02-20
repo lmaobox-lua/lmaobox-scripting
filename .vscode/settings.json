@@ -1,21 +1,44 @@
 {
+    "editor.inlayHints.enabled": "offUnlessPressed",
+    "explorer.sortOrder": "type",
+    "Lua.codeLens.enable": false,
+    "Lua.completion.autoRequire": true,
+    "lua.debug.settings.luaArch": "x86",
+    "lua.debug.settings.path": "${workspaceFolder}/?.lua;${workspaceFolder}/lua_modules/?.lua;${workspaceFolder}/lmaobox_modules/?.lua;",
+    "lua.debug.variables.showIntegerAsHex": true,
+    "Lua.hint.enable": true,
+    "Lua.hint.paramType": true,
+    "Lua.hint.setType": true,
+    "Lua.runtime.path": [
+      "?.lua",
+      "?/init.lua",
+      " ${workspace}/**/lua_modules/?.lua",
+      " ${workspace}/**/lmaobox_modules/?.lua"
+    ],
+    "Lua.telemetry.enable": false,
+    "Lua.type.castNumberToInteger": true,
+    "Lua.type.weakNilCheck": true,
+    "Lua.type.weakUnionCheck": true,
+    "Lua.workspace.checkThirdParty": false,
+    "Lua.workspace.library": [
+      "lmaobox-annotation/library"
+    ],
     "luahelper.format.align_args": true,
     "luahelper.format.align_parameter": true,
-    "luahelper.format.break_before_table_rb": false,
     "luahelper.format.break_after_table_lb": false,
+    "luahelper.format.break_before_table_rb": false,
     "luahelper.format.chop_down_kv_table": true,
-    "luahelper.format.spaces_inside_table_braces": true,
     "luahelper.format.double_quote_to_single_quote": true,
-    "todo-tree.regex.regex": "(--|//|#|<!--|;|/\\*|^|^[ \\t]*(-|\\d+.))\\s*($TAGS)",
-    "Lua.workspace.library": [
-        "${3rd}/lmaobox-annotation/library"
-    ],
-    "Lua.workspace.checkThirdParty": false,
-    "Lua.completion.autoRequire": false,
-    "explorer.sortOrder": "type",
-    "Lua.workspace.ignoreDir": [
-        ".vscode",
-        "lua_modules",
-        "lmaobox_modules"
-    ],
-}
+    "luahelper.format.spaces_inside_table_braces": true,
+    "maptz.regionfolder": {
+      "[lua]": {
+        "foldEnd": "---@endregion",
+        "foldEndRegex": "[\\s]*---@endregion",
+        "foldStart": "---@region [NAME]",
+        "foldStartRegex": "[\\s]*---@region[\\s]*(.*)"
+      },
+      "git.ignoreMissingGitWarning": true,
+      "workbench.sideBar.location": "right"
+    },
+    "todo-tree.regex.regex": "(--|//|#|<!--|;|/\\*|^|^[ \\t]*(-|\\d+.))\\s*($TAGS)"
+  }
