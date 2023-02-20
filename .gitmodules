@@ -1,0 +1,7 @@
+[submodule "lmaobox-annotation"]
+	path = lmaobox-annotation
+	url = https://github.com/LewdDeveloper/lmaobox-annotation
+	branch = master
+[submodule "DumbLuaParser"]
+	path = DumbLuaParser
+	url = https://github.com/ReFreezed/DumbLuaParser
