@@ -254,21 +254,21 @@ callbacks.Register("DispatchUserMessage", function(UserMessage) ---@param UserMe
 end)
 
 --- Debug:
-local rows, y = { 600, 800 }, 600
+-- local rows, y = { 600, 800 }, 600
 
-local function table_text(first, second)
-    if first then
-        draw.Color(255, 255, 255, 255)
-        draw.Text(rows[1], y, first)
-    end
-    if second then
-        draw.Color(255, 255, 0, 255)
-        draw.Text(rows[2], y, second)
-    end
-    y = y + 24
-end
+-- local function table_text(first, second)
+--     if first then
+--         draw.Color(255, 255, 255, 255)
+--         draw.Text(rows[1], y, first)
+--     end
+--     if second then
+--         draw.Color(255, 255, 0, 255)
+--         draw.Text(rows[2], y, second)
+--     end
+--     y = y + 24
+-- end
 
-callbacks.Register("Draw", function()
-    draw.SetFont(21)
-    y = 600
-end)
+-- callbacks.Register("Draw", function()
+--     draw.SetFont(21)
+--     y = 600
+-- end)

@@ -7,8 +7,11 @@
     CCommand::Tokenize
     - commandbuffer.cpp
     CCommandBuffer::GetNextCommandLength
+    -- https://github.com/mpeterv/argparse
+-- https://docs.python.org/3/howto/argparse.html#id1
+-- https://github.com/cofyc/argparse
+
 ]]
--- local inspect = require("inspect").inspect
 local function printLuaTable(a, indent)
     if a == nil then
         print("nil")
@@ -65,9 +68,6 @@ local function command_tokenizer(command)
 
 end
 
---[[
-    Command Lines Interface
-]]
 local function shell_buffer_parse(buffer)
 
 end
@@ -111,30 +111,38 @@ local function shell_tokenizer(command)
     return values
 end
 
-local function command_name(name, description)
+local function argument_parser(name)
 
 end
 
-local function command_argument(command, options)
+local function add_argument()
 
 end
 
--- https://github.com/mpeterv/argparse
--- https://docs.python.org/3/howto/argparse.html#id1
--- https://github.com/cofyc/argparse
+local function add_argument_help()
 
-print(printLuaTable(shell_tokenizer([[echo 'print('hello mom')']])))
-print(printLuaTable(shell_tokenizer([[echo 'print("hello dad")']])))
-print(printLuaTable(command_buffer_parse([[echo "left                 ;'   s" and right]])))
-print(printLuaTable(command_buffer_parse(
-    [[echo "print('hello mom')"; echo "print('hello dad')" |> test() && echo "test success" ]])))
+end
 
-return {
-    command_buffer_parse = command_buffer_parse,
-    command_tokenizer    = command_tokenizer,
-    shell_buffer_parse   = shell_buffer_parse,
-    shell_tokenizer      = shell_tokenizer,
-    command_name         = command_name,
-    command_argument     = command_argument
-}
 
+-- local PATH = {}
+-- callbacks.Register("SendStringCmd", function(msg) ---@param msg StringCmd
+--     local command = msg:Get()
+    
+-- end)
+
+-- local function main()
+--     local app = argument_parser("argparse")
+--     app.add_description("argparse for lmaobox lua")
+--     app.add_argument("--beep").help("Play Sentry Gun Beeping Sound.")
+--     app.add_argument("-?", "-h", "--help").help("Shows help about the selected command")
+--     app.add_argument("-v", "--version").help("Display the version information")
+
+--     local parse = app.add_command("parse")
+--     parse.add_description("Parse a command buffer.")
+-- end
+
+local krits = draw.CreateTexture([[E:\SteamLibrary\steamapps\common\Team Fortress 2\tf\custom\flawhud\materials\vgui\replay\thumbnails\kritz.vtf]])
+
+callbacks.Register("Draw", function ()
+    draw.TexturedRect(krits, 0, 0, 100, 100)
+end)

@@ -1,0 +1,3 @@
+-- callbacks.Register("ServerCmdKeyValues", function (kv) ---@param kv StringCmd
+--     print(kv:Get())
+-- end)

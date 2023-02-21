@@ -8,6 +8,8 @@ This exploit requires the use of a ghost upgrade
 
 So the exploit done with `The Wrap Assassin` and `The Vaccinator`. Technically a few other weapons should also be doable but, due to their higher credit threshold to perform, it's really just those two.
 
+Find more information over here : [https://tcrf.net/Development:Team_Fortress_2/April_21st,\_2020_Codebase_Leak](https://tcrf.net/Development:Team_Fortress_2/April_21st,_2020_Codebase_Leak)
+
 1.  You simply max out each of the weapons ghost upgrades. So for The Wrap Assassin you get its recharge rate up to +60%, and for the Vaccinator you get its ubercharge rate up to +100%.
 2.  You then exit the upgrade station, and re-enter it.
 3.  Now you minus out all available upgrade ticks, and then refund. You should then have all of your credits back, and the weapons will still have higher than default recharge/ubercharge rate attributes.
